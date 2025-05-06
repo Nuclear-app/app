@@ -11,7 +11,7 @@ export default function Home() {
           {user ? (
             <LogoutButton></LogoutButton>
           ) : (
-            <button>sign in kar lo frens</button>
+            <button>sign in kar lo frens </button>
           )}
         </div>
       </main>
