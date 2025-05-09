@@ -15,9 +15,6 @@ export default function Home() {
             <button>sign in kar lo frens</button>
           )}
         </div>
-        <div>
-          <TextInput></TextInput>
-        </div>
       </main>
 
     </div>
