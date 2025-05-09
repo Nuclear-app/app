@@ -1,5 +1,6 @@
 import Image from "next/image";
 import LogoutButton from "@/components/LogoutButton";
+import TextInput from "@/components/TextInput";
 
 export default function Home() {
   const user = true;
@@ -14,8 +15,11 @@ export default function Home() {
             <button>sign in kar lo frens</button>
           )}
         </div>
+        <div>
+          <TextInput></TextInput>
+        </div>
       </main>
-     
+
     </div>
   );
 }
