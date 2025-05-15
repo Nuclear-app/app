@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
@@ -13,4 +7,59 @@ datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
+}
+
+model Block {
+  id        String     @id
+  createdAt DateTime   @default(now())
+  title     String
+  Note      String?
+  authorId  String
+  folderId  String?
+  User      User       @relation(fields: [authorId], references: [id])
+  Folder    Folder?    @relation(fields: [folderId], references: [id])
+  Example   Example[]
+  Question  Question[]
+  Quiz      Quiz[]
+}
+
+model Example {
+  id      String @id
+  topic   String
+  example String
+  blockId String
+  Block   Block  @relation(fields: [blockId], references: [id])
+}
+
+model Folder {
+  id        String   @id
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  Block     Block[]
+}
+
+model Question {
+  id       String @id
+  question String
+  answer   String
+  blockId  String
+  Block    Block  @relation(fields: [blockId], references: [id])
+}
+
+model Quiz {
+  id         String   @id
+  question   String
+  answers    String[]
+  correctAns String
+  mistake    String?
+  blockId    String
+  Block      Block    @relation(fields: [blockId], references: [id])
+}
+
+model User {
+  id    String  @id
+  email String  @unique
+  name  String?
+  Block Block[]
 }
