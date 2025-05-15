@@ -8,6 +8,10 @@ import './styles.css';
 import { Sub } from '@radix-ui/react-dropdown-menu';
 import { SubmitButton } from '../submit-button';
 
+interface EditorProps {
+  returnHTMLString: (htmlString: string) => void;
+}
+
 // export default function Editor() {
 //   const toolbarOptions = ['bold', 'italic', 'underline', 'strike', { list: 'ordered' }, { list: 'bullet' }, { align: [] }, { color: [] }, { background: [] }, 'link', 'image', 'clean'];
 //   // const quill = new Quill('#editor', {
@@ -32,7 +36,7 @@ import { SubmitButton } from '../submit-button';
 // import ReactQuill from 'react-quill-new';
 // import 'react-quill-new/dist/quill.snow.css'; // Import the Snow theme CSS
 
-const Editor: React.FC = () => {
+const Editor: React.FC<EditorProps> = ({ returnHTMLString }) => {
   const [editorValue, setEditorValue] = useState("<h1>Untitled Page</h1><p></p>");
   return (
     <form>
@@ -46,7 +50,7 @@ const Editor: React.FC = () => {
       </div>
       <div className="flex justify-center mt-4">
         <SubmitButton formAction={() => {
-          console.log(editorValue);
+          returnHTMLString(editorValue);
           setEditorValue("<h1>Untitled Page</h1><p></p>");
         }}>
           Submit
