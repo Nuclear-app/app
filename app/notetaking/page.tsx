@@ -1,5 +1,5 @@
 'use client';
-import Editor from "@/components/editor-button-comp/editor";
+import NuclearEditor from "@/components/editor-button-comp/nuclear-editor";
 import { Edit } from "lucide-react";
 import React from "react";
 
@@ -11,7 +11,7 @@ const NoteTakingPage = () => {
   
   return (
     <div>
-      <Editor returnHTMLString={returnHTMLString}/>
+      <NuclearEditor />
     </div>
   )
 }
