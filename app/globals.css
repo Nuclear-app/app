@@ -32,6 +32,7 @@
   }
 
   .dark {
+    /* --background: #888888 0% 3.9%; */
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
     --card: 0 0% 3.9%;
@@ -66,4 +67,23 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Custom Quill Editor Styles */
+.title .ql-editor.ql-blank::before {
+  font-size: 30px;
+  color: #999;
+  font-style: normal;
+  font-family: "Bricolage Grotesque", sans-serif;
+}
+
+.title .ql-editor {
+  font-size: 30px;
+  font-family: "Bricolage Grotesque", sans-serif;
+}
+
+.body .ql-editor.ql-blank::before {
+  font-size: 1rem;
+  color: #999;
+  font-style: normal;
 }
