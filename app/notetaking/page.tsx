@@ -1,18 +1,13 @@
-'use client';
-import NuclearEditor from "@/components/editor-button-comp/nuclear-editor";
-import { Edit } from "lucide-react";
-import React from "react";
+import TailwindAdvancedEditor from "@/components/tailwind/advanced-editor";
+import { Button } from "@/components/tailwind/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/tailwind/ui/dialog";
+import Menu from "@/components/tailwind/ui/menu";
+import { ScrollArea } from "@/components/tailwind/ui/scroll-area";
+import { BookOpen, GithubIcon } from "lucide-react";
+import Link from "next/link";
 
-const NoteTakingPage = () => {
-  const returnHTMLString = (htmlString: string) => {
-    // TODO: Insert the HTML string into the database usiing prisma 
-    console.log(htmlString);
-  };
-  
+export default function Page() {
   return (
-    <div>
-      <NuclearEditor />
-    </div>
-  )
+      <TailwindAdvancedEditor />
+   );
 }
-export default NoteTakingPage;

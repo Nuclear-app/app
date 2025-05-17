@@ -18,6 +18,48 @@ const config = {
       },
     },
     extend: {
+      typography: {
+        DEFAULT: {
+          css: {
+            'h1': {
+              fontSize: '2.25rem',
+              fontWeight: '700',
+              marginTop: '2rem',
+              marginBottom: '1rem',
+            },
+            'h2': {
+              fontSize: '1.875rem',
+              fontWeight: '600',
+              marginTop: '1.75rem',
+              marginBottom: '0.75rem',
+            },
+            'h3': {
+              fontSize: '1.5rem',
+              fontWeight: '600',
+              marginTop: '1.5rem',
+              marginBottom: '0.75rem',
+            },
+            'h4': {
+              fontSize: '1.25rem',
+              fontWeight: '600',
+              marginTop: '1.25rem',
+              marginBottom: '0.5rem',
+            },
+            'h5': {
+              fontSize: '1.125rem',
+              fontWeight: '600',
+              marginTop: '1.25rem',
+              marginBottom: '0.5rem',
+            },
+            'h6': {
+              fontSize: '1rem',
+              fontWeight: '600',
+              marginTop: '1.25rem',
+              marginBottom: '0.5rem',
+            },
+          },
+        },
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -74,7 +116,10 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/typography"),
+  ],
 } satisfies Config;
 
 export default config;
