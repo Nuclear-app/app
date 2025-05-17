@@ -1,5 +1,5 @@
 import { Button } from "@/components/tailwind/ui/button";
-import { cn } from "@/lib/utils";
+import { ny } from "@/lib/utils";
 import { SigmaIcon } from "lucide-react";
 import { useEditor } from "novel";
 
@@ -27,7 +27,7 @@ export const MathSelector = () => {
       }}
     >
       <SigmaIcon
-        className={cn("size-4", { "text-blue-500": editor.isActive("math") })}
+        className={ny("size-4", { "text-blue-500": editor.isActive("math") })}
         strokeWidth={2.3}
       />
     </Button>
