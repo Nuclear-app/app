@@ -1,10 +1,11 @@
 import { Button } from "@/components/tailwind/ui/button";
 import { PopoverContent } from "@/components/tailwind/ui/popover";
-import { cn } from "@/lib/utils";
+
 import { Popover, PopoverTrigger } from "@radix-ui/react-popover";
 import { Check, Trash } from "lucide-react";
 import { useEditor } from "novel";
 import { useEffect, useRef } from "react";
+import { ny } from "@/lib/utils";
 
 export function isValidUrl(url: string) {
   try {
@@ -45,7 +46,7 @@ export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
         <Button size="sm" variant="ghost" className="gap-2 rounded-none border-none">
           <p className="text-base">↗</p>
           <p
-            className={cn("underline decoration-stone-400 underline-offset-4", {
+            className={ny("underline decoration-stone-400 underline-offset-4", {
               "text-blue-500": editor.isActive("link"),
             })}
           >
