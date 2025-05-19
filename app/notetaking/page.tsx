@@ -7,7 +7,10 @@ import { BookOpen, GithubIcon } from "lucide-react";
 import Link from "next/link";
 
 export default function Page() {
-  return (
-      <TailwindAdvancedEditor />
+  const returnContent = (content: any) => {
+    console.log("Content from editor:", content);
+  }
+   return (
+      <TailwindAdvancedEditor returnContent={returnContent}/>
    );
 }
