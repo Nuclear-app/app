@@ -6,6 +6,8 @@ import {
   EditorCommandItem,
   EditorCommandList,
   EditorContent,
+  EditorBubble,
+
   type EditorInstance,
   EditorRoot,
   ImageResizer,
@@ -28,6 +30,7 @@ import { uploadFn } from "./image-upload";
 import { TextButtons } from "./selectors/text-buttons";
 import { slashCommand, suggestionItems } from "./slash-command";
 
+
 const hljs = require("highlight.js");
 
 const extensions = [...defaultExtensions, slashCommand];
@@ -46,8 +49,6 @@ const TailwindAdvancedEditor: React.FC<TailwindAdvancedEditorProps> = ({ returnC
   const [openLink, setOpenLink] = useState(false);
   const [openAI, setOpenAI] = useState(false);
   const editorRef = useRef<EditorInstance | null>(null);
-  // const editor = editorRef.current;
-  // const editorContent = editor?.getJSON();
 
   //Apply Codeblock Highlighting on the HTML from editor.getHTML()
   const highlightCodeblocks = (content: string) => {
@@ -78,7 +79,7 @@ const TailwindAdvancedEditor: React.FC<TailwindAdvancedEditorProps> = ({ returnC
   if (!initialContent) return null;
 
   return (
-    <div className="relative w-full max-w-screen-lg">
+    <div className="relative w-full max-w-screen-lg mx-auto">
       <div className="flex absolute right-5 top-5 z-10 mb-5 gap-2">
         <div className="rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground">{saveStatus}</div>
         <div className={charsCount ? "rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground" : "hidden"}>
@@ -89,7 +90,7 @@ const TailwindAdvancedEditor: React.FC<TailwindAdvancedEditorProps> = ({ returnC
         <EditorContent
           initialContent={initialContent}
           extensions={extensions}
-          className="relative min-h-[500px] w-full max-w-screen-lg border-muted bg-background sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:shadow-lg"
+          className="relative p-4 min-h-[500px] w-full max-w-screen-lg bg-background sm:mb-[calc(20vh)] sm:rounded-lg sm:shadow-lg"
           editorProps={{
             handleDOMEvents: {
               keydown: (_view, event) => handleCommandNavigation(event),
@@ -110,6 +111,7 @@ const TailwindAdvancedEditor: React.FC<TailwindAdvancedEditorProps> = ({ returnC
           }}
           slotAfter={<ImageResizer />}
         >
+
           <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
             <EditorCommandEmpty className="px-2 text-muted-foreground">No results</EditorCommandEmpty>
             <EditorCommandList>
