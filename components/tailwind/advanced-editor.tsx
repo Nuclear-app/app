@@ -14,7 +14,7 @@ import {
   handleImageDrop,
   handleImagePaste,
 } from "novel";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { defaultExtensions } from "./extensions";
 import { ColorSelector } from "./selectors/color-selector";
@@ -45,8 +45,9 @@ const TailwindAdvancedEditor: React.FC<TailwindAdvancedEditorProps> = ({ returnC
   const [openColor, setOpenColor] = useState(false);
   const [openLink, setOpenLink] = useState(false);
   const [openAI, setOpenAI] = useState(false);
-
-  returnContent = returnContent || (() => {});
+  const editorRef = useRef<EditorInstance | null>(null);
+  // const editor = editorRef.current;
+  // const editorContent = editor?.getJSON();
 
   //Apply Codeblock Highlighting on the HTML from editor.getHTML()
   const highlightCodeblocks = (content: string) => {
@@ -103,6 +104,9 @@ const TailwindAdvancedEditor: React.FC<TailwindAdvancedEditorProps> = ({ returnC
           onUpdate={({ editor }) => {
             debouncedUpdates(editor);
             setSaveStatus("Unsaved");
+            if (returnContent) {
+              returnContent(editor.getJSON());
+            }
           }}
           slotAfter={<ImageResizer />}
         >
