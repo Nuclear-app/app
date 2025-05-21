@@ -20,7 +20,7 @@ model Block {
   id        String     @id @default(uuid())
   createdAt DateTime   @default(now())
   title     String
-  Note      String?
+  Note      Json?
   authorId  String
   folderId  String?
   author    User       @relation(fields: [authorId], references: [id])
