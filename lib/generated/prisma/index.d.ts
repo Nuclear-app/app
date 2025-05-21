@@ -43,6 +43,11 @@ export type Question = $Result.DefaultSelection<Prisma.$QuestionPayload>
  * 
  */
 export type Folder = $Result.DefaultSelection<Prisma.$FolderPayload>
+/**
+ * Model FillInTheBlank
+ * 
+ */
+export type FillInTheBlank = $Result.DefaultSelection<Prisma.$FillInTheBlankPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -228,6 +233,16 @@ export class PrismaClient<
     * ```
     */
   get folder(): Prisma.FolderDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.fillInTheBlank`: Exposes CRUD operations for the **FillInTheBlank** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more FillInTheBlanks
+    * const fillInTheBlanks = await prisma.fillInTheBlank.findMany()
+    * ```
+    */
+  get fillInTheBlank(): Prisma.FillInTheBlankDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -673,7 +688,8 @@ export namespace Prisma {
     Quiz: 'Quiz',
     Example: 'Example',
     Question: 'Question',
-    Folder: 'Folder'
+    Folder: 'Folder',
+    FillInTheBlank: 'FillInTheBlank'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -692,7 +708,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "block" | "quiz" | "example" | "question" | "folder"
+      modelProps: "user" | "block" | "quiz" | "example" | "question" | "folder" | "fillInTheBlank"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1140,6 +1156,80 @@ export namespace Prisma {
           }
         }
       }
+      FillInTheBlank: {
+        payload: Prisma.$FillInTheBlankPayload<ExtArgs>
+        fields: Prisma.FillInTheBlankFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FillInTheBlankFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FillInTheBlankPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FillInTheBlankFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FillInTheBlankPayload>
+          }
+          findFirst: {
+            args: Prisma.FillInTheBlankFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FillInTheBlankPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FillInTheBlankFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FillInTheBlankPayload>
+          }
+          findMany: {
+            args: Prisma.FillInTheBlankFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FillInTheBlankPayload>[]
+          }
+          create: {
+            args: Prisma.FillInTheBlankCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FillInTheBlankPayload>
+          }
+          createMany: {
+            args: Prisma.FillInTheBlankCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FillInTheBlankCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FillInTheBlankPayload>[]
+          }
+          delete: {
+            args: Prisma.FillInTheBlankDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FillInTheBlankPayload>
+          }
+          update: {
+            args: Prisma.FillInTheBlankUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FillInTheBlankPayload>
+          }
+          deleteMany: {
+            args: Prisma.FillInTheBlankDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FillInTheBlankUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.FillInTheBlankUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FillInTheBlankPayload>[]
+          }
+          upsert: {
+            args: Prisma.FillInTheBlankUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FillInTheBlankPayload>
+          }
+          aggregate: {
+            args: Prisma.FillInTheBlankAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFillInTheBlank>
+          }
+          groupBy: {
+            args: Prisma.FillInTheBlankGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FillInTheBlankGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FillInTheBlankCountArgs<ExtArgs>
+            result: $Utils.Optional<FillInTheBlankCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1230,6 +1320,7 @@ export namespace Prisma {
     example?: ExampleOmit
     question?: QuestionOmit
     folder?: FolderOmit
+    fillInTheBlank?: FillInTheBlankOmit
   }
 
   /* Types for Logging */
@@ -1356,12 +1447,14 @@ export namespace Prisma {
 
   export type BlockCountOutputType = {
     examples: number
+    FillInTheBlank: number
     questions: number
     quizzes: number
   }
 
   export type BlockCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     examples?: boolean | BlockCountOutputTypeCountExamplesArgs
+    FillInTheBlank?: boolean | BlockCountOutputTypeCountFillInTheBlankArgs
     questions?: boolean | BlockCountOutputTypeCountQuestionsArgs
     quizzes?: boolean | BlockCountOutputTypeCountQuizzesArgs
   }
@@ -1382,6 +1475,13 @@ export namespace Prisma {
    */
   export type BlockCountOutputTypeCountExamplesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ExampleWhereInput
+  }
+
+  /**
+   * BlockCountOutputType without action
+   */
+  export type BlockCountOutputTypeCountFillInTheBlankArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FillInTheBlankWhereInput
   }
 
   /**
@@ -2653,6 +2753,7 @@ export namespace Prisma {
     author?: boolean | UserDefaultArgs<ExtArgs>
     folder?: boolean | Block$folderArgs<ExtArgs>
     examples?: boolean | Block$examplesArgs<ExtArgs>
+    FillInTheBlank?: boolean | Block$FillInTheBlankArgs<ExtArgs>
     questions?: boolean | Block$questionsArgs<ExtArgs>
     quizzes?: boolean | Block$quizzesArgs<ExtArgs>
     _count?: boolean | BlockCountOutputTypeDefaultArgs<ExtArgs>
@@ -2694,6 +2795,7 @@ export namespace Prisma {
     author?: boolean | UserDefaultArgs<ExtArgs>
     folder?: boolean | Block$folderArgs<ExtArgs>
     examples?: boolean | Block$examplesArgs<ExtArgs>
+    FillInTheBlank?: boolean | Block$FillInTheBlankArgs<ExtArgs>
     questions?: boolean | Block$questionsArgs<ExtArgs>
     quizzes?: boolean | Block$quizzesArgs<ExtArgs>
     _count?: boolean | BlockCountOutputTypeDefaultArgs<ExtArgs>
@@ -2713,6 +2815,7 @@ export namespace Prisma {
       author: Prisma.$UserPayload<ExtArgs>
       folder: Prisma.$FolderPayload<ExtArgs> | null
       examples: Prisma.$ExamplePayload<ExtArgs>[]
+      FillInTheBlank: Prisma.$FillInTheBlankPayload<ExtArgs>[]
       questions: Prisma.$QuestionPayload<ExtArgs>[]
       quizzes: Prisma.$QuizPayload<ExtArgs>[]
     }
@@ -3120,6 +3223,7 @@ export namespace Prisma {
     author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     folder<T extends Block$folderArgs<ExtArgs> = {}>(args?: Subset<T, Block$folderArgs<ExtArgs>>): Prisma__FolderClient<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     examples<T extends Block$examplesArgs<ExtArgs> = {}>(args?: Subset<T, Block$examplesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExamplePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    FillInTheBlank<T extends Block$FillInTheBlankArgs<ExtArgs> = {}>(args?: Subset<T, Block$FillInTheBlankArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FillInTheBlankPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     questions<T extends Block$questionsArgs<ExtArgs> = {}>(args?: Subset<T, Block$questionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuestionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     quizzes<T extends Block$quizzesArgs<ExtArgs> = {}>(args?: Subset<T, Block$quizzesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuizPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -3593,6 +3697,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ExampleScalarFieldEnum | ExampleScalarFieldEnum[]
+  }
+
+  /**
+   * Block.FillInTheBlank
+   */
+  export type Block$FillInTheBlankArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FillInTheBlank
+     */
+    select?: FillInTheBlankSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FillInTheBlank
+     */
+    omit?: FillInTheBlankOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FillInTheBlankInclude<ExtArgs> | null
+    where?: FillInTheBlankWhereInput
+    orderBy?: FillInTheBlankOrderByWithRelationInput | FillInTheBlankOrderByWithRelationInput[]
+    cursor?: FillInTheBlankWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FillInTheBlankScalarFieldEnum | FillInTheBlankScalarFieldEnum[]
   }
 
   /**
@@ -7877,6 +8005,1064 @@ export namespace Prisma {
 
 
   /**
+   * Model FillInTheBlank
+   */
+
+  export type AggregateFillInTheBlank = {
+    _count: FillInTheBlankCountAggregateOutputType | null
+    _min: FillInTheBlankMinAggregateOutputType | null
+    _max: FillInTheBlankMaxAggregateOutputType | null
+  }
+
+  export type FillInTheBlankMinAggregateOutputType = {
+    id: string | null
+    sentence: string | null
+    answer: string | null
+    hint: string | null
+    blockId: string | null
+  }
+
+  export type FillInTheBlankMaxAggregateOutputType = {
+    id: string | null
+    sentence: string | null
+    answer: string | null
+    hint: string | null
+    blockId: string | null
+  }
+
+  export type FillInTheBlankCountAggregateOutputType = {
+    id: number
+    sentence: number
+    answer: number
+    hint: number
+    blockId: number
+    _all: number
+  }
+
+
+  export type FillInTheBlankMinAggregateInputType = {
+    id?: true
+    sentence?: true
+    answer?: true
+    hint?: true
+    blockId?: true
+  }
+
+  export type FillInTheBlankMaxAggregateInputType = {
+    id?: true
+    sentence?: true
+    answer?: true
+    hint?: true
+    blockId?: true
+  }
+
+  export type FillInTheBlankCountAggregateInputType = {
+    id?: true
+    sentence?: true
+    answer?: true
+    hint?: true
+    blockId?: true
+    _all?: true
+  }
+
+  export type FillInTheBlankAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FillInTheBlank to aggregate.
+     */
+    where?: FillInTheBlankWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FillInTheBlanks to fetch.
+     */
+    orderBy?: FillInTheBlankOrderByWithRelationInput | FillInTheBlankOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FillInTheBlankWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FillInTheBlanks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FillInTheBlanks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned FillInTheBlanks
+    **/
+    _count?: true | FillInTheBlankCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FillInTheBlankMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FillInTheBlankMaxAggregateInputType
+  }
+
+  export type GetFillInTheBlankAggregateType<T extends FillInTheBlankAggregateArgs> = {
+        [P in keyof T & keyof AggregateFillInTheBlank]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFillInTheBlank[P]>
+      : GetScalarType<T[P], AggregateFillInTheBlank[P]>
+  }
+
+
+
+
+  export type FillInTheBlankGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FillInTheBlankWhereInput
+    orderBy?: FillInTheBlankOrderByWithAggregationInput | FillInTheBlankOrderByWithAggregationInput[]
+    by: FillInTheBlankScalarFieldEnum[] | FillInTheBlankScalarFieldEnum
+    having?: FillInTheBlankScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FillInTheBlankCountAggregateInputType | true
+    _min?: FillInTheBlankMinAggregateInputType
+    _max?: FillInTheBlankMaxAggregateInputType
+  }
+
+  export type FillInTheBlankGroupByOutputType = {
+    id: string
+    sentence: string
+    answer: string
+    hint: string | null
+    blockId: string
+    _count: FillInTheBlankCountAggregateOutputType | null
+    _min: FillInTheBlankMinAggregateOutputType | null
+    _max: FillInTheBlankMaxAggregateOutputType | null
+  }
+
+  type GetFillInTheBlankGroupByPayload<T extends FillInTheBlankGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FillInTheBlankGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FillInTheBlankGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FillInTheBlankGroupByOutputType[P]>
+            : GetScalarType<T[P], FillInTheBlankGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FillInTheBlankSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    sentence?: boolean
+    answer?: boolean
+    hint?: boolean
+    blockId?: boolean
+    Block?: boolean | BlockDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["fillInTheBlank"]>
+
+  export type FillInTheBlankSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    sentence?: boolean
+    answer?: boolean
+    hint?: boolean
+    blockId?: boolean
+    Block?: boolean | BlockDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["fillInTheBlank"]>
+
+  export type FillInTheBlankSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    sentence?: boolean
+    answer?: boolean
+    hint?: boolean
+    blockId?: boolean
+    Block?: boolean | BlockDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["fillInTheBlank"]>
+
+  export type FillInTheBlankSelectScalar = {
+    id?: boolean
+    sentence?: boolean
+    answer?: boolean
+    hint?: boolean
+    blockId?: boolean
+  }
+
+  export type FillInTheBlankOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sentence" | "answer" | "hint" | "blockId", ExtArgs["result"]["fillInTheBlank"]>
+  export type FillInTheBlankInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    Block?: boolean | BlockDefaultArgs<ExtArgs>
+  }
+  export type FillInTheBlankIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    Block?: boolean | BlockDefaultArgs<ExtArgs>
+  }
+  export type FillInTheBlankIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    Block?: boolean | BlockDefaultArgs<ExtArgs>
+  }
+
+  export type $FillInTheBlankPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "FillInTheBlank"
+    objects: {
+      Block: Prisma.$BlockPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      sentence: string
+      answer: string
+      hint: string | null
+      blockId: string
+    }, ExtArgs["result"]["fillInTheBlank"]>
+    composites: {}
+  }
+
+  type FillInTheBlankGetPayload<S extends boolean | null | undefined | FillInTheBlankDefaultArgs> = $Result.GetResult<Prisma.$FillInTheBlankPayload, S>
+
+  type FillInTheBlankCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<FillInTheBlankFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: FillInTheBlankCountAggregateInputType | true
+    }
+
+  export interface FillInTheBlankDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['FillInTheBlank'], meta: { name: 'FillInTheBlank' } }
+    /**
+     * Find zero or one FillInTheBlank that matches the filter.
+     * @param {FillInTheBlankFindUniqueArgs} args - Arguments to find a FillInTheBlank
+     * @example
+     * // Get one FillInTheBlank
+     * const fillInTheBlank = await prisma.fillInTheBlank.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FillInTheBlankFindUniqueArgs>(args: SelectSubset<T, FillInTheBlankFindUniqueArgs<ExtArgs>>): Prisma__FillInTheBlankClient<$Result.GetResult<Prisma.$FillInTheBlankPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one FillInTheBlank that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {FillInTheBlankFindUniqueOrThrowArgs} args - Arguments to find a FillInTheBlank
+     * @example
+     * // Get one FillInTheBlank
+     * const fillInTheBlank = await prisma.fillInTheBlank.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FillInTheBlankFindUniqueOrThrowArgs>(args: SelectSubset<T, FillInTheBlankFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FillInTheBlankClient<$Result.GetResult<Prisma.$FillInTheBlankPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FillInTheBlank that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FillInTheBlankFindFirstArgs} args - Arguments to find a FillInTheBlank
+     * @example
+     * // Get one FillInTheBlank
+     * const fillInTheBlank = await prisma.fillInTheBlank.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FillInTheBlankFindFirstArgs>(args?: SelectSubset<T, FillInTheBlankFindFirstArgs<ExtArgs>>): Prisma__FillInTheBlankClient<$Result.GetResult<Prisma.$FillInTheBlankPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FillInTheBlank that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FillInTheBlankFindFirstOrThrowArgs} args - Arguments to find a FillInTheBlank
+     * @example
+     * // Get one FillInTheBlank
+     * const fillInTheBlank = await prisma.fillInTheBlank.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FillInTheBlankFindFirstOrThrowArgs>(args?: SelectSubset<T, FillInTheBlankFindFirstOrThrowArgs<ExtArgs>>): Prisma__FillInTheBlankClient<$Result.GetResult<Prisma.$FillInTheBlankPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more FillInTheBlanks that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FillInTheBlankFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all FillInTheBlanks
+     * const fillInTheBlanks = await prisma.fillInTheBlank.findMany()
+     * 
+     * // Get first 10 FillInTheBlanks
+     * const fillInTheBlanks = await prisma.fillInTheBlank.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const fillInTheBlankWithIdOnly = await prisma.fillInTheBlank.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FillInTheBlankFindManyArgs>(args?: SelectSubset<T, FillInTheBlankFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FillInTheBlankPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a FillInTheBlank.
+     * @param {FillInTheBlankCreateArgs} args - Arguments to create a FillInTheBlank.
+     * @example
+     * // Create one FillInTheBlank
+     * const FillInTheBlank = await prisma.fillInTheBlank.create({
+     *   data: {
+     *     // ... data to create a FillInTheBlank
+     *   }
+     * })
+     * 
+     */
+    create<T extends FillInTheBlankCreateArgs>(args: SelectSubset<T, FillInTheBlankCreateArgs<ExtArgs>>): Prisma__FillInTheBlankClient<$Result.GetResult<Prisma.$FillInTheBlankPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many FillInTheBlanks.
+     * @param {FillInTheBlankCreateManyArgs} args - Arguments to create many FillInTheBlanks.
+     * @example
+     * // Create many FillInTheBlanks
+     * const fillInTheBlank = await prisma.fillInTheBlank.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FillInTheBlankCreateManyArgs>(args?: SelectSubset<T, FillInTheBlankCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many FillInTheBlanks and returns the data saved in the database.
+     * @param {FillInTheBlankCreateManyAndReturnArgs} args - Arguments to create many FillInTheBlanks.
+     * @example
+     * // Create many FillInTheBlanks
+     * const fillInTheBlank = await prisma.fillInTheBlank.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many FillInTheBlanks and only return the `id`
+     * const fillInTheBlankWithIdOnly = await prisma.fillInTheBlank.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FillInTheBlankCreateManyAndReturnArgs>(args?: SelectSubset<T, FillInTheBlankCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FillInTheBlankPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a FillInTheBlank.
+     * @param {FillInTheBlankDeleteArgs} args - Arguments to delete one FillInTheBlank.
+     * @example
+     * // Delete one FillInTheBlank
+     * const FillInTheBlank = await prisma.fillInTheBlank.delete({
+     *   where: {
+     *     // ... filter to delete one FillInTheBlank
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FillInTheBlankDeleteArgs>(args: SelectSubset<T, FillInTheBlankDeleteArgs<ExtArgs>>): Prisma__FillInTheBlankClient<$Result.GetResult<Prisma.$FillInTheBlankPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one FillInTheBlank.
+     * @param {FillInTheBlankUpdateArgs} args - Arguments to update one FillInTheBlank.
+     * @example
+     * // Update one FillInTheBlank
+     * const fillInTheBlank = await prisma.fillInTheBlank.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FillInTheBlankUpdateArgs>(args: SelectSubset<T, FillInTheBlankUpdateArgs<ExtArgs>>): Prisma__FillInTheBlankClient<$Result.GetResult<Prisma.$FillInTheBlankPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more FillInTheBlanks.
+     * @param {FillInTheBlankDeleteManyArgs} args - Arguments to filter FillInTheBlanks to delete.
+     * @example
+     * // Delete a few FillInTheBlanks
+     * const { count } = await prisma.fillInTheBlank.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FillInTheBlankDeleteManyArgs>(args?: SelectSubset<T, FillInTheBlankDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FillInTheBlanks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FillInTheBlankUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many FillInTheBlanks
+     * const fillInTheBlank = await prisma.fillInTheBlank.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FillInTheBlankUpdateManyArgs>(args: SelectSubset<T, FillInTheBlankUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FillInTheBlanks and returns the data updated in the database.
+     * @param {FillInTheBlankUpdateManyAndReturnArgs} args - Arguments to update many FillInTheBlanks.
+     * @example
+     * // Update many FillInTheBlanks
+     * const fillInTheBlank = await prisma.fillInTheBlank.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more FillInTheBlanks and only return the `id`
+     * const fillInTheBlankWithIdOnly = await prisma.fillInTheBlank.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends FillInTheBlankUpdateManyAndReturnArgs>(args: SelectSubset<T, FillInTheBlankUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FillInTheBlankPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one FillInTheBlank.
+     * @param {FillInTheBlankUpsertArgs} args - Arguments to update or create a FillInTheBlank.
+     * @example
+     * // Update or create a FillInTheBlank
+     * const fillInTheBlank = await prisma.fillInTheBlank.upsert({
+     *   create: {
+     *     // ... data to create a FillInTheBlank
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the FillInTheBlank we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FillInTheBlankUpsertArgs>(args: SelectSubset<T, FillInTheBlankUpsertArgs<ExtArgs>>): Prisma__FillInTheBlankClient<$Result.GetResult<Prisma.$FillInTheBlankPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of FillInTheBlanks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FillInTheBlankCountArgs} args - Arguments to filter FillInTheBlanks to count.
+     * @example
+     * // Count the number of FillInTheBlanks
+     * const count = await prisma.fillInTheBlank.count({
+     *   where: {
+     *     // ... the filter for the FillInTheBlanks we want to count
+     *   }
+     * })
+    **/
+    count<T extends FillInTheBlankCountArgs>(
+      args?: Subset<T, FillInTheBlankCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FillInTheBlankCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a FillInTheBlank.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FillInTheBlankAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FillInTheBlankAggregateArgs>(args: Subset<T, FillInTheBlankAggregateArgs>): Prisma.PrismaPromise<GetFillInTheBlankAggregateType<T>>
+
+    /**
+     * Group by FillInTheBlank.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FillInTheBlankGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FillInTheBlankGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FillInTheBlankGroupByArgs['orderBy'] }
+        : { orderBy?: FillInTheBlankGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FillInTheBlankGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFillInTheBlankGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the FillInTheBlank model
+   */
+  readonly fields: FillInTheBlankFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for FillInTheBlank.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FillInTheBlankClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    Block<T extends BlockDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BlockDefaultArgs<ExtArgs>>): Prisma__BlockClient<$Result.GetResult<Prisma.$BlockPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the FillInTheBlank model
+   */
+  interface FillInTheBlankFieldRefs {
+    readonly id: FieldRef<"FillInTheBlank", 'String'>
+    readonly sentence: FieldRef<"FillInTheBlank", 'String'>
+    readonly answer: FieldRef<"FillInTheBlank", 'String'>
+    readonly hint: FieldRef<"FillInTheBlank", 'String'>
+    readonly blockId: FieldRef<"FillInTheBlank", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * FillInTheBlank findUnique
+   */
+  export type FillInTheBlankFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FillInTheBlank
+     */
+    select?: FillInTheBlankSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FillInTheBlank
+     */
+    omit?: FillInTheBlankOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FillInTheBlankInclude<ExtArgs> | null
+    /**
+     * Filter, which FillInTheBlank to fetch.
+     */
+    where: FillInTheBlankWhereUniqueInput
+  }
+
+  /**
+   * FillInTheBlank findUniqueOrThrow
+   */
+  export type FillInTheBlankFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FillInTheBlank
+     */
+    select?: FillInTheBlankSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FillInTheBlank
+     */
+    omit?: FillInTheBlankOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FillInTheBlankInclude<ExtArgs> | null
+    /**
+     * Filter, which FillInTheBlank to fetch.
+     */
+    where: FillInTheBlankWhereUniqueInput
+  }
+
+  /**
+   * FillInTheBlank findFirst
+   */
+  export type FillInTheBlankFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FillInTheBlank
+     */
+    select?: FillInTheBlankSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FillInTheBlank
+     */
+    omit?: FillInTheBlankOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FillInTheBlankInclude<ExtArgs> | null
+    /**
+     * Filter, which FillInTheBlank to fetch.
+     */
+    where?: FillInTheBlankWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FillInTheBlanks to fetch.
+     */
+    orderBy?: FillInTheBlankOrderByWithRelationInput | FillInTheBlankOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FillInTheBlanks.
+     */
+    cursor?: FillInTheBlankWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FillInTheBlanks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FillInTheBlanks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FillInTheBlanks.
+     */
+    distinct?: FillInTheBlankScalarFieldEnum | FillInTheBlankScalarFieldEnum[]
+  }
+
+  /**
+   * FillInTheBlank findFirstOrThrow
+   */
+  export type FillInTheBlankFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FillInTheBlank
+     */
+    select?: FillInTheBlankSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FillInTheBlank
+     */
+    omit?: FillInTheBlankOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FillInTheBlankInclude<ExtArgs> | null
+    /**
+     * Filter, which FillInTheBlank to fetch.
+     */
+    where?: FillInTheBlankWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FillInTheBlanks to fetch.
+     */
+    orderBy?: FillInTheBlankOrderByWithRelationInput | FillInTheBlankOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FillInTheBlanks.
+     */
+    cursor?: FillInTheBlankWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FillInTheBlanks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FillInTheBlanks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FillInTheBlanks.
+     */
+    distinct?: FillInTheBlankScalarFieldEnum | FillInTheBlankScalarFieldEnum[]
+  }
+
+  /**
+   * FillInTheBlank findMany
+   */
+  export type FillInTheBlankFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FillInTheBlank
+     */
+    select?: FillInTheBlankSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FillInTheBlank
+     */
+    omit?: FillInTheBlankOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FillInTheBlankInclude<ExtArgs> | null
+    /**
+     * Filter, which FillInTheBlanks to fetch.
+     */
+    where?: FillInTheBlankWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FillInTheBlanks to fetch.
+     */
+    orderBy?: FillInTheBlankOrderByWithRelationInput | FillInTheBlankOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing FillInTheBlanks.
+     */
+    cursor?: FillInTheBlankWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FillInTheBlanks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FillInTheBlanks.
+     */
+    skip?: number
+    distinct?: FillInTheBlankScalarFieldEnum | FillInTheBlankScalarFieldEnum[]
+  }
+
+  /**
+   * FillInTheBlank create
+   */
+  export type FillInTheBlankCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FillInTheBlank
+     */
+    select?: FillInTheBlankSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FillInTheBlank
+     */
+    omit?: FillInTheBlankOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FillInTheBlankInclude<ExtArgs> | null
+    /**
+     * The data needed to create a FillInTheBlank.
+     */
+    data: XOR<FillInTheBlankCreateInput, FillInTheBlankUncheckedCreateInput>
+  }
+
+  /**
+   * FillInTheBlank createMany
+   */
+  export type FillInTheBlankCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many FillInTheBlanks.
+     */
+    data: FillInTheBlankCreateManyInput | FillInTheBlankCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * FillInTheBlank createManyAndReturn
+   */
+  export type FillInTheBlankCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FillInTheBlank
+     */
+    select?: FillInTheBlankSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FillInTheBlank
+     */
+    omit?: FillInTheBlankOmit<ExtArgs> | null
+    /**
+     * The data used to create many FillInTheBlanks.
+     */
+    data: FillInTheBlankCreateManyInput | FillInTheBlankCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FillInTheBlankIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FillInTheBlank update
+   */
+  export type FillInTheBlankUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FillInTheBlank
+     */
+    select?: FillInTheBlankSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FillInTheBlank
+     */
+    omit?: FillInTheBlankOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FillInTheBlankInclude<ExtArgs> | null
+    /**
+     * The data needed to update a FillInTheBlank.
+     */
+    data: XOR<FillInTheBlankUpdateInput, FillInTheBlankUncheckedUpdateInput>
+    /**
+     * Choose, which FillInTheBlank to update.
+     */
+    where: FillInTheBlankWhereUniqueInput
+  }
+
+  /**
+   * FillInTheBlank updateMany
+   */
+  export type FillInTheBlankUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update FillInTheBlanks.
+     */
+    data: XOR<FillInTheBlankUpdateManyMutationInput, FillInTheBlankUncheckedUpdateManyInput>
+    /**
+     * Filter which FillInTheBlanks to update
+     */
+    where?: FillInTheBlankWhereInput
+    /**
+     * Limit how many FillInTheBlanks to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * FillInTheBlank updateManyAndReturn
+   */
+  export type FillInTheBlankUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FillInTheBlank
+     */
+    select?: FillInTheBlankSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FillInTheBlank
+     */
+    omit?: FillInTheBlankOmit<ExtArgs> | null
+    /**
+     * The data used to update FillInTheBlanks.
+     */
+    data: XOR<FillInTheBlankUpdateManyMutationInput, FillInTheBlankUncheckedUpdateManyInput>
+    /**
+     * Filter which FillInTheBlanks to update
+     */
+    where?: FillInTheBlankWhereInput
+    /**
+     * Limit how many FillInTheBlanks to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FillInTheBlankIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FillInTheBlank upsert
+   */
+  export type FillInTheBlankUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FillInTheBlank
+     */
+    select?: FillInTheBlankSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FillInTheBlank
+     */
+    omit?: FillInTheBlankOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FillInTheBlankInclude<ExtArgs> | null
+    /**
+     * The filter to search for the FillInTheBlank to update in case it exists.
+     */
+    where: FillInTheBlankWhereUniqueInput
+    /**
+     * In case the FillInTheBlank found by the `where` argument doesn't exist, create a new FillInTheBlank with this data.
+     */
+    create: XOR<FillInTheBlankCreateInput, FillInTheBlankUncheckedCreateInput>
+    /**
+     * In case the FillInTheBlank was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FillInTheBlankUpdateInput, FillInTheBlankUncheckedUpdateInput>
+  }
+
+  /**
+   * FillInTheBlank delete
+   */
+  export type FillInTheBlankDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FillInTheBlank
+     */
+    select?: FillInTheBlankSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FillInTheBlank
+     */
+    omit?: FillInTheBlankOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FillInTheBlankInclude<ExtArgs> | null
+    /**
+     * Filter which FillInTheBlank to delete.
+     */
+    where: FillInTheBlankWhereUniqueInput
+  }
+
+  /**
+   * FillInTheBlank deleteMany
+   */
+  export type FillInTheBlankDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FillInTheBlanks to delete
+     */
+    where?: FillInTheBlankWhereInput
+    /**
+     * Limit how many FillInTheBlanks to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * FillInTheBlank without action
+   */
+  export type FillInTheBlankDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FillInTheBlank
+     */
+    select?: FillInTheBlankSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FillInTheBlank
+     */
+    omit?: FillInTheBlankOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FillInTheBlankInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -7951,6 +9137,17 @@ export namespace Prisma {
   };
 
   export type FolderScalarFieldEnum = (typeof FolderScalarFieldEnum)[keyof typeof FolderScalarFieldEnum]
+
+
+  export const FillInTheBlankScalarFieldEnum: {
+    id: 'id',
+    sentence: 'sentence',
+    answer: 'answer',
+    hint: 'hint',
+    blockId: 'blockId'
+  };
+
+  export type FillInTheBlankScalarFieldEnum = (typeof FillInTheBlankScalarFieldEnum)[keyof typeof FillInTheBlankScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -8085,6 +9282,7 @@ export namespace Prisma {
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
     folder?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
     examples?: ExampleListRelationFilter
+    FillInTheBlank?: FillInTheBlankListRelationFilter
     questions?: QuestionListRelationFilter
     quizzes?: QuizListRelationFilter
   }
@@ -8099,6 +9297,7 @@ export namespace Prisma {
     author?: UserOrderByWithRelationInput
     folder?: FolderOrderByWithRelationInput
     examples?: ExampleOrderByRelationAggregateInput
+    FillInTheBlank?: FillInTheBlankOrderByRelationAggregateInput
     questions?: QuestionOrderByRelationAggregateInput
     quizzes?: QuizOrderByRelationAggregateInput
   }
@@ -8116,6 +9315,7 @@ export namespace Prisma {
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
     folder?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
     examples?: ExampleListRelationFilter
+    FillInTheBlank?: FillInTheBlankListRelationFilter
     questions?: QuestionListRelationFilter
     quizzes?: QuizListRelationFilter
   }, "id">
@@ -8354,6 +9554,61 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Folder"> | Date | string
   }
 
+  export type FillInTheBlankWhereInput = {
+    AND?: FillInTheBlankWhereInput | FillInTheBlankWhereInput[]
+    OR?: FillInTheBlankWhereInput[]
+    NOT?: FillInTheBlankWhereInput | FillInTheBlankWhereInput[]
+    id?: StringFilter<"FillInTheBlank"> | string
+    sentence?: StringFilter<"FillInTheBlank"> | string
+    answer?: StringFilter<"FillInTheBlank"> | string
+    hint?: StringNullableFilter<"FillInTheBlank"> | string | null
+    blockId?: StringFilter<"FillInTheBlank"> | string
+    Block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
+  }
+
+  export type FillInTheBlankOrderByWithRelationInput = {
+    id?: SortOrder
+    sentence?: SortOrder
+    answer?: SortOrder
+    hint?: SortOrderInput | SortOrder
+    blockId?: SortOrder
+    Block?: BlockOrderByWithRelationInput
+  }
+
+  export type FillInTheBlankWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: FillInTheBlankWhereInput | FillInTheBlankWhereInput[]
+    OR?: FillInTheBlankWhereInput[]
+    NOT?: FillInTheBlankWhereInput | FillInTheBlankWhereInput[]
+    sentence?: StringFilter<"FillInTheBlank"> | string
+    answer?: StringFilter<"FillInTheBlank"> | string
+    hint?: StringNullableFilter<"FillInTheBlank"> | string | null
+    blockId?: StringFilter<"FillInTheBlank"> | string
+    Block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
+  }, "id">
+
+  export type FillInTheBlankOrderByWithAggregationInput = {
+    id?: SortOrder
+    sentence?: SortOrder
+    answer?: SortOrder
+    hint?: SortOrderInput | SortOrder
+    blockId?: SortOrder
+    _count?: FillInTheBlankCountOrderByAggregateInput
+    _max?: FillInTheBlankMaxOrderByAggregateInput
+    _min?: FillInTheBlankMinOrderByAggregateInput
+  }
+
+  export type FillInTheBlankScalarWhereWithAggregatesInput = {
+    AND?: FillInTheBlankScalarWhereWithAggregatesInput | FillInTheBlankScalarWhereWithAggregatesInput[]
+    OR?: FillInTheBlankScalarWhereWithAggregatesInput[]
+    NOT?: FillInTheBlankScalarWhereWithAggregatesInput | FillInTheBlankScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"FillInTheBlank"> | string
+    sentence?: StringWithAggregatesFilter<"FillInTheBlank"> | string
+    answer?: StringWithAggregatesFilter<"FillInTheBlank"> | string
+    hint?: StringNullableWithAggregatesFilter<"FillInTheBlank"> | string | null
+    blockId?: StringWithAggregatesFilter<"FillInTheBlank"> | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -8408,6 +9663,7 @@ export namespace Prisma {
     author: UserCreateNestedOneWithoutPostsInput
     folder?: FolderCreateNestedOneWithoutBlocksInput
     examples?: ExampleCreateNestedManyWithoutBlockInput
+    FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
     questions?: QuestionCreateNestedManyWithoutBlockInput
     quizzes?: QuizCreateNestedManyWithoutBlockInput
   }
@@ -8420,6 +9676,7 @@ export namespace Prisma {
     authorId: string
     folderId?: string | null
     examples?: ExampleUncheckedCreateNestedManyWithoutBlockInput
+    FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
   }
@@ -8432,6 +9689,7 @@ export namespace Prisma {
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     folder?: FolderUpdateOneWithoutBlocksNestedInput
     examples?: ExampleUpdateManyWithoutBlockNestedInput
+    FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
     questions?: QuestionUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUpdateManyWithoutBlockNestedInput
   }
@@ -8444,6 +9702,7 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
     examples?: ExampleUncheckedUpdateManyWithoutBlockNestedInput
+    FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
   }
@@ -8684,6 +9943,61 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type FillInTheBlankCreateInput = {
+    id: string
+    sentence: string
+    answer: string
+    hint?: string | null
+    Block: BlockCreateNestedOneWithoutFillInTheBlankInput
+  }
+
+  export type FillInTheBlankUncheckedCreateInput = {
+    id: string
+    sentence: string
+    answer: string
+    hint?: string | null
+    blockId: string
+  }
+
+  export type FillInTheBlankUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sentence?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    hint?: NullableStringFieldUpdateOperationsInput | string | null
+    Block?: BlockUpdateOneRequiredWithoutFillInTheBlankNestedInput
+  }
+
+  export type FillInTheBlankUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sentence?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    hint?: NullableStringFieldUpdateOperationsInput | string | null
+    blockId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type FillInTheBlankCreateManyInput = {
+    id: string
+    sentence: string
+    answer: string
+    hint?: string | null
+    blockId: string
+  }
+
+  export type FillInTheBlankUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sentence?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    hint?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type FillInTheBlankUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sentence?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    hint?: NullableStringFieldUpdateOperationsInput | string | null
+    blockId?: StringFieldUpdateOperationsInput | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -8810,6 +10124,12 @@ export namespace Prisma {
     none?: ExampleWhereInput
   }
 
+  export type FillInTheBlankListRelationFilter = {
+    every?: FillInTheBlankWhereInput
+    some?: FillInTheBlankWhereInput
+    none?: FillInTheBlankWhereInput
+  }
+
   export type QuestionListRelationFilter = {
     every?: QuestionWhereInput
     some?: QuestionWhereInput
@@ -8823,6 +10143,10 @@ export namespace Prisma {
   }
 
   export type ExampleOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type FillInTheBlankOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -8976,6 +10300,30 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type FillInTheBlankCountOrderByAggregateInput = {
+    id?: SortOrder
+    sentence?: SortOrder
+    answer?: SortOrder
+    hint?: SortOrder
+    blockId?: SortOrder
+  }
+
+  export type FillInTheBlankMaxOrderByAggregateInput = {
+    id?: SortOrder
+    sentence?: SortOrder
+    answer?: SortOrder
+    hint?: SortOrder
+    blockId?: SortOrder
+  }
+
+  export type FillInTheBlankMinOrderByAggregateInput = {
+    id?: SortOrder
+    sentence?: SortOrder
+    answer?: SortOrder
+    hint?: SortOrder
+    blockId?: SortOrder
+  }
+
   export type BlockCreateNestedManyWithoutAuthorInput = {
     create?: XOR<BlockCreateWithoutAuthorInput, BlockUncheckedCreateWithoutAuthorInput> | BlockCreateWithoutAuthorInput[] | BlockUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: BlockCreateOrConnectWithoutAuthorInput | BlockCreateOrConnectWithoutAuthorInput[]
@@ -9045,6 +10393,13 @@ export namespace Prisma {
     connect?: ExampleWhereUniqueInput | ExampleWhereUniqueInput[]
   }
 
+  export type FillInTheBlankCreateNestedManyWithoutBlockInput = {
+    create?: XOR<FillInTheBlankCreateWithoutBlockInput, FillInTheBlankUncheckedCreateWithoutBlockInput> | FillInTheBlankCreateWithoutBlockInput[] | FillInTheBlankUncheckedCreateWithoutBlockInput[]
+    connectOrCreate?: FillInTheBlankCreateOrConnectWithoutBlockInput | FillInTheBlankCreateOrConnectWithoutBlockInput[]
+    createMany?: FillInTheBlankCreateManyBlockInputEnvelope
+    connect?: FillInTheBlankWhereUniqueInput | FillInTheBlankWhereUniqueInput[]
+  }
+
   export type QuestionCreateNestedManyWithoutBlockInput = {
     create?: XOR<QuestionCreateWithoutBlockInput, QuestionUncheckedCreateWithoutBlockInput> | QuestionCreateWithoutBlockInput[] | QuestionUncheckedCreateWithoutBlockInput[]
     connectOrCreate?: QuestionCreateOrConnectWithoutBlockInput | QuestionCreateOrConnectWithoutBlockInput[]
@@ -9064,6 +10419,13 @@ export namespace Prisma {
     connectOrCreate?: ExampleCreateOrConnectWithoutBlockInput | ExampleCreateOrConnectWithoutBlockInput[]
     createMany?: ExampleCreateManyBlockInputEnvelope
     connect?: ExampleWhereUniqueInput | ExampleWhereUniqueInput[]
+  }
+
+  export type FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput = {
+    create?: XOR<FillInTheBlankCreateWithoutBlockInput, FillInTheBlankUncheckedCreateWithoutBlockInput> | FillInTheBlankCreateWithoutBlockInput[] | FillInTheBlankUncheckedCreateWithoutBlockInput[]
+    connectOrCreate?: FillInTheBlankCreateOrConnectWithoutBlockInput | FillInTheBlankCreateOrConnectWithoutBlockInput[]
+    createMany?: FillInTheBlankCreateManyBlockInputEnvelope
+    connect?: FillInTheBlankWhereUniqueInput | FillInTheBlankWhereUniqueInput[]
   }
 
   export type QuestionUncheckedCreateNestedManyWithoutBlockInput = {
@@ -9116,6 +10478,20 @@ export namespace Prisma {
     deleteMany?: ExampleScalarWhereInput | ExampleScalarWhereInput[]
   }
 
+  export type FillInTheBlankUpdateManyWithoutBlockNestedInput = {
+    create?: XOR<FillInTheBlankCreateWithoutBlockInput, FillInTheBlankUncheckedCreateWithoutBlockInput> | FillInTheBlankCreateWithoutBlockInput[] | FillInTheBlankUncheckedCreateWithoutBlockInput[]
+    connectOrCreate?: FillInTheBlankCreateOrConnectWithoutBlockInput | FillInTheBlankCreateOrConnectWithoutBlockInput[]
+    upsert?: FillInTheBlankUpsertWithWhereUniqueWithoutBlockInput | FillInTheBlankUpsertWithWhereUniqueWithoutBlockInput[]
+    createMany?: FillInTheBlankCreateManyBlockInputEnvelope
+    set?: FillInTheBlankWhereUniqueInput | FillInTheBlankWhereUniqueInput[]
+    disconnect?: FillInTheBlankWhereUniqueInput | FillInTheBlankWhereUniqueInput[]
+    delete?: FillInTheBlankWhereUniqueInput | FillInTheBlankWhereUniqueInput[]
+    connect?: FillInTheBlankWhereUniqueInput | FillInTheBlankWhereUniqueInput[]
+    update?: FillInTheBlankUpdateWithWhereUniqueWithoutBlockInput | FillInTheBlankUpdateWithWhereUniqueWithoutBlockInput[]
+    updateMany?: FillInTheBlankUpdateManyWithWhereWithoutBlockInput | FillInTheBlankUpdateManyWithWhereWithoutBlockInput[]
+    deleteMany?: FillInTheBlankScalarWhereInput | FillInTheBlankScalarWhereInput[]
+  }
+
   export type QuestionUpdateManyWithoutBlockNestedInput = {
     create?: XOR<QuestionCreateWithoutBlockInput, QuestionUncheckedCreateWithoutBlockInput> | QuestionCreateWithoutBlockInput[] | QuestionUncheckedCreateWithoutBlockInput[]
     connectOrCreate?: QuestionCreateOrConnectWithoutBlockInput | QuestionCreateOrConnectWithoutBlockInput[]
@@ -9156,6 +10532,20 @@ export namespace Prisma {
     update?: ExampleUpdateWithWhereUniqueWithoutBlockInput | ExampleUpdateWithWhereUniqueWithoutBlockInput[]
     updateMany?: ExampleUpdateManyWithWhereWithoutBlockInput | ExampleUpdateManyWithWhereWithoutBlockInput[]
     deleteMany?: ExampleScalarWhereInput | ExampleScalarWhereInput[]
+  }
+
+  export type FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput = {
+    create?: XOR<FillInTheBlankCreateWithoutBlockInput, FillInTheBlankUncheckedCreateWithoutBlockInput> | FillInTheBlankCreateWithoutBlockInput[] | FillInTheBlankUncheckedCreateWithoutBlockInput[]
+    connectOrCreate?: FillInTheBlankCreateOrConnectWithoutBlockInput | FillInTheBlankCreateOrConnectWithoutBlockInput[]
+    upsert?: FillInTheBlankUpsertWithWhereUniqueWithoutBlockInput | FillInTheBlankUpsertWithWhereUniqueWithoutBlockInput[]
+    createMany?: FillInTheBlankCreateManyBlockInputEnvelope
+    set?: FillInTheBlankWhereUniqueInput | FillInTheBlankWhereUniqueInput[]
+    disconnect?: FillInTheBlankWhereUniqueInput | FillInTheBlankWhereUniqueInput[]
+    delete?: FillInTheBlankWhereUniqueInput | FillInTheBlankWhereUniqueInput[]
+    connect?: FillInTheBlankWhereUniqueInput | FillInTheBlankWhereUniqueInput[]
+    update?: FillInTheBlankUpdateWithWhereUniqueWithoutBlockInput | FillInTheBlankUpdateWithWhereUniqueWithoutBlockInput[]
+    updateMany?: FillInTheBlankUpdateManyWithWhereWithoutBlockInput | FillInTheBlankUpdateManyWithWhereWithoutBlockInput[]
+    deleteMany?: FillInTheBlankScalarWhereInput | FillInTheBlankScalarWhereInput[]
   }
 
   export type QuestionUncheckedUpdateManyWithoutBlockNestedInput = {
@@ -9279,6 +10669,20 @@ export namespace Prisma {
     deleteMany?: BlockScalarWhereInput | BlockScalarWhereInput[]
   }
 
+  export type BlockCreateNestedOneWithoutFillInTheBlankInput = {
+    create?: XOR<BlockCreateWithoutFillInTheBlankInput, BlockUncheckedCreateWithoutFillInTheBlankInput>
+    connectOrCreate?: BlockCreateOrConnectWithoutFillInTheBlankInput
+    connect?: BlockWhereUniqueInput
+  }
+
+  export type BlockUpdateOneRequiredWithoutFillInTheBlankNestedInput = {
+    create?: XOR<BlockCreateWithoutFillInTheBlankInput, BlockUncheckedCreateWithoutFillInTheBlankInput>
+    connectOrCreate?: BlockCreateOrConnectWithoutFillInTheBlankInput
+    upsert?: BlockUpsertWithoutFillInTheBlankInput
+    connect?: BlockWhereUniqueInput
+    update?: XOR<XOR<BlockUpdateToOneWithWhereWithoutFillInTheBlankInput, BlockUpdateWithoutFillInTheBlankInput>, BlockUncheckedUpdateWithoutFillInTheBlankInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -9395,6 +10799,7 @@ export namespace Prisma {
     Note?: string | null
     folder?: FolderCreateNestedOneWithoutBlocksInput
     examples?: ExampleCreateNestedManyWithoutBlockInput
+    FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
     questions?: QuestionCreateNestedManyWithoutBlockInput
     quizzes?: QuizCreateNestedManyWithoutBlockInput
   }
@@ -9406,6 +10811,7 @@ export namespace Prisma {
     Note?: string | null
     folderId?: string | null
     examples?: ExampleUncheckedCreateNestedManyWithoutBlockInput
+    FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
   }
@@ -9503,6 +10909,30 @@ export namespace Prisma {
 
   export type ExampleCreateManyBlockInputEnvelope = {
     data: ExampleCreateManyBlockInput | ExampleCreateManyBlockInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type FillInTheBlankCreateWithoutBlockInput = {
+    id: string
+    sentence: string
+    answer: string
+    hint?: string | null
+  }
+
+  export type FillInTheBlankUncheckedCreateWithoutBlockInput = {
+    id: string
+    sentence: string
+    answer: string
+    hint?: string | null
+  }
+
+  export type FillInTheBlankCreateOrConnectWithoutBlockInput = {
+    where: FillInTheBlankWhereUniqueInput
+    create: XOR<FillInTheBlankCreateWithoutBlockInput, FillInTheBlankUncheckedCreateWithoutBlockInput>
+  }
+
+  export type FillInTheBlankCreateManyBlockInputEnvelope = {
+    data: FillInTheBlankCreateManyBlockInput | FillInTheBlankCreateManyBlockInput[]
     skipDuplicates?: boolean
   }
 
@@ -9628,6 +11058,33 @@ export namespace Prisma {
     blockId?: StringFilter<"Example"> | string
   }
 
+  export type FillInTheBlankUpsertWithWhereUniqueWithoutBlockInput = {
+    where: FillInTheBlankWhereUniqueInput
+    update: XOR<FillInTheBlankUpdateWithoutBlockInput, FillInTheBlankUncheckedUpdateWithoutBlockInput>
+    create: XOR<FillInTheBlankCreateWithoutBlockInput, FillInTheBlankUncheckedCreateWithoutBlockInput>
+  }
+
+  export type FillInTheBlankUpdateWithWhereUniqueWithoutBlockInput = {
+    where: FillInTheBlankWhereUniqueInput
+    data: XOR<FillInTheBlankUpdateWithoutBlockInput, FillInTheBlankUncheckedUpdateWithoutBlockInput>
+  }
+
+  export type FillInTheBlankUpdateManyWithWhereWithoutBlockInput = {
+    where: FillInTheBlankScalarWhereInput
+    data: XOR<FillInTheBlankUpdateManyMutationInput, FillInTheBlankUncheckedUpdateManyWithoutBlockInput>
+  }
+
+  export type FillInTheBlankScalarWhereInput = {
+    AND?: FillInTheBlankScalarWhereInput | FillInTheBlankScalarWhereInput[]
+    OR?: FillInTheBlankScalarWhereInput[]
+    NOT?: FillInTheBlankScalarWhereInput | FillInTheBlankScalarWhereInput[]
+    id?: StringFilter<"FillInTheBlank"> | string
+    sentence?: StringFilter<"FillInTheBlank"> | string
+    answer?: StringFilter<"FillInTheBlank"> | string
+    hint?: StringNullableFilter<"FillInTheBlank"> | string | null
+    blockId?: StringFilter<"FillInTheBlank"> | string
+  }
+
   export type QuestionUpsertWithWhereUniqueWithoutBlockInput = {
     where: QuestionWhereUniqueInput
     update: XOR<QuestionUpdateWithoutBlockInput, QuestionUncheckedUpdateWithoutBlockInput>
@@ -9690,6 +11147,7 @@ export namespace Prisma {
     author: UserCreateNestedOneWithoutPostsInput
     folder?: FolderCreateNestedOneWithoutBlocksInput
     examples?: ExampleCreateNestedManyWithoutBlockInput
+    FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
     questions?: QuestionCreateNestedManyWithoutBlockInput
   }
 
@@ -9701,6 +11159,7 @@ export namespace Prisma {
     authorId: string
     folderId?: string | null
     examples?: ExampleUncheckedCreateNestedManyWithoutBlockInput
+    FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
   }
 
@@ -9728,6 +11187,7 @@ export namespace Prisma {
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     folder?: FolderUpdateOneWithoutBlocksNestedInput
     examples?: ExampleUpdateManyWithoutBlockNestedInput
+    FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
     questions?: QuestionUpdateManyWithoutBlockNestedInput
   }
 
@@ -9739,6 +11199,7 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
     examples?: ExampleUncheckedUpdateManyWithoutBlockNestedInput
+    FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
   }
 
@@ -9749,6 +11210,7 @@ export namespace Prisma {
     Note?: string | null
     author: UserCreateNestedOneWithoutPostsInput
     folder?: FolderCreateNestedOneWithoutBlocksInput
+    FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
     questions?: QuestionCreateNestedManyWithoutBlockInput
     quizzes?: QuizCreateNestedManyWithoutBlockInput
   }
@@ -9760,6 +11222,7 @@ export namespace Prisma {
     Note?: string | null
     authorId: string
     folderId?: string | null
+    FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
   }
@@ -9787,6 +11250,7 @@ export namespace Prisma {
     Note?: NullableStringFieldUpdateOperationsInput | string | null
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     folder?: FolderUpdateOneWithoutBlocksNestedInput
+    FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
     questions?: QuestionUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUpdateManyWithoutBlockNestedInput
   }
@@ -9798,6 +11262,7 @@ export namespace Prisma {
     Note?: NullableStringFieldUpdateOperationsInput | string | null
     authorId?: StringFieldUpdateOperationsInput | string
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
   }
@@ -9810,6 +11275,7 @@ export namespace Prisma {
     author: UserCreateNestedOneWithoutPostsInput
     folder?: FolderCreateNestedOneWithoutBlocksInput
     examples?: ExampleCreateNestedManyWithoutBlockInput
+    FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
     quizzes?: QuizCreateNestedManyWithoutBlockInput
   }
 
@@ -9821,6 +11287,7 @@ export namespace Prisma {
     authorId: string
     folderId?: string | null
     examples?: ExampleUncheckedCreateNestedManyWithoutBlockInput
+    FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
   }
 
@@ -9848,6 +11315,7 @@ export namespace Prisma {
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     folder?: FolderUpdateOneWithoutBlocksNestedInput
     examples?: ExampleUpdateManyWithoutBlockNestedInput
+    FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUpdateManyWithoutBlockNestedInput
   }
 
@@ -9859,6 +11327,7 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
     examples?: ExampleUncheckedUpdateManyWithoutBlockNestedInput
+    FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
   }
 
@@ -9869,6 +11338,7 @@ export namespace Prisma {
     Note?: string | null
     author: UserCreateNestedOneWithoutPostsInput
     examples?: ExampleCreateNestedManyWithoutBlockInput
+    FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
     questions?: QuestionCreateNestedManyWithoutBlockInput
     quizzes?: QuizCreateNestedManyWithoutBlockInput
   }
@@ -9880,6 +11350,7 @@ export namespace Prisma {
     Note?: string | null
     authorId: string
     examples?: ExampleUncheckedCreateNestedManyWithoutBlockInput
+    FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
   }
@@ -9910,6 +11381,70 @@ export namespace Prisma {
     data: XOR<BlockUpdateManyMutationInput, BlockUncheckedUpdateManyWithoutFolderInput>
   }
 
+  export type BlockCreateWithoutFillInTheBlankInput = {
+    id?: string
+    createdAt?: Date | string
+    title: string
+    Note?: string | null
+    author: UserCreateNestedOneWithoutPostsInput
+    folder?: FolderCreateNestedOneWithoutBlocksInput
+    examples?: ExampleCreateNestedManyWithoutBlockInput
+    questions?: QuestionCreateNestedManyWithoutBlockInput
+    quizzes?: QuizCreateNestedManyWithoutBlockInput
+  }
+
+  export type BlockUncheckedCreateWithoutFillInTheBlankInput = {
+    id?: string
+    createdAt?: Date | string
+    title: string
+    Note?: string | null
+    authorId: string
+    folderId?: string | null
+    examples?: ExampleUncheckedCreateNestedManyWithoutBlockInput
+    questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
+    quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
+  }
+
+  export type BlockCreateOrConnectWithoutFillInTheBlankInput = {
+    where: BlockWhereUniqueInput
+    create: XOR<BlockCreateWithoutFillInTheBlankInput, BlockUncheckedCreateWithoutFillInTheBlankInput>
+  }
+
+  export type BlockUpsertWithoutFillInTheBlankInput = {
+    update: XOR<BlockUpdateWithoutFillInTheBlankInput, BlockUncheckedUpdateWithoutFillInTheBlankInput>
+    create: XOR<BlockCreateWithoutFillInTheBlankInput, BlockUncheckedCreateWithoutFillInTheBlankInput>
+    where?: BlockWhereInput
+  }
+
+  export type BlockUpdateToOneWithWhereWithoutFillInTheBlankInput = {
+    where?: BlockWhereInput
+    data: XOR<BlockUpdateWithoutFillInTheBlankInput, BlockUncheckedUpdateWithoutFillInTheBlankInput>
+  }
+
+  export type BlockUpdateWithoutFillInTheBlankInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    title?: StringFieldUpdateOperationsInput | string
+    Note?: NullableStringFieldUpdateOperationsInput | string | null
+    author?: UserUpdateOneRequiredWithoutPostsNestedInput
+    folder?: FolderUpdateOneWithoutBlocksNestedInput
+    examples?: ExampleUpdateManyWithoutBlockNestedInput
+    questions?: QuestionUpdateManyWithoutBlockNestedInput
+    quizzes?: QuizUpdateManyWithoutBlockNestedInput
+  }
+
+  export type BlockUncheckedUpdateWithoutFillInTheBlankInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    title?: StringFieldUpdateOperationsInput | string
+    Note?: NullableStringFieldUpdateOperationsInput | string | null
+    authorId?: StringFieldUpdateOperationsInput | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    examples?: ExampleUncheckedUpdateManyWithoutBlockNestedInput
+    questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
+    quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
+  }
+
   export type BlockCreateManyAuthorInput = {
     id?: string
     createdAt?: Date | string
@@ -9925,6 +11460,7 @@ export namespace Prisma {
     Note?: NullableStringFieldUpdateOperationsInput | string | null
     folder?: FolderUpdateOneWithoutBlocksNestedInput
     examples?: ExampleUpdateManyWithoutBlockNestedInput
+    FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
     questions?: QuestionUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUpdateManyWithoutBlockNestedInput
   }
@@ -9936,6 +11472,7 @@ export namespace Prisma {
     Note?: NullableStringFieldUpdateOperationsInput | string | null
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
     examples?: ExampleUncheckedUpdateManyWithoutBlockNestedInput
+    FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
   }
@@ -9952,6 +11489,13 @@ export namespace Prisma {
     id?: string
     topic: string
     example: string
+  }
+
+  export type FillInTheBlankCreateManyBlockInput = {
+    id: string
+    sentence: string
+    answer: string
+    hint?: string | null
   }
 
   export type QuestionCreateManyBlockInput = {
@@ -9984,6 +11528,27 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     topic?: StringFieldUpdateOperationsInput | string
     example?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type FillInTheBlankUpdateWithoutBlockInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sentence?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    hint?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type FillInTheBlankUncheckedUpdateWithoutBlockInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sentence?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    hint?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type FillInTheBlankUncheckedUpdateManyWithoutBlockInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sentence?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    hint?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type QuestionUpdateWithoutBlockInput = {
@@ -10043,6 +11608,7 @@ export namespace Prisma {
     Note?: NullableStringFieldUpdateOperationsInput | string | null
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     examples?: ExampleUpdateManyWithoutBlockNestedInput
+    FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
     questions?: QuestionUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUpdateManyWithoutBlockNestedInput
   }
@@ -10054,6 +11620,7 @@ export namespace Prisma {
     Note?: NullableStringFieldUpdateOperationsInput | string | null
     authorId?: StringFieldUpdateOperationsInput | string
     examples?: ExampleUncheckedUpdateManyWithoutBlockNestedInput
+    FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
   }
