@@ -24,12 +24,12 @@ export async function updateBlock(content: JSONContent, blockId?: string) {
       // Create new block if it doesn't exist
       updatedBlock = await prisma.block.create({
         data: {
-          id: blockId || crypto.randomUUID(),
           title: "Untitled Note", // Default title
           authorId: user.id,
           note: content as any,
         },
       });
+      return { success: true, data: updatedBlock, isNewBlock: true };
     } else {
       // Update existing block
       updatedBlock = await prisma.block.update({
@@ -40,9 +40,8 @@ export async function updateBlock(content: JSONContent, blockId?: string) {
           note: content as any,
         },
       });
+      return { success: true, data: updatedBlock, isNewBlock: false, id: updatedBlock.id };
     }
-
-    return { success: true, data: updatedBlock };
   } catch (error) {
     console.error('Error saving block:', error);
     return { success: false, error: error instanceof Error ? error.message : 'Failed to save block' };

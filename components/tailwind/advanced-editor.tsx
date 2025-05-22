@@ -40,10 +40,11 @@ interface AdvancedEditorProps {
   initialContent?: JSONContent;
 }
 
-export function AdvancedEditor({ blockId, initialContent }: AdvancedEditorProps) {
+export function AdvancedEditor({ blockId: initialBlockId, initialContent }: AdvancedEditorProps) {
   const [content, setContent] = useState<JSONContent | null>(initialContent || null);
   const [saveStatus, setSaveStatus] = useState("Saved");
   const [charsCount, setCharsCount] = useState();
+  const [currentBlockId, setCurrentBlockId] = useState<string | undefined>(initialBlockId);
 
   const [openNode, setOpenNode] = useState(false);
   const [openColor, setOpenColor] = useState(false);
@@ -68,11 +69,16 @@ export function AdvancedEditor({ blockId, initialContent }: AdvancedEditorProps)
     
     // Save to database using server action
     try {
-      const result = await updateBlock(json, blockId);
+      const result = await updateBlock(json, currentBlockId);
       
       if (!result.success) {
         console.log(result.error);  
         throw new Error(result.error);
+      }
+
+      // Update the block ID if this is a new block
+      if (result.isNewBlock) {
+        setCurrentBlockId(result.data.id);
       }
 
       setSaveStatus("Saved");
