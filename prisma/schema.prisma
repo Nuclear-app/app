@@ -20,9 +20,10 @@ model Block {
   id             String           @id @default(uuid())
   createdAt      DateTime         @default(now())
   title          String
-  Note           String?
   authorId       String
   folderId       String?
+  note           Json?
+  context        String?
   author         User             @relation(fields: [authorId], references: [id])
   folder         Folder?          @relation(fields: [folderId], references: [id])
   examples       Example[]
@@ -66,7 +67,7 @@ model Folder {
 }
 
 model FillInTheBlank {
-  id       String  @id
+  id       String  @id @default(uuid())
   sentence String
   answer   String
   hint     String?

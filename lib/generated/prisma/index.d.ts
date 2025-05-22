@@ -2592,27 +2592,28 @@ export namespace Prisma {
     id: string | null
     createdAt: Date | null
     title: string | null
-    Note: string | null
     authorId: string | null
     folderId: string | null
+    context: string | null
   }
 
   export type BlockMaxAggregateOutputType = {
     id: string | null
     createdAt: Date | null
     title: string | null
-    Note: string | null
     authorId: string | null
     folderId: string | null
+    context: string | null
   }
 
   export type BlockCountAggregateOutputType = {
     id: number
     createdAt: number
     title: number
-    Note: number
     authorId: number
     folderId: number
+    note: number
+    context: number
     _all: number
   }
 
@@ -2621,27 +2622,28 @@ export namespace Prisma {
     id?: true
     createdAt?: true
     title?: true
-    Note?: true
     authorId?: true
     folderId?: true
+    context?: true
   }
 
   export type BlockMaxAggregateInputType = {
     id?: true
     createdAt?: true
     title?: true
-    Note?: true
     authorId?: true
     folderId?: true
+    context?: true
   }
 
   export type BlockCountAggregateInputType = {
     id?: true
     createdAt?: true
     title?: true
-    Note?: true
     authorId?: true
     folderId?: true
+    note?: true
+    context?: true
     _all?: true
   }
 
@@ -2721,9 +2723,10 @@ export namespace Prisma {
     id: string
     createdAt: Date
     title: string
-    Note: string | null
     authorId: string
     folderId: string | null
+    note: JsonValue | null
+    context: string | null
     _count: BlockCountAggregateOutputType | null
     _min: BlockMinAggregateOutputType | null
     _max: BlockMaxAggregateOutputType | null
@@ -2747,9 +2750,10 @@ export namespace Prisma {
     id?: boolean
     createdAt?: boolean
     title?: boolean
-    Note?: boolean
     authorId?: boolean
     folderId?: boolean
+    note?: boolean
+    context?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
     folder?: boolean | Block$folderArgs<ExtArgs>
     examples?: boolean | Block$examplesArgs<ExtArgs>
@@ -2763,9 +2767,10 @@ export namespace Prisma {
     id?: boolean
     createdAt?: boolean
     title?: boolean
-    Note?: boolean
     authorId?: boolean
     folderId?: boolean
+    note?: boolean
+    context?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
     folder?: boolean | Block$folderArgs<ExtArgs>
   }, ExtArgs["result"]["block"]>
@@ -2774,9 +2779,10 @@ export namespace Prisma {
     id?: boolean
     createdAt?: boolean
     title?: boolean
-    Note?: boolean
     authorId?: boolean
     folderId?: boolean
+    note?: boolean
+    context?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
     folder?: boolean | Block$folderArgs<ExtArgs>
   }, ExtArgs["result"]["block"]>
@@ -2785,12 +2791,13 @@ export namespace Prisma {
     id?: boolean
     createdAt?: boolean
     title?: boolean
-    Note?: boolean
     authorId?: boolean
     folderId?: boolean
+    note?: boolean
+    context?: boolean
   }
 
-  export type BlockOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "title" | "Note" | "authorId" | "folderId", ExtArgs["result"]["block"]>
+  export type BlockOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "title" | "authorId" | "folderId" | "note" | "context", ExtArgs["result"]["block"]>
   export type BlockInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
     folder?: boolean | Block$folderArgs<ExtArgs>
@@ -2823,9 +2830,10 @@ export namespace Prisma {
       id: string
       createdAt: Date
       title: string
-      Note: string | null
       authorId: string
       folderId: string | null
+      note: Prisma.JsonValue | null
+      context: string | null
     }, ExtArgs["result"]["block"]>
     composites: {}
   }
@@ -3258,9 +3266,10 @@ export namespace Prisma {
     readonly id: FieldRef<"Block", 'String'>
     readonly createdAt: FieldRef<"Block", 'DateTime'>
     readonly title: FieldRef<"Block", 'String'>
-    readonly Note: FieldRef<"Block", 'String'>
     readonly authorId: FieldRef<"Block", 'String'>
     readonly folderId: FieldRef<"Block", 'String'>
+    readonly note: FieldRef<"Block", 'Json'>
+    readonly context: FieldRef<"Block", 'String'>
   }
     
 
@@ -9089,9 +9098,10 @@ export namespace Prisma {
     id: 'id',
     createdAt: 'createdAt',
     title: 'title',
-    Note: 'Note',
     authorId: 'authorId',
-    folderId: 'folderId'
+    folderId: 'folderId',
+    note: 'note',
+    context: 'context'
   };
 
   export type BlockScalarFieldEnum = (typeof BlockScalarFieldEnum)[keyof typeof BlockScalarFieldEnum]
@@ -9158,6 +9168,14 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
   export const QueryMode: {
     default: 'default',
     insensitive: 'insensitive'
@@ -9172,6 +9190,15 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -9204,6 +9231,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -9276,9 +9317,10 @@ export namespace Prisma {
     id?: StringFilter<"Block"> | string
     createdAt?: DateTimeFilter<"Block"> | Date | string
     title?: StringFilter<"Block"> | string
-    Note?: StringNullableFilter<"Block"> | string | null
     authorId?: StringFilter<"Block"> | string
     folderId?: StringNullableFilter<"Block"> | string | null
+    note?: JsonNullableFilter<"Block">
+    context?: StringNullableFilter<"Block"> | string | null
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
     folder?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
     examples?: ExampleListRelationFilter
@@ -9291,9 +9333,10 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     title?: SortOrder
-    Note?: SortOrderInput | SortOrder
     authorId?: SortOrder
     folderId?: SortOrderInput | SortOrder
+    note?: SortOrderInput | SortOrder
+    context?: SortOrderInput | SortOrder
     author?: UserOrderByWithRelationInput
     folder?: FolderOrderByWithRelationInput
     examples?: ExampleOrderByRelationAggregateInput
@@ -9309,9 +9352,10 @@ export namespace Prisma {
     NOT?: BlockWhereInput | BlockWhereInput[]
     createdAt?: DateTimeFilter<"Block"> | Date | string
     title?: StringFilter<"Block"> | string
-    Note?: StringNullableFilter<"Block"> | string | null
     authorId?: StringFilter<"Block"> | string
     folderId?: StringNullableFilter<"Block"> | string | null
+    note?: JsonNullableFilter<"Block">
+    context?: StringNullableFilter<"Block"> | string | null
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
     folder?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
     examples?: ExampleListRelationFilter
@@ -9324,9 +9368,10 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     title?: SortOrder
-    Note?: SortOrderInput | SortOrder
     authorId?: SortOrder
     folderId?: SortOrderInput | SortOrder
+    note?: SortOrderInput | SortOrder
+    context?: SortOrderInput | SortOrder
     _count?: BlockCountOrderByAggregateInput
     _max?: BlockMaxOrderByAggregateInput
     _min?: BlockMinOrderByAggregateInput
@@ -9339,9 +9384,10 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Block"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Block"> | Date | string
     title?: StringWithAggregatesFilter<"Block"> | string
-    Note?: StringNullableWithAggregatesFilter<"Block"> | string | null
     authorId?: StringWithAggregatesFilter<"Block"> | string
     folderId?: StringNullableWithAggregatesFilter<"Block"> | string | null
+    note?: JsonNullableWithAggregatesFilter<"Block">
+    context?: StringNullableWithAggregatesFilter<"Block"> | string | null
   }
 
   export type QuizWhereInput = {
@@ -9659,7 +9705,8 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     title: string
-    Note?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
     author: UserCreateNestedOneWithoutPostsInput
     folder?: FolderCreateNestedOneWithoutBlocksInput
     examples?: ExampleCreateNestedManyWithoutBlockInput
@@ -9672,9 +9719,10 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     title: string
-    Note?: string | null
     authorId: string
     folderId?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
     examples?: ExampleUncheckedCreateNestedManyWithoutBlockInput
     FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
@@ -9685,7 +9733,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     folder?: FolderUpdateOneWithoutBlocksNestedInput
     examples?: ExampleUpdateManyWithoutBlockNestedInput
@@ -9698,9 +9747,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
     authorId?: StringFieldUpdateOperationsInput | string
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
     examples?: ExampleUncheckedUpdateManyWithoutBlockNestedInput
     FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
@@ -9711,25 +9761,28 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     title: string
-    Note?: string | null
     authorId: string
     folderId?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
   }
 
   export type BlockUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type BlockUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
     authorId?: StringFieldUpdateOperationsInput | string
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type QuizCreateInput = {
@@ -9944,7 +9997,7 @@ export namespace Prisma {
   }
 
   export type FillInTheBlankCreateInput = {
-    id: string
+    id?: string
     sentence: string
     answer: string
     hint?: string | null
@@ -9952,7 +10005,7 @@ export namespace Prisma {
   }
 
   export type FillInTheBlankUncheckedCreateInput = {
-    id: string
+    id?: string
     sentence: string
     answer: string
     hint?: string | null
@@ -9976,7 +10029,7 @@ export namespace Prisma {
   }
 
   export type FillInTheBlankCreateManyInput = {
-    id: string
+    id?: string
     sentence: string
     answer: string
     hint?: string | null
@@ -10107,6 +10160,29 @@ export namespace Prisma {
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
@@ -10162,27 +10238,28 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     title?: SortOrder
-    Note?: SortOrder
     authorId?: SortOrder
     folderId?: SortOrder
+    note?: SortOrder
+    context?: SortOrder
   }
 
   export type BlockMaxOrderByAggregateInput = {
     id?: SortOrder
     createdAt?: SortOrder
     title?: SortOrder
-    Note?: SortOrder
     authorId?: SortOrder
     folderId?: SortOrder
+    context?: SortOrder
   }
 
   export type BlockMinOrderByAggregateInput = {
     id?: SortOrder
     createdAt?: SortOrder
     title?: SortOrder
-    Note?: SortOrder
     authorId?: SortOrder
     folderId?: SortOrder
+    context?: SortOrder
   }
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -10197,6 +10274,32 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
   export type StringNullableListFilter<$PrismaModel = never> = {
@@ -10791,12 +10894,36 @@ export namespace Prisma {
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type BlockCreateWithoutAuthorInput = {
     id?: string
     createdAt?: Date | string
     title: string
-    Note?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
     folder?: FolderCreateNestedOneWithoutBlocksInput
     examples?: ExampleCreateNestedManyWithoutBlockInput
     FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
@@ -10808,8 +10935,9 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     title: string
-    Note?: string | null
     folderId?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
     examples?: ExampleUncheckedCreateNestedManyWithoutBlockInput
     FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
@@ -10849,9 +10977,10 @@ export namespace Prisma {
     id?: StringFilter<"Block"> | string
     createdAt?: DateTimeFilter<"Block"> | Date | string
     title?: StringFilter<"Block"> | string
-    Note?: StringNullableFilter<"Block"> | string | null
     authorId?: StringFilter<"Block"> | string
     folderId?: StringNullableFilter<"Block"> | string | null
+    note?: JsonNullableFilter<"Block">
+    context?: StringNullableFilter<"Block"> | string | null
   }
 
   export type UserCreateWithoutPostsInput = {
@@ -10913,14 +11042,14 @@ export namespace Prisma {
   }
 
   export type FillInTheBlankCreateWithoutBlockInput = {
-    id: string
+    id?: string
     sentence: string
     answer: string
     hint?: string | null
   }
 
   export type FillInTheBlankUncheckedCreateWithoutBlockInput = {
-    id: string
+    id?: string
     sentence: string
     answer: string
     hint?: string | null
@@ -11143,7 +11272,8 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     title: string
-    Note?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
     author: UserCreateNestedOneWithoutPostsInput
     folder?: FolderCreateNestedOneWithoutBlocksInput
     examples?: ExampleCreateNestedManyWithoutBlockInput
@@ -11155,9 +11285,10 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     title: string
-    Note?: string | null
     authorId: string
     folderId?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
     examples?: ExampleUncheckedCreateNestedManyWithoutBlockInput
     FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
@@ -11183,7 +11314,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     folder?: FolderUpdateOneWithoutBlocksNestedInput
     examples?: ExampleUpdateManyWithoutBlockNestedInput
@@ -11195,9 +11327,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
     authorId?: StringFieldUpdateOperationsInput | string
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
     examples?: ExampleUncheckedUpdateManyWithoutBlockNestedInput
     FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
@@ -11207,7 +11340,8 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     title: string
-    Note?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
     author: UserCreateNestedOneWithoutPostsInput
     folder?: FolderCreateNestedOneWithoutBlocksInput
     FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
@@ -11219,9 +11353,10 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     title: string
-    Note?: string | null
     authorId: string
     folderId?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
     FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
@@ -11247,7 +11382,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     folder?: FolderUpdateOneWithoutBlocksNestedInput
     FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
@@ -11259,9 +11395,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
     authorId?: StringFieldUpdateOperationsInput | string
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
     FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
@@ -11271,7 +11408,8 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     title: string
-    Note?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
     author: UserCreateNestedOneWithoutPostsInput
     folder?: FolderCreateNestedOneWithoutBlocksInput
     examples?: ExampleCreateNestedManyWithoutBlockInput
@@ -11283,9 +11421,10 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     title: string
-    Note?: string | null
     authorId: string
     folderId?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
     examples?: ExampleUncheckedCreateNestedManyWithoutBlockInput
     FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
@@ -11311,7 +11450,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     folder?: FolderUpdateOneWithoutBlocksNestedInput
     examples?: ExampleUpdateManyWithoutBlockNestedInput
@@ -11323,9 +11463,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
     authorId?: StringFieldUpdateOperationsInput | string
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
     examples?: ExampleUncheckedUpdateManyWithoutBlockNestedInput
     FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
@@ -11335,7 +11476,8 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     title: string
-    Note?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
     author: UserCreateNestedOneWithoutPostsInput
     examples?: ExampleCreateNestedManyWithoutBlockInput
     FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
@@ -11347,8 +11489,9 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     title: string
-    Note?: string | null
     authorId: string
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
     examples?: ExampleUncheckedCreateNestedManyWithoutBlockInput
     FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
@@ -11385,7 +11528,8 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     title: string
-    Note?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
     author: UserCreateNestedOneWithoutPostsInput
     folder?: FolderCreateNestedOneWithoutBlocksInput
     examples?: ExampleCreateNestedManyWithoutBlockInput
@@ -11397,9 +11541,10 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     title: string
-    Note?: string | null
     authorId: string
     folderId?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
     examples?: ExampleUncheckedCreateNestedManyWithoutBlockInput
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
@@ -11425,7 +11570,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     folder?: FolderUpdateOneWithoutBlocksNestedInput
     examples?: ExampleUpdateManyWithoutBlockNestedInput
@@ -11437,9 +11583,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
     authorId?: StringFieldUpdateOperationsInput | string
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
     examples?: ExampleUncheckedUpdateManyWithoutBlockNestedInput
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
@@ -11449,15 +11596,17 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     title: string
-    Note?: string | null
     folderId?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
   }
 
   export type BlockUpdateWithoutAuthorInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
     folder?: FolderUpdateOneWithoutBlocksNestedInput
     examples?: ExampleUpdateManyWithoutBlockNestedInput
     FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
@@ -11469,8 +11618,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
     examples?: ExampleUncheckedUpdateManyWithoutBlockNestedInput
     FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
@@ -11481,8 +11631,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ExampleCreateManyBlockInput = {
@@ -11492,7 +11643,7 @@ export namespace Prisma {
   }
 
   export type FillInTheBlankCreateManyBlockInput = {
-    id: string
+    id?: string
     sentence: string
     answer: string
     hint?: string | null
@@ -11597,15 +11748,17 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     title: string
-    Note?: string | null
     authorId: string
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
   }
 
   export type BlockUpdateWithoutFolderInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     examples?: ExampleUpdateManyWithoutBlockNestedInput
     FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
@@ -11617,8 +11770,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
     authorId?: StringFieldUpdateOperationsInput | string
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
     examples?: ExampleUncheckedUpdateManyWithoutBlockNestedInput
     FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
@@ -11629,8 +11783,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    Note?: NullableStringFieldUpdateOperationsInput | string | null
     authorId?: StringFieldUpdateOperationsInput | string
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

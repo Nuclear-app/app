@@ -85,7 +85,4 @@ export async function generateFillInTheBlank(text: string) {
     console.error("Error generating fill-in-the-blank:", error);
     throw new Error("Failed to generate fill-in-the-blank questions");
   }
-} 
-
-
-
+}
