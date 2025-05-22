@@ -68,7 +68,7 @@ export function AdvancedEditor({ blockId, initialContent }: AdvancedEditorProps)
     
     // Save to database using server action
     try {
-      const result = await updateBlock(json, (blockId || ""));
+      const result = await updateBlock(json, blockId);
       
       if (!result.success) {
         console.log(result.error);  
@@ -122,9 +122,6 @@ export function AdvancedEditor({ blockId, initialContent }: AdvancedEditorProps)
           onUpdate={({ editor }) => {
             debouncedUpdates(editor);
             setSaveStatus("Unsaved");
-            if (returnContent) {
-              returnContent(editor.getJSON());
-            }
           }}
           slotAfter={<ImageResizer />}
         >

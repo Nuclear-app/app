@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import { JSONContent } from "novel";
 import { createClient } from "@/utils/supabase/server";
 
-export async function updateBlock( content: JSONContent, blockId?: string) {
+export async function updateBlock(content: JSONContent, blockId?: string) {
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -14,9 +14,9 @@ export async function updateBlock( content: JSONContent, blockId?: string) {
     }
 
     // Try to find existing block
-    const existingBlock = await prisma.block.findUnique({
+    const existingBlock = blockId ? await prisma.block.findUnique({
       where: { id: blockId },
-    });
+    }) : null;
 
     let updatedBlock;
     
@@ -24,10 +24,10 @@ export async function updateBlock( content: JSONContent, blockId?: string) {
       // Create new block if it doesn't exist
       updatedBlock = await prisma.block.create({
         data: {
-          id: blockId,
+          id: blockId || crypto.randomUUID(),
           title: "Untitled Note", // Default title
           authorId: user.id,
-          Note: content as any,
+          note: content as any,
         },
       });
     } else {
@@ -37,7 +37,7 @@ export async function updateBlock( content: JSONContent, blockId?: string) {
           id: blockId,
         },
         data: {
-          Note: content as any,
+          note: content as any,
         },
       });
     }
