@@ -102,21 +102,13 @@
   opacity: 0.09;
 }
 
-/* Custom Quill Editor Styles */
-.title .ql-editor.ql-blank::before {
-  font-size: 30px;
-  color: #999;
-  font-style: normal;
-  font-family: "Bricolage Grotesque", sans-serif;
-}
-
-.title .ql-editor {
-  font-size: 30px;
-  font-family: "Bricolage Grotesque", sans-serif;
-}
-
-.body .ql-editor.ql-blank::before {
-  font-size: 1rem;
-  color: #999;
-  font-style: normal;
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);      /* display the placeholder text */
+  position: absolute;                   /* position it over the editor content */
+  top: 0;                            /* tweak vertical alignment */
+  left: 0;                           /* tweak horizontal alignment */
+  color: #9ca3af;                       /* e.g., Tailwind gray-400 */
+  font-style: italic;                   /* optional styling */
+  pointer-events: none;                 /* let clicks pass through */
+  white-space: nowrap;                  /* prevent wrapping */
 }

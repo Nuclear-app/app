@@ -8,12 +8,12 @@ import {
     FormControl,
     FormField,
     FormItem,
-    FormLabel,
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ControllerRenderProps } from "react-hook-form"
+import Link from "next/link"
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -44,11 +44,12 @@ export function UpdateNameForm({ onSubmit, defaultName }: UpdateNameFormProps) {
                     name="name"
                     render={({ field }: { field: ControllerRenderProps<FormSchema, "name"> }) => (
                         <FormItem>
-                            <FormLabel>Name</FormLabel>
                             <FormControl>
                                 <div className="flex items-center space-x-2">
-                                    <Input type="text" placeholder="Name" />
-                                    <Button type="submit">-></Button>
+                                    <Input className="bg-foreground/80 text-background" {...field} type="text" placeholder="Name" />
+                                    <Link href="/onboarding/name/study-type">
+                                        <Button className="bg-background/80 text-foreground hover:bg-background/60" type="button">{"->"}</Button>
+                                    </Link>
                                 </div>
                             </FormControl>
                             <FormMessage />
