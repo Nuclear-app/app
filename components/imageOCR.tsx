@@ -1,54 +1,82 @@
 'use client'
 
-import { useState } from 'react'
-import { parseImage } from '@/lib/parseImage'
-import { createWorker } from 'tesseract.js'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 
-const ImageOCR = () => {
+type OCRResult = {
+    text: string;
+    status: 'success' | 'error' | 'processing';
+    error?: string;
+};
+
+export default function ImageOCR() {
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
-    const [ocrResult, setOcrResult] = useState<string | null>('');
-    const [ocrStatus, setOcrStatus] = useState<string | null>('');
+    const [ocrResult, setOcrResult] = useState<OCRResult | null>(null);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
             setSelectedImage(event.target.files[0]);
-            setOcrResult('');
-            setOcrStatus('');
+            setOcrResult(null);
         }
-    }
-    
-    // const readImageText = async () => {
-    //     if (!selectedImage) return;
-    //     setOcrStatus('Processing...');
-    //     const worker = await createWorker('eng', 1, {
-    //         logger: m => console.log(m),
-    //     });
-        
-    //     try {
-    //         const {
-    //             data: { text }
-    //         } = await worker.recognize(selectedImage);
-    //         setOcrResult(text);
-    //         setOcrStatus('Success');
-    //     } catch (error) {
-    //         console.error('Error reading image:', error);
-    //         setOcrStatus('Error');
-    //     } finally {
-    //         await worker.terminate();
-    //     }
-    // };
-    const readImageText = async () => {
+    };
+
+    const processImage = async () => {
         if (!selectedImage) return;
-        setOcrStatus('Processing...');
-        const result = await parseImage(selectedImage);
-        if (result) {
-            setOcrResult(result[0]);
-            setOcrStatus(result[1]);
+
+        setIsProcessing(true);
+        setOcrResult({ text: '', status: 'processing' });
+
+        try {
+            const reader = new FileReader();
+            const base64Promise = new Promise<string>((resolve, reject) => {
+                reader.onload = () => {
+                    const base64 = (reader.result as string).split(",")[1];
+                    resolve(base64);
+                };
+                reader.onerror = reject;
+            });
+
+            reader.readAsDataURL(selectedImage);
+            const base64 = await base64Promise;
+
+            const response = await fetch("/api/ocr", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ imageBase64: base64 }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const { text, error } = await response.json();
+
+            if (error) {
+                setOcrResult({
+                    text: '',
+                    status: 'error',
+                    error: error
+                });
+            } else {
+                setOcrResult({
+                    text: text,
+                    status: 'success'
+                });
+            }
+        } catch (error) {
+            console.error('Error processing image:', error);
+            setOcrResult({
+                text: '',
+                status: 'error',
+                error: error instanceof Error ? error.message : 'An unknown error occurred'
+            });
+        } finally {
+            setIsProcessing(false);
         }
-    }
+    };
 
     return (
         <Card className="w-full max-w-2xl mx-auto p-6">
@@ -72,43 +100,53 @@ const ImageOCR = () => {
 
                 <div className="mt-4">
                     <Button
-                        onClick={readImageText}
+                        onClick={processImage}
                         variant="default"
                         className="w-full sm:w-auto"
+                        disabled={!selectedImage || isProcessing}
                     >
-                        Submit
+                        {isProcessing ? 'Processing...' : 'Extract Text'}
                     </Button>
                 </div>
 
-                <div className="mt-6 space-y-2">
-                    <h4 className="font-semibold">Status:</h4>
-                    <p className={`${
-                        ocrStatus === 'Success' ? 'text-green-500' :
-                        ocrStatus === 'Error' ? 'text-red-500' :
-                        ocrStatus === 'Processing...' ? 'text-yellow-500' : ''
-                    }`}>
-                        {ocrStatus}
-                    </p>
-                </div>
-
                 {ocrResult && (
-                    <div className="mt-6 space-y-2">
-                        <h3 className="font-semibold text-lg">Extracted Text:</h3>
-                        {/* <div 
-                            className="p-4 rounded-lg border bg-background/50"
-                            dangerouslySetInnerHTML={{
-                                __html: ocrResult.replace(/\n/g, '<br />')
-                                    .replace(/[=,—,-,+]/g, ' ') || '',
-                            }}
-                        /> */}
-                        <div className="p-4 rounded-lg border bg-background/50">
-                            {ocrResult}
+                    <>
+                        <div className="mt-6 space-y-2">
+                            <h4 className="font-semibold">Status:</h4>
+                            <p className={`${
+                                ocrResult.status === 'success' ? 'text-green-500' :
+                                ocrResult.status === 'error' ? 'text-red-500' :
+                                ocrResult.status === 'processing' ? 'text-yellow-500' : ''
+                            }`}>
+                                {ocrResult.status === 'processing' ? 'Processing...' :
+                                 ocrResult.status === 'success' ? 'Success' :
+                                 'Error'}
+                            </p>
                         </div>
-                    </div>
+
+                        {ocrResult.status === 'success' && (
+                            <div className="mt-6 space-y-2">
+                                <h3 className="font-semibold text-lg">Extracted Text:</h3>
+                                <div 
+                                    className="p-4 rounded-lg border bg-background/50"
+                                    dangerouslySetInnerHTML={{
+                                        __html: ocrResult.text
+                                            .replace(/\n/g, '<br />')
+                                            .replace(/[=,—,-,+]/g, ' ') || '',
+                                    }}
+                                />
+                            </div>
+                        )}
+
+                        {ocrResult.status === 'error' && (
+                            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                <h4 className="font-semibold text-red-700">Error:</h4>
+                                <p className="text-red-600">{ocrResult.error}</p>
+                            </div>
+                        )}
+                    </>
                 )}
             </CardContent>
         </Card>
     );
 }
-
-export default ImageOCR;
