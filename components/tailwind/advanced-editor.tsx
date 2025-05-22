@@ -27,13 +27,19 @@ import GenerativeMenuSwitch from "./generative/generative-menu-switch";
 import { uploadFn } from "./image-upload";
 import { TextButtons } from "./selectors/text-buttons";
 import { slashCommand, suggestionItems } from "./slash-command";
+import { updateBlock } from "@/app/actions/update-block";
 
 const hljs = require("highlight.js");
 
 const extensions = [...defaultExtensions, slashCommand];
 
-const TailwindAdvancedEditor = () => {
-  const [initialContent, setInitialContent] = useState<null | JSONContent>(null);
+interface AdvancedEditorProps {
+  blockId?: string;
+  initialContent?: JSONContent;
+}
+
+export function AdvancedEditor({ blockId, initialContent }: AdvancedEditorProps) {
+  const [content, setContent] = useState<JSONContent | null>(initialContent || null);
   const [saveStatus, setSaveStatus] = useState("Saved");
   const [charsCount, setCharsCount] = useState();
 
@@ -56,19 +62,35 @@ const TailwindAdvancedEditor = () => {
   const debouncedUpdates = useDebouncedCallback(async (editor: EditorInstance) => {
     const json = editor.getJSON();
     setCharsCount(editor.storage.characterCount.words());
+    
+    // Save to database using server action
+    try {
+      const result = await updateBlock(json, (blockId || ""));
+      
+      if (!result.success) {
+        console.log(result.error);  
+        throw new Error(result.error);
+      }
+
+      setSaveStatus("Saved");
+    } catch (error) {
+      console.error('Error saving content:', error);
+      setSaveStatus("Error saving");
+    }
+
+    // Local storage backup
     window.localStorage.setItem("html-content", highlightCodeblocks(editor.getHTML()));
     window.localStorage.setItem("novel-content", JSON.stringify(json));
     window.localStorage.setItem("markdown", editor.storage.markdown.getMarkdown());
-    setSaveStatus("Saved");
-  }, 500);
+  }, 2000); // 2 second debounce
 
   useEffect(() => {
     const content = window.localStorage.getItem("novel-content");
-    if (content) setInitialContent(JSON.parse(content));
-    else setInitialContent(defaultEditorContent);
+    if (content) setContent(JSON.parse(content));
+    else setContent(defaultEditorContent);
   }, []);
 
-  if (!initialContent) return null;
+  if (!content) return null;
 
   return (
     <div className="relative w-full max-w-screen-lg">
@@ -80,7 +102,7 @@ const TailwindAdvancedEditor = () => {
       </div>
       <EditorRoot>
         <EditorContent
-          initialContent={initialContent}
+          initialContent={content}
           extensions={extensions}
           className="relative min-h-[500px] w-full max-w-screen-lg border-muted bg-background sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:shadow-lg"
           editorProps={{
@@ -139,6 +161,6 @@ const TailwindAdvancedEditor = () => {
       </EditorRoot>
     </div>
   );
-};
+}
 
-export default TailwindAdvancedEditor;
+export default AdvancedEditor;
