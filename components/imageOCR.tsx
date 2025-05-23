@@ -4,113 +4,55 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-
-type OCRResult = {
-    text: string;
-    status: 'success' | 'error' | 'processing';
-    error?: string;
-};
+import { ocr, OCRResult } from "@/lib/ocr";
 
 export default function ImageOCR() {
-    const [selectedImage, setSelectedImage] = useState<File | null>(null);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [ocrResult, setOcrResult] = useState<OCRResult | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
-            setSelectedImage(event.target.files[0]);
+            setSelectedFile(event.target.files[0]);
             setOcrResult(null);
         }
     };
 
-    const processImage = async () => {
-        if (!selectedImage) return;
-
-        setIsProcessing(true);
-        setOcrResult({ text: '', status: 'processing' });
-
-        try {
-            const reader = new FileReader();
-            const base64Promise = new Promise<string>((resolve, reject) => {
-                reader.onload = () => {
-                    const dataUrl = reader.result as string;
-                    // dataUrl: "data:application/pdf;base64,AAAA..."
-                    resolve(dataUrl.split(",")[1]);
-                };
-                reader.onerror = reject;
-            });
-            if (selectedImage.type === "application/pdf") {
-                reader.readAsDataURL(selectedImage);
-            } else {
-                reader.readAsDataURL(selectedImage);
-            }
-            const base64 = await base64Promise;
-
-            const response = await fetch("/api/ocr", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    imageBase64: base64,
-                    fileName: selectedImage.name 
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const { text, error } = await response.json();
-
-            if (error) {
-                setOcrResult({
-                    text: '',
-                    status: 'error',
-                    error: error
-                });
-            } else {
-                setOcrResult({
-                    text: text,
-                    status: 'success'
-                });
-            }
-        } catch (error) {
-            console.error('Error processing image:', error);
-            setOcrResult({
-                text: '',
-                status: 'error',
-                error: error instanceof Error ? error.message : 'An unknown error occurred'
-            });
-        } finally {
-            setIsProcessing(false);
-        }
+    const processFile = async () => {
+        if (!selectedFile) return;
+        const result = await ocr(selectedFile);
+        setOcrResult(result);
     };
 
     return (
         <Card className="w-full max-w-2xl mx-auto p-6">
             <CardContent className="space-y-4">
                 <Input
+                    className="h-12"
+                    multiple={false}
                     type="file"
                     accept="image/*,application/pdf"
                     onChange={handleFileChange}
                 />
 
 
-                {selectedImage && (
+                {selectedFile && (
                     <div className="mt-4">
-                        <img
-                            src={URL.createObjectURL(selectedImage)}
-                            alt="Uploaded content"
-                            className="w-full max-w-md mx-auto rounded-lg"
+                        <embed
+                            src={URL.createObjectURL(selectedFile)}
+                            type="application/pdf"
+                            width="100%"
+                            height="500px"
                         />
                     </div>
                 )}
 
                 <div className="mt-4">
                     <Button
-                        onClick={processImage}
+                        onClick={processFile}
                         variant="default"
                         className="w-full sm:w-auto"
-                        disabled={!selectedImage || isProcessing}
+                        disabled={!selectedFile || isProcessing}
                     >
                         {isProcessing ? 'Processing...' : 'Extract Text'}
                     </Button>
