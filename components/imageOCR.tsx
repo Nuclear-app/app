@@ -16,7 +16,7 @@ export default function ImageOCR() {
     const [ocrResult, setOcrResult] = useState<OCRResult | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
 
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
             setSelectedImage(event.target.files[0]);
             setOcrResult(null);
@@ -33,19 +33,26 @@ export default function ImageOCR() {
             const reader = new FileReader();
             const base64Promise = new Promise<string>((resolve, reject) => {
                 reader.onload = () => {
-                    const base64 = (reader.result as string).split(",")[1];
-                    resolve(base64);
+                    const dataUrl = reader.result as string;
+                    // dataUrl: "data:application/pdf;base64,AAAA..."
+                    resolve(dataUrl.split(",")[1]);
                 };
                 reader.onerror = reject;
             });
-
-            reader.readAsDataURL(selectedImage);
+            if (selectedImage.type === "application/pdf") {
+                reader.readAsDataURL(selectedImage);
+            } else {
+                reader.readAsDataURL(selectedImage);
+            }
             const base64 = await base64Promise;
 
             const response = await fetch("/api/ocr", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ imageBase64: base64 }),
+                body: JSON.stringify({ 
+                    imageBase64: base64,
+                    fileName: selectedImage.name 
+                }),
             });
 
             if (!response.ok) {
@@ -81,12 +88,12 @@ export default function ImageOCR() {
     return (
         <Card className="w-full max-w-2xl mx-auto p-6">
             <CardContent className="space-y-4">
-                <Input 
-                    type="file" 
-                    accept="image/*" 
-                    onChange={handleImageChange}
-                    className="w-full"
+                <Input
+                    type="file"
+                    accept="image/*,application/pdf"
+                    onChange={handleFileChange}
                 />
+
 
                 {selectedImage && (
                     <div className="mt-4">
@@ -113,21 +120,20 @@ export default function ImageOCR() {
                     <>
                         <div className="mt-6 space-y-2">
                             <h4 className="font-semibold">Status:</h4>
-                            <p className={`${
-                                ocrResult.status === 'success' ? 'text-green-500' :
+                            <p className={`${ocrResult.status === 'success' ? 'text-green-500' :
                                 ocrResult.status === 'error' ? 'text-red-500' :
-                                ocrResult.status === 'processing' ? 'text-yellow-500' : ''
-                            }`}>
+                                    ocrResult.status === 'processing' ? 'text-yellow-500' : ''
+                                }`}>
                                 {ocrResult.status === 'processing' ? 'Processing...' :
-                                 ocrResult.status === 'success' ? 'Success' :
-                                 'Error'}
+                                    ocrResult.status === 'success' ? 'Success' :
+                                        'Error'}
                             </p>
                         </div>
 
                         {ocrResult.status === 'success' && (
                             <div className="mt-6 space-y-2">
                                 <h3 className="font-semibold text-lg">Extracted Text:</h3>
-                                <div 
+                                <div
                                     className="p-4 rounded-lg border bg-background/50"
                                     dangerouslySetInnerHTML={{
                                         __html: ocrResult.text
@@ -150,3 +156,4 @@ export default function ImageOCR() {
         </Card>
     );
 }
+
