@@ -1,37 +1,120 @@
-// pages/api/ocr.ts
-import { NextApiRequest, NextApiResponse } from "next";
-import { TextractClient, DetectDocumentTextCommand } from "@aws-sdk/client-textract";
+import { NextResponse } from "next/server";
+import {
+  TextractClient,
+  DetectDocumentTextCommand,
+  StartDocumentTextDetectionCommand,
+  GetDocumentTextDetectionCommand
+} from "@aws-sdk/client-textract";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
-const client = new TextractClient({
-  region: process.env.AWS_REGION, 
-});
+// Validate environment variables
+if (!process.env.AWS_REGION) {
+  throw new Error("AWS_REGION environment variable is not set");
+}
+if (!process.env.UPLOAD_BUCKET) {
+  throw new Error("UPLOAD_BUCKET environment variable is not set");
+}
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
-    return res.status(405).end("Method Not Allowed");
-  }
+const texClient = new TextractClient({ region: process.env.AWS_REGION });
+const s3 = new S3Client({ region: process.env.AWS_REGION });
 
+export async function POST(request: Request) {
   try {
-    const { imageBase64 } = req.body;
+    const { imageBase64, fileName } = await request.json();
+    
     if (!imageBase64) {
-      return res.status(400).json({ error: "Missing imageBase64 in request body" });
+      return NextResponse.json(
+        { error: "Missing imageBase64 in request body" },
+        { status: 400 }
+      );
+    }
+    
+    if (!fileName) {
+      return NextResponse.json(
+        { error: "Missing fileName in request body" },
+        { status: 400 }
+      );
     }
 
-    const imageBytes = Buffer.from(imageBase64, "base64");
-    const command = new DetectDocumentTextCommand({
-      Document: { Bytes: imageBytes },
-    });
-    const { Blocks } = await client.send(command);
+    const ext = fileName.split(".").pop()?.toLowerCase();
 
-    const textLines = Blocks
-      ?.filter((b) => b.BlockType === "LINE")
-      .map((b) => b.Text)
-      .join("\n") || "";
+    if (ext === "pdf") {
+      try {
+        const key = `uploads/${Date.now()}-${fileName}`;
+        await s3.send(new PutObjectCommand({
+          Bucket: process.env.UPLOAD_BUCKET!,
+          Key: key,
+          Body: Buffer.from(imageBase64, "base64"),
+          ContentType: "application/pdf",
+        }));
 
-    res.status(200).json({ text: textLines });
-  } catch (err: any) {
-    console.error("Textract error:", err);
-    res.status(500).json({ error: err.message || "Internal error" });
+        const { JobId } = await texClient.send(new StartDocumentTextDetectionCommand({
+          DocumentLocation: { S3Object: { Bucket: process.env.UPLOAD_BUCKET!, Name: key } }
+        }));
+
+        if (!JobId) {
+          throw new Error("Failed to start text detection job");
+        }
+
+        let jobStatus = "IN_PROGRESS";
+        let allBlocks: any[] = [];
+        let attempts = 0;
+        const maxAttempts = 12; // 1 minute maximum wait time
+
+        while (jobStatus === "IN_PROGRESS" && attempts < maxAttempts) {
+          await new Promise(r => setTimeout(r, 5000));
+          const resp = await texClient.send(new GetDocumentTextDetectionCommand({ JobId }));
+          jobStatus = resp.JobStatus!;
+          if (resp.Blocks) allBlocks.push(...resp.Blocks);
+          attempts++;
+        }
+
+        if (jobStatus === "FAILED") {
+          throw new Error("Text detection job failed");
+        }
+
+        if (jobStatus === "IN_PROGRESS") {
+          throw new Error("Text detection job timed out");
+        }
+
+        const text = allBlocks
+          .filter(b => b.BlockType === "LINE")
+          .map(b => b.Text)
+          .join("\n");
+        return NextResponse.json({ text });
+      } catch (error: any) {
+        console.error("PDF processing error:", error);
+        return NextResponse.json(
+          { error: `PDF processing failed: ${error.message}` },
+          { status: 500 }
+        );
+      }
+    } else {
+      try {
+        const imageBytes = Buffer.from(imageBase64, "base64");
+        const { Blocks } = await texClient.send(new DetectDocumentTextCommand({
+          Document: { Bytes: imageBytes }
+        }));
+        
+        if (!Blocks) {
+          throw new Error("No text blocks detected in the image");
+        }
+
+        const text = Blocks.filter(b => b.BlockType === "LINE").map(b => b.Text).join("\n") || "";
+        return NextResponse.json({ text });
+      } catch (error: any) {
+        console.error("Image processing error:", error);
+        return NextResponse.json(
+          { error: `Image processing failed: ${error.message}` },
+          { status: 500 }
+        );
+      }
+    }
+  } catch (error: any) {
+    console.error("General error:", error);
+    return NextResponse.json(
+      { error: `Request processing failed: ${error.message}` },
+      { status: 500 }
+    );
   }
 }
