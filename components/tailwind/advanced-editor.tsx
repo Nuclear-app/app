@@ -29,20 +29,22 @@ import GenerativeMenuSwitch from "./generative/generative-menu-switch";
 import { uploadFn } from "./image-upload";
 import { TextButtons } from "./selectors/text-buttons";
 import { slashCommand, suggestionItems } from "./slash-command";
-
+import { updateBlock } from "@/app/actions/update-block";
 
 const hljs = require("highlight.js");
 
 const extensions = [...defaultExtensions, slashCommand];
 
-interface TailwindAdvancedEditorProps {
-  returnContent?: (content: JSONContent) => void;
+interface AdvancedEditorProps {
+  blockId?: string;
+  initialContent?: JSONContent;
 }
 
-const TailwindAdvancedEditor: React.FC<TailwindAdvancedEditorProps> = ({ returnContent }) => {
-  const [initialContent, setInitialContent] = useState<null | JSONContent>(null);
+export function AdvancedEditor({ blockId: initialBlockId, initialContent }: AdvancedEditorProps) {
+  const [content, setContent] = useState<JSONContent | null>(initialContent || null);
   const [saveStatus, setSaveStatus] = useState("Saved");
   const [charsCount, setCharsCount] = useState();
+  const [currentBlockId, setCurrentBlockId] = useState<string | undefined>(initialBlockId);
 
   const [openNode, setOpenNode] = useState(false);
   const [openColor, setOpenColor] = useState(false);
@@ -64,19 +66,40 @@ const TailwindAdvancedEditor: React.FC<TailwindAdvancedEditorProps> = ({ returnC
   const debouncedUpdates = useDebouncedCallback(async (editor: EditorInstance) => {
     const json = editor.getJSON();
     setCharsCount(editor.storage.characterCount.words());
+    
+    // Save to database using server action
+    try {
+      const result = await updateBlock(json, currentBlockId);
+      
+      if (!result.success) {
+        console.log(result.error);  
+        throw new Error(result.error);
+      }
+
+      // Update the block ID if this is a new block
+      if (result.isNewBlock) {
+        setCurrentBlockId(result.data.id);
+      }
+
+      setSaveStatus("Saved");
+    } catch (error) {
+      console.error('Error saving content:', error);
+      setSaveStatus("Error saving");
+    }
+
+    // Local storage backup
     window.localStorage.setItem("html-content", highlightCodeblocks(editor.getHTML()));
     window.localStorage.setItem("novel-content", JSON.stringify(json));
     window.localStorage.setItem("markdown", editor.storage.markdown.getMarkdown());
-    setSaveStatus("Saved");
-  }, 500);
+  }, 2000); // 2 second debounce
 
   useEffect(() => {
     const content = window.localStorage.getItem("novel-content");
-    if (content) setInitialContent(JSON.parse(content));
-    else setInitialContent(defaultEditorContent);
+    if (content) setContent(JSON.parse(content));
+    else setContent(defaultEditorContent);
   }, []);
 
-  if (!initialContent) return null;
+  if (!content) return null;
 
   return (
     <div className="relative w-full max-w-screen-lg mx-auto">
@@ -88,7 +111,7 @@ const TailwindAdvancedEditor: React.FC<TailwindAdvancedEditorProps> = ({ returnC
       </div>
       <EditorRoot>
         <EditorContent
-          initialContent={initialContent}
+          initialContent={content}
           extensions={extensions}
           className="relative p-4 min-h-[500px] w-full max-w-screen-lg bg-background sm:mb-[calc(20vh)] sm:rounded-lg sm:shadow-lg"
           editorProps={{
@@ -105,9 +128,6 @@ const TailwindAdvancedEditor: React.FC<TailwindAdvancedEditorProps> = ({ returnC
           onUpdate={({ editor }) => {
             debouncedUpdates(editor);
             setSaveStatus("Unsaved");
-            if (returnContent) {
-              returnContent(editor.getJSON());
-            }
           }}
           slotAfter={<ImageResizer />}
         >
@@ -151,6 +171,6 @@ const TailwindAdvancedEditor: React.FC<TailwindAdvancedEditorProps> = ({ returnC
       </EditorRoot>
     </div>
   );
-};
+}
 
-export default TailwindAdvancedEditor;
+export default AdvancedEditor;

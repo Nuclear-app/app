@@ -16,9 +16,7 @@ export default function EditorPage() {
  
    return (
      <div className="p-4">
-       <TailwindAdvancedEditor
-         returnContent={(content) => handleContentChange(content)}
-       />
+       <TailwindAdvancedEditor/>
      </div>
    );
  }
