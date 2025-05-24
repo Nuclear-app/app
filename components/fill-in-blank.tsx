@@ -1,12 +1,12 @@
 import { Input } from "@/components/ui/input";
 import { ny } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface FillInBlankProps {
   sentence: string;
   answer: string;
   hint?: string;
-  onAnswerChange?: (answer: string) => void;
+  onAnswerChange?: (answer: string, isCorrect: boolean) => void;
   className?: string;
 }
 
@@ -27,11 +27,11 @@ export function FillInBlank({
 
   const handleAnswerChange = (value: string) => {
     setUserAnswer(value);
-    onAnswerChange?.(value);
     
     // Check if the answer is correct (case-insensitive)
     const isAnswerCorrect = value.toLowerCase() === answer.toLowerCase();
     setIsCorrect(isAnswerCorrect);
+    onAnswerChange?.(value, isAnswerCorrect);
   };
 
   return (
@@ -44,9 +44,10 @@ export function FillInBlank({
           onChange={(e) => handleAnswerChange(e.target.value)}
           placeholder=""
           className={ny(
-            "w-32 h-7 text-base inline-block align-middle",
-            isCorrect === true && "border-green-500",
-            isCorrect === false && "border-red-500"
+            "w-32 h-7 text-base inline-block align-middle bg-transparent border-0 border-b-2 px-1 py-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0",
+            isCorrect === true && "border-b-green-500",
+            isCorrect === false && "border-b-red-500",
+            isCorrect === null && "border-b-gray-300"
           )}
         />
         {/* {hint && (

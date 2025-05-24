@@ -4,7 +4,7 @@ import { FillInBlank } from "@/components/fill-in-blank";
 
 export default function TestPage() {
   return (
-    <div className="container mx-auto p-8">
+    <div className="container mx-auto px-48">
       <h1 className="text-2xl font-bold mb-8">Fill in the Blanks Test</h1>
       
       <div className="space-y-6">
