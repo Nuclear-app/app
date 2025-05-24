@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
+import prisma from '@/lib/prisma'
 
 export async function GET(request: Request) {
   // The `/auth/callback` route is required for the server-side auth flow implemented
@@ -13,7 +14,35 @@ export async function GET(request: Request) {
   if (code) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
+    
     if (!error) {
+      // Get the user after successful auth
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (user) {
+        try {
+          // Check if user exists in Prisma
+          const existingUser = await prisma.user.findUnique({
+            where: { id: user.id }
+          })
+
+          // If user doesn't exist in Prisma, create them
+          if (!existingUser) {
+            await prisma.user.create({
+              data: {
+                id: user.id,
+                email: user.email!,
+                name: null, // Can be updated later
+              }
+            })
+          }
+        } catch (error) {
+          console.error('Error handling Prisma user:', error)
+          // Continue with redirect even if Prisma operation fails
+          // The user can still use the app, and we can handle the Prisma sync later
+        }
+      }
+
       const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
       const isLocalEnv = process.env.NODE_ENV === 'development'
       if (isLocalEnv) {
