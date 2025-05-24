@@ -74,3 +74,28 @@ model FillInTheBlank {
   blockId  String
   Block    Block   @relation(fields: [blockId], references: [id])
 }
+
+model Example {
+  id      String @id @default(uuid())
+  topic   String
+  example String
+  blockId String
+  block   Block  @relation(fields: [blockId], references: [id])
+}
+
+model Question {
+  id       String @id @default(uuid())
+  question String
+  answer   String
+  blockId  String
+  block    Block  @relation(fields: [blockId], references: [id])
+}
+
+model Folder {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  blocks    Block[]
+>>>>>>> 03bf693 (Onboarding a little bit)
+}
