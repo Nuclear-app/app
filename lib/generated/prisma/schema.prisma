@@ -17,18 +17,19 @@ model User {
 }
 
 model Block {
-  id              String           @id @default(uuid())
-  createdAt       DateTime         @default(now())
-  title           String
-  note            Json?
-  authorId        String
-  folderId        String?
-  author          User             @relation(fields: [authorId], references: [id])
-  folder          Folder?          @relation(fields: [folderId], references: [id])
-  examples        Example[]
-  questions       Question[]
-  quizzes         Quiz[]
-  fillInTheBlanks FillInTheBlank[]
+  id             String           @id @default(uuid())
+  createdAt      DateTime         @default(now())
+  title          String
+  authorId       String
+  folderId       String?
+  note           Json?
+  context        String?
+  author         User             @relation(fields: [authorId], references: [id])
+  folder         Folder?          @relation(fields: [folderId], references: [id])
+  examples       Example[]
+  FillInTheBlank FillInTheBlank[]
+  questions      Question[]
+  quizzes        Quiz[]
 }
 
 model Quiz {
@@ -67,9 +68,9 @@ model Folder {
 
 model FillInTheBlank {
   id       String  @id @default(uuid())
-  sentence String // sentence with blank
-  answer   String // answer to the blank
-  hint     String? // hint to the blank
+  sentence String
+  answer   String
+  hint     String?
   blockId  String
-  block    Block   @relation(fields: [blockId], references: [id])
+  Block    Block   @relation(fields: [blockId], references: [id])
 }
