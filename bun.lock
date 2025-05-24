@@ -33,6 +33,7 @@
         "@tiptap/starter-kit": "^2.12.0",
         "@vercel/blob": "^1.0.1",
         "ai": "^4.3.15",
+        "assemblyai": "^4.12.2",
         "autoprefixer": "10.4.20",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -650,6 +651,8 @@
     "argparse": ["argparse@2.0.1", "", {}, "sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q=="],
 
     "aria-hidden": ["aria-hidden@1.2.4", "", { "dependencies": { "tslib": "^2.0.0" } }, ""],
+
+    "assemblyai": ["assemblyai@4.12.2", "", { "dependencies": { "ws": "^8.18.0" } }, "sha512-T0QPhKfKoIV1hiQgUvH8fmxYeDsNZI8gSvJHCntJnzQF/WwbtMrebc4z6rFy29QP1tp28iXlmABGRZjHwW0LEQ=="],
 
     "ast-types": ["ast-types@0.16.1", "", { "dependencies": { "tslib": "^2.0.1" } }, "sha512-6t10qk83GOG8p0vKmaCr8eiilZwO171AvbROMtvvNiwrTly62t+7XkA8RdIIVbpMhCASAsxgAzdRSwh6nw/5Dg=="],
 
