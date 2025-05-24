@@ -1,24 +1,26 @@
 import { AssemblyAI } from "assemblyai";
 
-if (!process.env.ASSEMBLYAI_API_KEY) {
+if (!process.env.NEXT_PUBLIC_ASSEMBLYAI_API_KEY) {
+  console.log(process.env.NEXT_PUBLIC_ASSEMBLYAI_API_KEY);
   throw new Error("ASSEMBLYAI_API_KEY is not set in environment variables");
 }
 
 const client = new AssemblyAI({
-  apiKey: process.env.ASSEMBLYAI_API_KEY,
+  apiKey: process.env.NEXT_PUBLIC_ASSEMBLYAI_API_KEY,
 });
 
-export async function transcribeAudio(audioUrl: string): Promise<string> {
-  if (!audioUrl) {
+export async function transcribeAudio(audioFile: string): Promise<string> {
+  if (!audioFile) {
     throw new Error("Audio URL is required");
   }
 
   try {
-    const transcript = await client.transcripts.transcribe({
-      audio_url: audioUrl,
-      speech_model: "nano",
-    });
 
+    const params = {
+      audio: audioFile,
+      speaker_labels: true,
+    };
+    const transcript = await client.transcripts.transcribe(params);
     if (!transcript.text) {
       throw new Error("No transcription text received");
     }
@@ -26,7 +28,7 @@ export async function transcribeAudio(audioUrl: string): Promise<string> {
     return transcript.text;
   } catch (error) {
     console.error("Error transcribing audio:", error);
-    throw new Error("Failed to transcribe audio");
+    throw new Error("Failed to transcribe audio", { cause: error });
   }
 }
 
@@ -35,7 +37,7 @@ export async function transcribeAudio(audioUrl: string): Promise<string> {
 
 // const params = {
 //   audio_url: audioFile,
-// //   speech_model: "",
+//   //   speech_model: "",
 //   // Remove speech_model as it's not needed for basic transcription
 // };
 
@@ -46,3 +48,6 @@ export async function transcribeAudio(audioUrl: string): Promise<string> {
 // };
 
 // run();
+
+// transcribeAudio("https://assembly.ai/sports_injuries.mp3").then(console.log);
+// transcribeAudio("lib/test.mp3").then(console.log);

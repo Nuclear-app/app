@@ -30,7 +30,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles }) => {
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   // This is important
-  const maxSizeInMB = 50;
+  const maxSizeInMB = 100;
 
   const handleFileSelection = (selectedFiles: FileList | null) => {
     if (!selectedFiles) return;
