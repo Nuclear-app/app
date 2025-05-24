@@ -9,57 +9,67 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model User {
+  id    String  @id @default(uuid())
+  email String  @unique
+  name  String?
+  posts Block[]
+}
+
 model Block {
-  id        String     @id
+  id        String     @id @default(uuid())
   createdAt DateTime   @default(now())
   title     String
-  Note      String?
+  note      Json?
   authorId  String
   folderId  String?
-  User      User       @relation(fields: [authorId], references: [id])
-  Folder    Folder?    @relation(fields: [folderId], references: [id])
-  Example   Example[]
-  Question  Question[]
-  Quiz      Quiz[]
-}
-
-model Example {
-  id      String @id
-  topic   String
-  example String
-  blockId String
-  Block   Block  @relation(fields: [blockId], references: [id])
-}
-
-model Folder {
-  id        String   @id
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime
-  Block     Block[]
-}
-
-model Question {
-  id       String @id
-  question String
-  answer   String
-  blockId  String
-  Block    Block  @relation(fields: [blockId], references: [id])
+  author    User       @relation(fields: [authorId], references: [id])
+  folder    Folder?    @relation(fields: [folderId], references: [id])
+  examples  Example[]
+  questions Question[]
+  quizzes   Quiz[]
+  fillInTheBlanks FillInTheBlank[]
 }
 
 model Quiz {
-  id         String   @id
+  id         String   @id @default(uuid())
   question   String
   answers    String[]
   correctAns String
   mistake    String?
   blockId    String
-  Block      Block    @relation(fields: [blockId], references: [id])
+  block      Block    @relation(fields: [blockId], references: [id])
 }
 
-model User {
-  id    String  @id
-  email String  @unique
-  name  String?
-  Block Block[]
+model Example {
+  id      String @id @default(uuid())
+  topic   String
+  example String
+  blockId String
+  block   Block  @relation(fields: [blockId], references: [id])
+}
+
+model Question {
+  id       String @id @default(uuid())
+  question String
+  answer   String
+  blockId  String
+  block    Block  @relation(fields: [blockId], references: [id])
+}
+
+model Folder {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  blocks    Block[]
+}
+
+model FillInTheBlank {
+  id          String  @id @default(uuid())
+  sentence    String  // sentence with blank
+  answer      String  // answer to the blank
+  hint        String? // hint to the blank
+  blockId     String
+  block       Block   @relation(fields: [blockId], references: [id])
 }
