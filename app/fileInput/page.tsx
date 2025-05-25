@@ -28,7 +28,6 @@ const acceptedFileTypes = {
 };
 
 export default function FileInputPage() {
-
   const [context, setContext] = useState('')
 
   const router = useRouter()
@@ -37,7 +36,7 @@ export default function FileInputPage() {
 
     const checkAuth = async () => {
 
-      const supabase = createBrowserClient(
+      const supabaseClient = createBrowserClient(
 
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
 
@@ -45,7 +44,7 @@ export default function FileInputPage() {
 
       )
 
-      const { data: { session }, error } = await supabase.auth.getSession()
+      const { data: { session }, error } = await supabaseClient.auth.getSession()
 
       if (error || !session) {
 
