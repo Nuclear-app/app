@@ -1,4 +1,4 @@
-import Examples from '@/components/Examples';
+import Examples from '@/components/examples';
 import { generateExamples } from '@/lib/examplesPerplexity';
 
 export default async function Page() {

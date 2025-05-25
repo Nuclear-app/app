@@ -26,19 +26,19 @@ model Block {
   context        String?
   author         User             @relation(fields: [authorId], references: [id])
   folder         Folder?          @relation(fields: [folderId], references: [id])
-  topic          Topic[]
   FillInTheBlank FillInTheBlank[]
   questions      Question[]
   quizzes        Quiz[]
+  topic          Topic[]
 }
 
 model Quiz {
   id         String   @id @default(uuid())
   question   String
-  answers    String[]
   correctAns String
   mistake    String?
   blockId    String
+  answers    String[]
   block      Block    @relation(fields: [blockId], references: [id])
 }
 
@@ -68,9 +68,9 @@ model FillInTheBlank {
 }
 
 model Topic {
-  id      String @id
-  name    String
-  example String
-  blockId String
-  Block   Block  @relation(fields: [blockId], references: [id])
+  id       String   @id
+  name     String
+  blockId  String
+  examples String[]
+  Block    Block    @relation(fields: [blockId], references: [id])
 }
