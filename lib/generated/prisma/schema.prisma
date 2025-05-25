@@ -15,6 +15,12 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum Mode {
+  EASY
+  MEDIUM
+  HARD
+}
+
 model User {
   id    String  @id @default(uuid())
   email String  @unique

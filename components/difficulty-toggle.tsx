@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getMode, setMode } from '@/app/actions';
-import { Mode, type Difficulty } from '@/app/types';
+import { getMode, setMode, type Difficulty } from '@/app/actions';
+import { Mode } from '@/lib/generated/prisma';
 
 export default function DifficultyToggle() {
   const [difficulty, setDifficulty] = useState<Difficulty>(Mode.MEDIUM);
