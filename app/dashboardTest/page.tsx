@@ -1,6 +1,6 @@
 'use client';
 
-import FileSystem from '@/components/FileSystem';
+import FileSystem from '@/components/dashboardComp/fileSystem';
 
 export default function DashboardPage() {
   return (
