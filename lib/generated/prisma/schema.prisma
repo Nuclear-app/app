@@ -24,9 +24,10 @@ model Block {
   folderId       String?
   note           Json?
   context        String?
+  points         Int?
   author         User             @relation(fields: [authorId], references: [id])
   folder         Folder?          @relation(fields: [folderId], references: [id])
-  examples       Example[]
+  topic          Topic[]
   FillInTheBlank FillInTheBlank[]
   questions      Question[]
   quizzes        Quiz[]
@@ -40,14 +41,6 @@ model Quiz {
   mistake    String?
   blockId    String
   block      Block    @relation(fields: [blockId], references: [id])
-}
-
-model Example {
-  id      String @id @default(uuid())
-  topic   String
-  example String
-  blockId String
-  block   Block  @relation(fields: [blockId], references: [id])
 }
 
 model Question {
@@ -73,4 +66,12 @@ model FillInTheBlank {
   hint     String?
   blockId  String
   Block    Block   @relation(fields: [blockId], references: [id])
+}
+
+model Topic {
+  id      String @id
+  name    String
+  example String
+  blockId String
+  Block   Block  @relation(fields: [blockId], references: [id])
 }
