@@ -13,7 +13,7 @@ import notesBg from './notesbg.png'
 export default async function Login(props: { searchParams: Promise<Message> }) {
    const searchParams = await props.searchParams;
    return (
-      <div className="flex min-h-svh flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-green-600/40 via-purple-600/40 to-orange-600/40 bg-black/50 p-6 md:p-10">
+      <div className="flex min-h-svh rounded-3xl flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-green-600/40 via-purple-600/40 to-orange-600/40 bg-black/50 p-6 md:p-10">
          <div className="w-full max-w-sm md:max-w-3xl">
             <LoginForm />
          </div>
