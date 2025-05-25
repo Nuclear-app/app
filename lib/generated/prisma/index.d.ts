@@ -50,6 +50,24 @@ export type FillInTheBlank = $Result.DefaultSelection<Prisma.$FillInTheBlankPayl
 export type Topic = $Result.DefaultSelection<Prisma.$TopicPayload>
 
 /**
+ * Enums
+ */
+export namespace $Enums {
+  export const Mode: {
+  EASY: 'EASY',
+  MEDIUM: 'MEDIUM',
+  HARD: 'HARD'
+};
+
+export type Mode = (typeof Mode)[keyof typeof Mode]
+
+}
+
+export type Mode = $Enums.Mode
+
+export const Mode: typeof $Enums.Mode
+
+/**
  * ##  Prisma Client ʲˢ
  *
  * Type-safe database client for TypeScript & Node.js
@@ -1588,18 +1606,21 @@ export namespace Prisma {
     id: string | null
     email: string | null
     name: string | null
+    mode: $Enums.Mode | null
   }
 
   export type UserMaxAggregateOutputType = {
     id: string | null
     email: string | null
     name: string | null
+    mode: $Enums.Mode | null
   }
 
   export type UserCountAggregateOutputType = {
     id: number
     email: number
     name: number
+    mode: number
     _all: number
   }
 
@@ -1608,18 +1629,21 @@ export namespace Prisma {
     id?: true
     email?: true
     name?: true
+    mode?: true
   }
 
   export type UserMaxAggregateInputType = {
     id?: true
     email?: true
     name?: true
+    mode?: true
   }
 
   export type UserCountAggregateInputType = {
     id?: true
     email?: true
     name?: true
+    mode?: true
     _all?: true
   }
 
@@ -1699,6 +1723,7 @@ export namespace Prisma {
     id: string
     email: string
     name: string | null
+    mode: $Enums.Mode | null
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -1722,6 +1747,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     name?: boolean
+    mode?: boolean
     posts?: boolean | User$postsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -1730,21 +1756,24 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     name?: boolean
+    mode?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     email?: boolean
     name?: boolean
+    mode?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
     id?: boolean
     email?: boolean
     name?: boolean
+    mode?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "mode", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     posts?: boolean | User$postsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1761,6 +1790,7 @@ export namespace Prisma {
       id: string
       email: string
       name: string | null
+      mode: $Enums.Mode | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -2188,6 +2218,7 @@ export namespace Prisma {
     readonly id: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly name: FieldRef<"User", 'String'>
+    readonly mode: FieldRef<"User", 'Mode'>
   }
     
 
@@ -9272,7 +9303,8 @@ export namespace Prisma {
   export const UserScalarFieldEnum: {
     id: 'id',
     email: 'email',
-    name: 'name'
+    name: 'name',
+    mode: 'mode'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -9407,6 +9439,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Mode'
+   */
+  export type EnumModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Mode'>
+    
+
+
+  /**
+   * Reference to a field of type 'Mode[]'
+   */
+  export type ListEnumModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Mode[]'>
+    
+
+
+  /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -9458,6 +9504,7 @@ export namespace Prisma {
     id?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
     name?: StringNullableFilter<"User"> | string | null
+    mode?: EnumModeNullableFilter<"User"> | $Enums.Mode | null
     posts?: BlockListRelationFilter
   }
 
@@ -9465,6 +9512,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrderInput | SortOrder
+    mode?: SortOrderInput | SortOrder
     posts?: BlockOrderByRelationAggregateInput
   }
 
@@ -9475,6 +9523,7 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     name?: StringNullableFilter<"User"> | string | null
+    mode?: EnumModeNullableFilter<"User"> | $Enums.Mode | null
     posts?: BlockListRelationFilter
   }, "id" | "email">
 
@@ -9482,6 +9531,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrderInput | SortOrder
+    mode?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -9494,6 +9544,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
     name?: StringNullableWithAggregatesFilter<"User"> | string | null
+    mode?: EnumModeNullableWithAggregatesFilter<"User"> | $Enums.Mode | null
   }
 
   export type BlockWhereInput = {
@@ -9867,6 +9918,7 @@ export namespace Prisma {
     id?: string
     email: string
     name?: string | null
+    mode?: $Enums.Mode | null
     posts?: BlockCreateNestedManyWithoutAuthorInput
   }
 
@@ -9874,6 +9926,7 @@ export namespace Prisma {
     id?: string
     email: string
     name?: string | null
+    mode?: $Enums.Mode | null
     posts?: BlockUncheckedCreateNestedManyWithoutAuthorInput
   }
 
@@ -9881,6 +9934,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
     posts?: BlockUpdateManyWithoutAuthorNestedInput
   }
 
@@ -9888,6 +9942,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
     posts?: BlockUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
@@ -9895,18 +9950,21 @@ export namespace Prisma {
     id?: string
     email: string
     name?: string | null
+    mode?: $Enums.Mode | null
   }
 
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
   }
 
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
   }
 
   export type BlockCreateInput = {
@@ -10309,6 +10367,13 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type EnumModeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.Mode | EnumModeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Mode[] | ListEnumModeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Mode[] | ListEnumModeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumModeNullableFilter<$PrismaModel> | $Enums.Mode | null
+  }
+
   export type BlockListRelationFilter = {
     every?: BlockWhereInput
     some?: BlockWhereInput
@@ -10328,18 +10393,21 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrder
+    mode?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrder
+    mode?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrder
+    mode?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -10376,6 +10444,16 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type EnumModeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Mode | EnumModeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Mode[] | ListEnumModeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Mode[] | ListEnumModeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumModeNullableWithAggregatesFilter<$PrismaModel> | $Enums.Mode | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumModeNullableFilter<$PrismaModel>
+    _max?: NestedEnumModeNullableFilter<$PrismaModel>
   }
 
   export type DateTimeFilter<$PrismaModel = never> = {
@@ -10694,6 +10772,10 @@ export namespace Prisma {
 
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
+  }
+
+  export type NullableEnumModeFieldUpdateOperationsInput = {
+    set?: $Enums.Mode | null
   }
 
   export type BlockUpdateManyWithoutAuthorNestedInput = {
@@ -11186,6 +11268,13 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type NestedEnumModeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.Mode | EnumModeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Mode[] | ListEnumModeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Mode[] | ListEnumModeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumModeNullableFilter<$PrismaModel> | $Enums.Mode | null
+  }
+
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -11240,6 +11329,16 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumModeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Mode | EnumModeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Mode[] | ListEnumModeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Mode[] | ListEnumModeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumModeNullableWithAggregatesFilter<$PrismaModel> | $Enums.Mode | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumModeNullableFilter<$PrismaModel>
+    _max?: NestedEnumModeNullableFilter<$PrismaModel>
   }
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
@@ -11359,12 +11458,14 @@ export namespace Prisma {
     id?: string
     email: string
     name?: string | null
+    mode?: $Enums.Mode | null
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
     id?: string
     email: string
     name?: string | null
+    mode?: $Enums.Mode | null
   }
 
   export type UserCreateOrConnectWithoutPostsInput = {
@@ -11508,12 +11609,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
   }
 
   export type FolderUpsertWithoutBlocksInput = {
