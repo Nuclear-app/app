@@ -55,7 +55,7 @@ IMPORTANT RULES:
 
 5. Each example should also contain a description of how the example is related to the key concept (in the format this should be stored with the example itself).
 
-6. Each description should:
+6. Each description should: 
     - Most importantly, give a detailed explanation of how the example is a good application of the key concept.
     - Try to give real life examples where its possible give detailed elaboration on the pre-context of that example and how the concept is demonstrated in context of that example.
     - be grammatically correct and make sense with the educational text.
@@ -300,7 +300,4 @@ export async function generateExamples(text: string) {
   }
 }
 
-generateExamples(hardCodedExample).then((res) => {
-    console.log(JSON.stringify(res, null, 2));
-});
 
