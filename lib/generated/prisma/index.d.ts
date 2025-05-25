@@ -3831,7 +3831,7 @@ export namespace Prisma {
     correctAns: number
     mistake: number
     blockId: number
-    answers: number
+    options: number
     _all: number
   }
 
@@ -3858,7 +3858,7 @@ export namespace Prisma {
     correctAns?: true
     mistake?: true
     blockId?: true
-    answers?: true
+    options?: true
     _all?: true
   }
 
@@ -3940,7 +3940,7 @@ export namespace Prisma {
     correctAns: string
     mistake: string | null
     blockId: string
-    answers: string[]
+    options: string[]
     _count: QuizCountAggregateOutputType | null
     _min: QuizMinAggregateOutputType | null
     _max: QuizMaxAggregateOutputType | null
@@ -3966,7 +3966,7 @@ export namespace Prisma {
     correctAns?: boolean
     mistake?: boolean
     blockId?: boolean
-    answers?: boolean
+    options?: boolean
     block?: boolean | BlockDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["quiz"]>
 
@@ -3976,7 +3976,7 @@ export namespace Prisma {
     correctAns?: boolean
     mistake?: boolean
     blockId?: boolean
-    answers?: boolean
+    options?: boolean
     block?: boolean | BlockDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["quiz"]>
 
@@ -3986,7 +3986,7 @@ export namespace Prisma {
     correctAns?: boolean
     mistake?: boolean
     blockId?: boolean
-    answers?: boolean
+    options?: boolean
     block?: boolean | BlockDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["quiz"]>
 
@@ -3996,10 +3996,10 @@ export namespace Prisma {
     correctAns?: boolean
     mistake?: boolean
     blockId?: boolean
-    answers?: boolean
+    options?: boolean
   }
 
-  export type QuizOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "question" | "correctAns" | "mistake" | "blockId" | "answers", ExtArgs["result"]["quiz"]>
+  export type QuizOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "question" | "correctAns" | "mistake" | "blockId" | "options", ExtArgs["result"]["quiz"]>
   export type QuizInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     block?: boolean | BlockDefaultArgs<ExtArgs>
   }
@@ -4021,7 +4021,7 @@ export namespace Prisma {
       correctAns: string
       mistake: string | null
       blockId: string
-      answers: string[]
+      options: string[]
     }, ExtArgs["result"]["quiz"]>
     composites: {}
   }
@@ -4451,7 +4451,7 @@ export namespace Prisma {
     readonly correctAns: FieldRef<"Quiz", 'String'>
     readonly mistake: FieldRef<"Quiz", 'String'>
     readonly blockId: FieldRef<"Quiz", 'String'>
-    readonly answers: FieldRef<"Quiz", 'String[]'>
+    readonly options: FieldRef<"Quiz", 'String[]'>
   }
     
 
@@ -9109,7 +9109,7 @@ export namespace Prisma {
     correctAns: 'correctAns',
     mistake: 'mistake',
     blockId: 'blockId',
-    answers: 'answers'
+    options: 'options'
   };
 
   export type QuizScalarFieldEnum = (typeof QuizScalarFieldEnum)[keyof typeof QuizScalarFieldEnum]
@@ -9395,7 +9395,7 @@ export namespace Prisma {
     correctAns?: StringFilter<"Quiz"> | string
     mistake?: StringNullableFilter<"Quiz"> | string | null
     blockId?: StringFilter<"Quiz"> | string
-    answers?: StringNullableListFilter<"Quiz">
+    options?: StringNullableListFilter<"Quiz">
     block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
   }
 
@@ -9405,7 +9405,7 @@ export namespace Prisma {
     correctAns?: SortOrder
     mistake?: SortOrderInput | SortOrder
     blockId?: SortOrder
-    answers?: SortOrder
+    options?: SortOrder
     block?: BlockOrderByWithRelationInput
   }
 
@@ -9418,7 +9418,7 @@ export namespace Prisma {
     correctAns?: StringFilter<"Quiz"> | string
     mistake?: StringNullableFilter<"Quiz"> | string | null
     blockId?: StringFilter<"Quiz"> | string
-    answers?: StringNullableListFilter<"Quiz">
+    options?: StringNullableListFilter<"Quiz">
     block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
   }, "id">
 
@@ -9428,7 +9428,7 @@ export namespace Prisma {
     correctAns?: SortOrder
     mistake?: SortOrderInput | SortOrder
     blockId?: SortOrder
-    answers?: SortOrder
+    options?: SortOrder
     _count?: QuizCountOrderByAggregateInput
     _max?: QuizMaxOrderByAggregateInput
     _min?: QuizMinOrderByAggregateInput
@@ -9443,7 +9443,7 @@ export namespace Prisma {
     correctAns?: StringWithAggregatesFilter<"Quiz"> | string
     mistake?: StringNullableWithAggregatesFilter<"Quiz"> | string | null
     blockId?: StringWithAggregatesFilter<"Quiz"> | string
-    answers?: StringNullableListFilter<"Quiz">
+    options?: StringNullableListFilter<"Quiz">
   }
 
   export type QuestionWhereInput = {
@@ -9786,7 +9786,7 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake?: string | null
-    answers?: QuizCreateanswersInput | string[]
+    options?: QuizCreateoptionsInput | string[]
     block: BlockCreateNestedOneWithoutQuizzesInput
   }
 
@@ -9796,7 +9796,7 @@ export namespace Prisma {
     correctAns: string
     mistake?: string | null
     blockId: string
-    answers?: QuizCreateanswersInput | string[]
+    options?: QuizCreateoptionsInput | string[]
   }
 
   export type QuizUpdateInput = {
@@ -9804,7 +9804,7 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
-    answers?: QuizUpdateanswersInput | string[]
+    options?: QuizUpdateoptionsInput | string[]
     block?: BlockUpdateOneRequiredWithoutQuizzesNestedInput
   }
 
@@ -9814,7 +9814,7 @@ export namespace Prisma {
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
     blockId?: StringFieldUpdateOperationsInput | string
-    answers?: QuizUpdateanswersInput | string[]
+    options?: QuizUpdateoptionsInput | string[]
   }
 
   export type QuizCreateManyInput = {
@@ -9823,7 +9823,7 @@ export namespace Prisma {
     correctAns: string
     mistake?: string | null
     blockId: string
-    answers?: QuizCreateanswersInput | string[]
+    options?: QuizCreateoptionsInput | string[]
   }
 
   export type QuizUpdateManyMutationInput = {
@@ -9831,7 +9831,7 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
-    answers?: QuizUpdateanswersInput | string[]
+    options?: QuizUpdateoptionsInput | string[]
   }
 
   export type QuizUncheckedUpdateManyInput = {
@@ -9840,7 +9840,7 @@ export namespace Prisma {
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
     blockId?: StringFieldUpdateOperationsInput | string
-    answers?: QuizUpdateanswersInput | string[]
+    options?: QuizUpdateoptionsInput | string[]
   }
 
   export type QuestionCreateInput = {
@@ -10317,7 +10317,7 @@ export namespace Prisma {
     correctAns?: SortOrder
     mistake?: SortOrder
     blockId?: SortOrder
-    answers?: SortOrder
+    options?: SortOrder
   }
 
   export type QuizMaxOrderByAggregateInput = {
@@ -10673,7 +10673,7 @@ export namespace Prisma {
     deleteMany?: TopicScalarWhereInput | TopicScalarWhereInput[]
   }
 
-  export type QuizCreateanswersInput = {
+  export type QuizCreateoptionsInput = {
     set: string[]
   }
 
@@ -10683,7 +10683,7 @@ export namespace Prisma {
     connect?: BlockWhereUniqueInput
   }
 
-  export type QuizUpdateanswersInput = {
+  export type QuizUpdateoptionsInput = {
     set?: string[]
     push?: string | string[]
   }
@@ -11073,7 +11073,7 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake?: string | null
-    answers?: QuizCreateanswersInput | string[]
+    options?: QuizCreateoptionsInput | string[]
   }
 
   export type QuizUncheckedCreateWithoutBlockInput = {
@@ -11081,7 +11081,7 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake?: string | null
-    answers?: QuizCreateanswersInput | string[]
+    options?: QuizCreateoptionsInput | string[]
   }
 
   export type QuizCreateOrConnectWithoutBlockInput = {
@@ -11242,7 +11242,7 @@ export namespace Prisma {
     correctAns?: StringFilter<"Quiz"> | string
     mistake?: StringNullableFilter<"Quiz"> | string | null
     blockId?: StringFilter<"Quiz"> | string
-    answers?: StringNullableListFilter<"Quiz">
+    options?: StringNullableListFilter<"Quiz">
   }
 
   export type TopicUpsertWithWhereUniqueWithoutBlockInput = {
@@ -11657,7 +11657,7 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake?: string | null
-    answers?: QuizCreateanswersInput | string[]
+    options?: QuizCreateoptionsInput | string[]
   }
 
   export type TopicCreateManyBlockInput = {
@@ -11710,7 +11710,7 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
-    answers?: QuizUpdateanswersInput | string[]
+    options?: QuizUpdateoptionsInput | string[]
   }
 
   export type QuizUncheckedUpdateWithoutBlockInput = {
@@ -11718,7 +11718,7 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
-    answers?: QuizUpdateanswersInput | string[]
+    options?: QuizUpdateoptionsInput | string[]
   }
 
   export type QuizUncheckedUpdateManyWithoutBlockInput = {
@@ -11726,7 +11726,7 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
-    answers?: QuizUpdateanswersInput | string[]
+    options?: QuizUpdateoptionsInput | string[]
   }
 
   export type TopicUpdateWithoutBlockInput = {

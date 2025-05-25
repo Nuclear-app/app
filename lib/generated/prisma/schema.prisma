@@ -38,7 +38,7 @@ model Quiz {
   correctAns String
   mistake    String?
   blockId    String
-  answers    String[]
+  options    String[]
   block      Block    @relation(fields: [blockId], references: [id])
 }
 
