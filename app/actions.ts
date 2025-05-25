@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
+import { Mode } from '@/lib/generated/prisma';
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -222,4 +223,56 @@ export async function signInWithGoogle() {
   }
 
   return redirect(data.url);
+}
+
+export type Difficulty = Mode;
+
+export async function setMode(mode: Difficulty) {
+  const supabase = await createClient();
+  
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.user) {
+    throw new Error('Not authenticated');
+  }
+
+  try {
+    await prisma.user.update({
+      where: {
+        id: session.user.id,
+      },
+      data: {
+        mode: mode as Mode,
+      },
+    });
+
+    return { success: true, mode };
+  } catch (error) {
+    console.error('Error setting mode:', error);
+    throw new Error('Failed to set mode');
+  }
+}
+
+export async function getMode(): Promise<Difficulty> {
+  const supabase = await createClient();
+  
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.user) {
+    throw new Error('Not authenticated');
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: session.user.id,
+      },
+      select: {
+        mode: true,
+      },
+    });
+
+    return (user?.mode || Mode.MEDIUM) as Difficulty;
+  } catch (error) {
+    console.error('Error getting mode:', error);
+    throw new Error('Failed to get mode');
+  }
 }
