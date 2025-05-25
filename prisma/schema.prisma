@@ -38,8 +38,10 @@ model Quiz {
   correctAns String
   mistake    String?
   blockId    String
-  answers    String[]
+  options    String[]
+  topicId    String?
   block      Block    @relation(fields: [blockId], references: [id])
+  Topic      Topic?   @relation(fields: [topicId], references: [id])
 }
 
 model Question {
@@ -72,5 +74,6 @@ model Topic {
   name     String
   blockId  String
   examples String[]
+  Quiz     Quiz[]
   Block    Block    @relation(fields: [blockId], references: [id])
 }
