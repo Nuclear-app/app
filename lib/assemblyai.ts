@@ -29,12 +29,7 @@ export async function transcribeAudio(audioUrl: string): Promise<string> {
       speech_model: "nano",
 
     });
-
-    const params = {
-      audio: audioFile,
-      speaker_labels: true,
-    };
-    const transcript = await client.transcripts.transcribe(params);
+        
     if (!transcript.text) {
 
       throw new Error("No transcription text received");
