@@ -20,43 +20,61 @@ export const signUpAction = async (formData: FormData) => {
     );
   }
 
-  // Sign up with Supabase Auth
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: `${origin}/auth/callback`,
-    },
-  });
-
-  if (authError) {
-    console.error(authError.code + " " + authError.message);
-    return encodedRedirect("error", "/sign-up", authError.message);
-  }
-
   try {
-    // Create user in Prisma database
-    await prisma.user.create({
-      data: {
-        id: authData.user!.id, // Use Supabase user ID
-        email: email,
-        name: null, // Can be updated later
+    // Sign up with Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${origin}/auth/callback`,
       },
     });
+
+    if (authError) {
+      console.error(authError.code + " " + authError.message);
+      return encodedRedirect("error", "/sign-up", authError.message);
+    }
+
+    if (!authData.user) {
+      return encodedRedirect("error", "/sign-up", "Failed to create user account");
+    }
+
+    try {
+      // Create user in Prisma database
+      await prisma.user.create({
+        data: {
+          id: authData.user.id,
+          email: email,
+          name: null, // Can be updated later
+        },
+      });
+    } catch (prismaError: any) {
+      // If the error is because the user already exists, that's fine
+      // The user can still proceed with email verification
+      if (prismaError.code === 'P2002') {
+        console.log('User already exists in database, continuing with signup process');
+      } else {
+        console.error('Prisma Error:', prismaError);
+        throw prismaError; // Re-throw other Prisma errors
+      }
+    }
 
     return encodedRedirect(
       "success",
       "/sign-up",
       "Thanks for signing up! Please check your email for a verification link.",
     );
-  } catch (error) {
-    console.error("Prisma Error:", error);
-    // If Prisma creation fails, we should delete the Supabase user
-    await supabase.auth.admin.deleteUser(authData.user!.id);
+  } catch (error: any) {
+    // Ignore Next.js redirect errors
+    if (error.message === 'NEXT_REDIRECT') {
+      throw error; // Let Next.js handle the redirect
+    }
+    
+    console.error("Error during signup:", error);
     return encodedRedirect(
       "error",
       "/sign-up",
-      "Failed to create user account. Please try again.",
+      "An error occurred during signup. Please try again.",
     );
   }
 };
