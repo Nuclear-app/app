@@ -24,7 +24,7 @@ export async function POST(req: Request) {
           data: {
             id: nanoid(),
             name: topic.topic,
-            example: JSON.stringify(topic.examples),
+            examples: topic.examples.map(ex => ex.example), // Convert example objects to strings
             blockId: blockId,
           },
         });
