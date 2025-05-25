@@ -1531,6 +1531,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type TopicCountOutputType
+   */
+
+  export type TopicCountOutputType = {
+    Quiz: number
+  }
+
+  export type TopicCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    Quiz?: boolean | TopicCountOutputTypeCountQuizArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * TopicCountOutputType without action
+   */
+  export type TopicCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TopicCountOutputType
+     */
+    select?: TopicCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * TopicCountOutputType without action
+   */
+  export type TopicCountOutputTypeCountQuizArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: QuizWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -3814,6 +3845,7 @@ export namespace Prisma {
     question: string | null
     correctAns: string | null
     mistake: string | null
+    topicId: string | null
     blockId: string | null
   }
 
@@ -3822,6 +3854,7 @@ export namespace Prisma {
     question: string | null
     correctAns: string | null
     mistake: string | null
+    topicId: string | null
     blockId: string | null
   }
 
@@ -3830,6 +3863,7 @@ export namespace Prisma {
     question: number
     correctAns: number
     mistake: number
+    topicId: number
     blockId: number
     options: number
     _all: number
@@ -3841,6 +3875,7 @@ export namespace Prisma {
     question?: true
     correctAns?: true
     mistake?: true
+    topicId?: true
     blockId?: true
   }
 
@@ -3849,6 +3884,7 @@ export namespace Prisma {
     question?: true
     correctAns?: true
     mistake?: true
+    topicId?: true
     blockId?: true
   }
 
@@ -3857,6 +3893,7 @@ export namespace Prisma {
     question?: true
     correctAns?: true
     mistake?: true
+    topicId?: true
     blockId?: true
     options?: true
     _all?: true
@@ -3939,6 +3976,7 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake: string | null
+    topicId: string | null
     blockId: string
     options: string[]
     _count: QuizCountAggregateOutputType | null
@@ -3965,8 +4003,10 @@ export namespace Prisma {
     question?: boolean
     correctAns?: boolean
     mistake?: boolean
+    topicId?: boolean
     blockId?: boolean
     options?: boolean
+    topic?: boolean | Quiz$topicArgs<ExtArgs>
     block?: boolean | BlockDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["quiz"]>
 
@@ -3975,8 +4015,10 @@ export namespace Prisma {
     question?: boolean
     correctAns?: boolean
     mistake?: boolean
+    topicId?: boolean
     blockId?: boolean
     options?: boolean
+    topic?: boolean | Quiz$topicArgs<ExtArgs>
     block?: boolean | BlockDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["quiz"]>
 
@@ -3985,8 +4027,10 @@ export namespace Prisma {
     question?: boolean
     correctAns?: boolean
     mistake?: boolean
+    topicId?: boolean
     blockId?: boolean
     options?: boolean
+    topic?: boolean | Quiz$topicArgs<ExtArgs>
     block?: boolean | BlockDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["quiz"]>
 
@@ -3995,24 +4039,29 @@ export namespace Prisma {
     question?: boolean
     correctAns?: boolean
     mistake?: boolean
+    topicId?: boolean
     blockId?: boolean
     options?: boolean
   }
 
-  export type QuizOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "question" | "correctAns" | "mistake" | "blockId" | "options", ExtArgs["result"]["quiz"]>
+  export type QuizOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "question" | "correctAns" | "mistake" | "topicId" | "blockId" | "options", ExtArgs["result"]["quiz"]>
   export type QuizInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    topic?: boolean | Quiz$topicArgs<ExtArgs>
     block?: boolean | BlockDefaultArgs<ExtArgs>
   }
   export type QuizIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    topic?: boolean | Quiz$topicArgs<ExtArgs>
     block?: boolean | BlockDefaultArgs<ExtArgs>
   }
   export type QuizIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    topic?: boolean | Quiz$topicArgs<ExtArgs>
     block?: boolean | BlockDefaultArgs<ExtArgs>
   }
 
   export type $QuizPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Quiz"
     objects: {
+      topic: Prisma.$TopicPayload<ExtArgs> | null
       block: Prisma.$BlockPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -4020,6 +4069,7 @@ export namespace Prisma {
       question: string
       correctAns: string
       mistake: string | null
+      topicId: string | null
       blockId: string
       options: string[]
     }, ExtArgs["result"]["quiz"]>
@@ -4416,6 +4466,7 @@ export namespace Prisma {
    */
   export interface Prisma__QuizClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    topic<T extends Quiz$topicArgs<ExtArgs> = {}>(args?: Subset<T, Quiz$topicArgs<ExtArgs>>): Prisma__TopicClient<$Result.GetResult<Prisma.$TopicPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     block<T extends BlockDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BlockDefaultArgs<ExtArgs>>): Prisma__BlockClient<$Result.GetResult<Prisma.$BlockPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -4450,6 +4501,7 @@ export namespace Prisma {
     readonly question: FieldRef<"Quiz", 'String'>
     readonly correctAns: FieldRef<"Quiz", 'String'>
     readonly mistake: FieldRef<"Quiz", 'String'>
+    readonly topicId: FieldRef<"Quiz", 'String'>
     readonly blockId: FieldRef<"Quiz", 'String'>
     readonly options: FieldRef<"Quiz", 'String[]'>
   }
@@ -4845,6 +4897,25 @@ export namespace Prisma {
      * Limit how many Quizzes to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Quiz.topic
+   */
+  export type Quiz$topicArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Topic
+     */
+    select?: TopicSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Topic
+     */
+    omit?: TopicOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TopicInclude<ExtArgs> | null
+    where?: TopicWhereInput
   }
 
   /**
@@ -8179,6 +8250,8 @@ export namespace Prisma {
     blockId?: boolean
     examples?: boolean
     Block?: boolean | BlockDefaultArgs<ExtArgs>
+    Quiz?: boolean | Topic$QuizArgs<ExtArgs>
+    _count?: boolean | TopicCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["topic"]>
 
   export type TopicSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8207,6 +8280,8 @@ export namespace Prisma {
   export type TopicOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "blockId" | "examples", ExtArgs["result"]["topic"]>
   export type TopicInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     Block?: boolean | BlockDefaultArgs<ExtArgs>
+    Quiz?: boolean | Topic$QuizArgs<ExtArgs>
+    _count?: boolean | TopicCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TopicIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     Block?: boolean | BlockDefaultArgs<ExtArgs>
@@ -8219,6 +8294,7 @@ export namespace Prisma {
     name: "Topic"
     objects: {
       Block: Prisma.$BlockPayload<ExtArgs>
+      Quiz: Prisma.$QuizPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -8620,6 +8696,7 @@ export namespace Prisma {
   export interface Prisma__TopicClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     Block<T extends BlockDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BlockDefaultArgs<ExtArgs>>): Prisma__BlockClient<$Result.GetResult<Prisma.$BlockPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    Quiz<T extends Topic$QuizArgs<ExtArgs> = {}>(args?: Subset<T, Topic$QuizArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuizPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9049,6 +9126,30 @@ export namespace Prisma {
   }
 
   /**
+   * Topic.Quiz
+   */
+  export type Topic$QuizArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Quiz
+     */
+    select?: QuizSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Quiz
+     */
+    omit?: QuizOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuizInclude<ExtArgs> | null
+    where?: QuizWhereInput
+    orderBy?: QuizOrderByWithRelationInput | QuizOrderByWithRelationInput[]
+    cursor?: QuizWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: QuizScalarFieldEnum | QuizScalarFieldEnum[]
+  }
+
+  /**
    * Topic without action
    */
   export type TopicDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9108,6 +9209,7 @@ export namespace Prisma {
     question: 'question',
     correctAns: 'correctAns',
     mistake: 'mistake',
+    topicId: 'topicId',
     blockId: 'blockId',
     options: 'options'
   };
@@ -9394,8 +9496,10 @@ export namespace Prisma {
     question?: StringFilter<"Quiz"> | string
     correctAns?: StringFilter<"Quiz"> | string
     mistake?: StringNullableFilter<"Quiz"> | string | null
+    topicId?: StringNullableFilter<"Quiz"> | string | null
     blockId?: StringFilter<"Quiz"> | string
     options?: StringNullableListFilter<"Quiz">
+    topic?: XOR<TopicNullableScalarRelationFilter, TopicWhereInput> | null
     block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
   }
 
@@ -9404,8 +9508,10 @@ export namespace Prisma {
     question?: SortOrder
     correctAns?: SortOrder
     mistake?: SortOrderInput | SortOrder
+    topicId?: SortOrderInput | SortOrder
     blockId?: SortOrder
     options?: SortOrder
+    topic?: TopicOrderByWithRelationInput
     block?: BlockOrderByWithRelationInput
   }
 
@@ -9417,8 +9523,10 @@ export namespace Prisma {
     question?: StringFilter<"Quiz"> | string
     correctAns?: StringFilter<"Quiz"> | string
     mistake?: StringNullableFilter<"Quiz"> | string | null
+    topicId?: StringNullableFilter<"Quiz"> | string | null
     blockId?: StringFilter<"Quiz"> | string
     options?: StringNullableListFilter<"Quiz">
+    topic?: XOR<TopicNullableScalarRelationFilter, TopicWhereInput> | null
     block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
   }, "id">
 
@@ -9427,6 +9535,7 @@ export namespace Prisma {
     question?: SortOrder
     correctAns?: SortOrder
     mistake?: SortOrderInput | SortOrder
+    topicId?: SortOrderInput | SortOrder
     blockId?: SortOrder
     options?: SortOrder
     _count?: QuizCountOrderByAggregateInput
@@ -9442,6 +9551,7 @@ export namespace Prisma {
     question?: StringWithAggregatesFilter<"Quiz"> | string
     correctAns?: StringWithAggregatesFilter<"Quiz"> | string
     mistake?: StringNullableWithAggregatesFilter<"Quiz"> | string | null
+    topicId?: StringNullableWithAggregatesFilter<"Quiz"> | string | null
     blockId?: StringWithAggregatesFilter<"Quiz"> | string
     options?: StringNullableListFilter<"Quiz">
   }
@@ -9610,6 +9720,7 @@ export namespace Prisma {
     blockId?: StringFilter<"Topic"> | string
     examples?: StringNullableListFilter<"Topic">
     Block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
+    Quiz?: QuizListRelationFilter
   }
 
   export type TopicOrderByWithRelationInput = {
@@ -9618,6 +9729,7 @@ export namespace Prisma {
     blockId?: SortOrder
     examples?: SortOrder
     Block?: BlockOrderByWithRelationInput
+    Quiz?: QuizOrderByRelationAggregateInput
   }
 
   export type TopicWhereUniqueInput = Prisma.AtLeast<{
@@ -9629,6 +9741,7 @@ export namespace Prisma {
     blockId?: StringFilter<"Topic"> | string
     examples?: StringNullableListFilter<"Topic">
     Block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
+    Quiz?: QuizListRelationFilter
   }, "id">
 
   export type TopicOrderByWithAggregationInput = {
@@ -9787,6 +9900,7 @@ export namespace Prisma {
     correctAns: string
     mistake?: string | null
     options?: QuizCreateoptionsInput | string[]
+    topic?: TopicCreateNestedOneWithoutQuizInput
     block: BlockCreateNestedOneWithoutQuizzesInput
   }
 
@@ -9795,6 +9909,7 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake?: string | null
+    topicId?: string | null
     blockId: string
     options?: QuizCreateoptionsInput | string[]
   }
@@ -9805,6 +9920,7 @@ export namespace Prisma {
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
     options?: QuizUpdateoptionsInput | string[]
+    topic?: TopicUpdateOneWithoutQuizNestedInput
     block?: BlockUpdateOneRequiredWithoutQuizzesNestedInput
   }
 
@@ -9813,6 +9929,7 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
+    topicId?: NullableStringFieldUpdateOperationsInput | string | null
     blockId?: StringFieldUpdateOperationsInput | string
     options?: QuizUpdateoptionsInput | string[]
   }
@@ -9822,6 +9939,7 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake?: string | null
+    topicId?: string | null
     blockId: string
     options?: QuizCreateoptionsInput | string[]
   }
@@ -9839,6 +9957,7 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
+    topicId?: NullableStringFieldUpdateOperationsInput | string | null
     blockId?: StringFieldUpdateOperationsInput | string
     options?: QuizUpdateoptionsInput | string[]
   }
@@ -10000,17 +10119,19 @@ export namespace Prisma {
   }
 
   export type TopicCreateInput = {
-    id: string
+    id?: string
     name: string
     examples?: TopicCreateexamplesInput | string[]
     Block: BlockCreateNestedOneWithoutTopicInput
+    Quiz?: QuizCreateNestedManyWithoutTopicInput
   }
 
   export type TopicUncheckedCreateInput = {
-    id: string
+    id?: string
     name: string
     blockId: string
     examples?: TopicCreateexamplesInput | string[]
+    Quiz?: QuizUncheckedCreateNestedManyWithoutTopicInput
   }
 
   export type TopicUpdateInput = {
@@ -10018,6 +10139,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     examples?: TopicUpdateexamplesInput | string[]
     Block?: BlockUpdateOneRequiredWithoutTopicNestedInput
+    Quiz?: QuizUpdateManyWithoutTopicNestedInput
   }
 
   export type TopicUncheckedUpdateInput = {
@@ -10025,10 +10147,11 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     blockId?: StringFieldUpdateOperationsInput | string
     examples?: TopicUpdateexamplesInput | string[]
+    Quiz?: QuizUncheckedUpdateManyWithoutTopicNestedInput
   }
 
   export type TopicCreateManyInput = {
-    id: string
+    id?: string
     name: string
     blockId: string
     examples?: TopicCreateexamplesInput | string[]
@@ -10306,6 +10429,11 @@ export namespace Prisma {
     isEmpty?: boolean
   }
 
+  export type TopicNullableScalarRelationFilter = {
+    is?: TopicWhereInput | null
+    isNot?: TopicWhereInput | null
+  }
+
   export type BlockScalarRelationFilter = {
     is?: BlockWhereInput
     isNot?: BlockWhereInput
@@ -10316,6 +10444,7 @@ export namespace Prisma {
     question?: SortOrder
     correctAns?: SortOrder
     mistake?: SortOrder
+    topicId?: SortOrder
     blockId?: SortOrder
     options?: SortOrder
   }
@@ -10325,6 +10454,7 @@ export namespace Prisma {
     question?: SortOrder
     correctAns?: SortOrder
     mistake?: SortOrder
+    topicId?: SortOrder
     blockId?: SortOrder
   }
 
@@ -10333,6 +10463,7 @@ export namespace Prisma {
     question?: SortOrder
     correctAns?: SortOrder
     mistake?: SortOrder
+    topicId?: SortOrder
     blockId?: SortOrder
   }
 
@@ -10677,6 +10808,12 @@ export namespace Prisma {
     set: string[]
   }
 
+  export type TopicCreateNestedOneWithoutQuizInput = {
+    create?: XOR<TopicCreateWithoutQuizInput, TopicUncheckedCreateWithoutQuizInput>
+    connectOrCreate?: TopicCreateOrConnectWithoutQuizInput
+    connect?: TopicWhereUniqueInput
+  }
+
   export type BlockCreateNestedOneWithoutQuizzesInput = {
     create?: XOR<BlockCreateWithoutQuizzesInput, BlockUncheckedCreateWithoutQuizzesInput>
     connectOrCreate?: BlockCreateOrConnectWithoutQuizzesInput
@@ -10686,6 +10823,16 @@ export namespace Prisma {
   export type QuizUpdateoptionsInput = {
     set?: string[]
     push?: string | string[]
+  }
+
+  export type TopicUpdateOneWithoutQuizNestedInput = {
+    create?: XOR<TopicCreateWithoutQuizInput, TopicUncheckedCreateWithoutQuizInput>
+    connectOrCreate?: TopicCreateOrConnectWithoutQuizInput
+    upsert?: TopicUpsertWithoutQuizInput
+    disconnect?: TopicWhereInput | boolean
+    delete?: TopicWhereInput | boolean
+    connect?: TopicWhereUniqueInput
+    update?: XOR<XOR<TopicUpdateToOneWithWhereWithoutQuizInput, TopicUpdateWithoutQuizInput>, TopicUncheckedUpdateWithoutQuizInput>
   }
 
   export type BlockUpdateOneRequiredWithoutQuizzesNestedInput = {
@@ -10776,6 +10923,20 @@ export namespace Prisma {
     connect?: BlockWhereUniqueInput
   }
 
+  export type QuizCreateNestedManyWithoutTopicInput = {
+    create?: XOR<QuizCreateWithoutTopicInput, QuizUncheckedCreateWithoutTopicInput> | QuizCreateWithoutTopicInput[] | QuizUncheckedCreateWithoutTopicInput[]
+    connectOrCreate?: QuizCreateOrConnectWithoutTopicInput | QuizCreateOrConnectWithoutTopicInput[]
+    createMany?: QuizCreateManyTopicInputEnvelope
+    connect?: QuizWhereUniqueInput | QuizWhereUniqueInput[]
+  }
+
+  export type QuizUncheckedCreateNestedManyWithoutTopicInput = {
+    create?: XOR<QuizCreateWithoutTopicInput, QuizUncheckedCreateWithoutTopicInput> | QuizCreateWithoutTopicInput[] | QuizUncheckedCreateWithoutTopicInput[]
+    connectOrCreate?: QuizCreateOrConnectWithoutTopicInput | QuizCreateOrConnectWithoutTopicInput[]
+    createMany?: QuizCreateManyTopicInputEnvelope
+    connect?: QuizWhereUniqueInput | QuizWhereUniqueInput[]
+  }
+
   export type TopicUpdateexamplesInput = {
     set?: string[]
     push?: string | string[]
@@ -10787,6 +10948,34 @@ export namespace Prisma {
     upsert?: BlockUpsertWithoutTopicInput
     connect?: BlockWhereUniqueInput
     update?: XOR<XOR<BlockUpdateToOneWithWhereWithoutTopicInput, BlockUpdateWithoutTopicInput>, BlockUncheckedUpdateWithoutTopicInput>
+  }
+
+  export type QuizUpdateManyWithoutTopicNestedInput = {
+    create?: XOR<QuizCreateWithoutTopicInput, QuizUncheckedCreateWithoutTopicInput> | QuizCreateWithoutTopicInput[] | QuizUncheckedCreateWithoutTopicInput[]
+    connectOrCreate?: QuizCreateOrConnectWithoutTopicInput | QuizCreateOrConnectWithoutTopicInput[]
+    upsert?: QuizUpsertWithWhereUniqueWithoutTopicInput | QuizUpsertWithWhereUniqueWithoutTopicInput[]
+    createMany?: QuizCreateManyTopicInputEnvelope
+    set?: QuizWhereUniqueInput | QuizWhereUniqueInput[]
+    disconnect?: QuizWhereUniqueInput | QuizWhereUniqueInput[]
+    delete?: QuizWhereUniqueInput | QuizWhereUniqueInput[]
+    connect?: QuizWhereUniqueInput | QuizWhereUniqueInput[]
+    update?: QuizUpdateWithWhereUniqueWithoutTopicInput | QuizUpdateWithWhereUniqueWithoutTopicInput[]
+    updateMany?: QuizUpdateManyWithWhereWithoutTopicInput | QuizUpdateManyWithWhereWithoutTopicInput[]
+    deleteMany?: QuizScalarWhereInput | QuizScalarWhereInput[]
+  }
+
+  export type QuizUncheckedUpdateManyWithoutTopicNestedInput = {
+    create?: XOR<QuizCreateWithoutTopicInput, QuizUncheckedCreateWithoutTopicInput> | QuizCreateWithoutTopicInput[] | QuizUncheckedCreateWithoutTopicInput[]
+    connectOrCreate?: QuizCreateOrConnectWithoutTopicInput | QuizCreateOrConnectWithoutTopicInput[]
+    upsert?: QuizUpsertWithWhereUniqueWithoutTopicInput | QuizUpsertWithWhereUniqueWithoutTopicInput[]
+    createMany?: QuizCreateManyTopicInputEnvelope
+    set?: QuizWhereUniqueInput | QuizWhereUniqueInput[]
+    disconnect?: QuizWhereUniqueInput | QuizWhereUniqueInput[]
+    delete?: QuizWhereUniqueInput | QuizWhereUniqueInput[]
+    connect?: QuizWhereUniqueInput | QuizWhereUniqueInput[]
+    update?: QuizUpdateWithWhereUniqueWithoutTopicInput | QuizUpdateWithWhereUniqueWithoutTopicInput[]
+    updateMany?: QuizUpdateManyWithWhereWithoutTopicInput | QuizUpdateManyWithWhereWithoutTopicInput[]
+    deleteMany?: QuizScalarWhereInput | QuizScalarWhereInput[]
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -11074,6 +11263,7 @@ export namespace Prisma {
     correctAns: string
     mistake?: string | null
     options?: QuizCreateoptionsInput | string[]
+    topic?: TopicCreateNestedOneWithoutQuizInput
   }
 
   export type QuizUncheckedCreateWithoutBlockInput = {
@@ -11081,6 +11271,7 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake?: string | null
+    topicId?: string | null
     options?: QuizCreateoptionsInput | string[]
   }
 
@@ -11095,15 +11286,17 @@ export namespace Prisma {
   }
 
   export type TopicCreateWithoutBlockInput = {
-    id: string
+    id?: string
     name: string
     examples?: TopicCreateexamplesInput | string[]
+    Quiz?: QuizCreateNestedManyWithoutTopicInput
   }
 
   export type TopicUncheckedCreateWithoutBlockInput = {
-    id: string
+    id?: string
     name: string
     examples?: TopicCreateexamplesInput | string[]
+    Quiz?: QuizUncheckedCreateNestedManyWithoutTopicInput
   }
 
   export type TopicCreateOrConnectWithoutBlockInput = {
@@ -11241,6 +11434,7 @@ export namespace Prisma {
     question?: StringFilter<"Quiz"> | string
     correctAns?: StringFilter<"Quiz"> | string
     mistake?: StringNullableFilter<"Quiz"> | string | null
+    topicId?: StringNullableFilter<"Quiz"> | string | null
     blockId?: StringFilter<"Quiz"> | string
     options?: StringNullableListFilter<"Quiz">
   }
@@ -11269,6 +11463,25 @@ export namespace Prisma {
     name?: StringFilter<"Topic"> | string
     blockId?: StringFilter<"Topic"> | string
     examples?: StringNullableListFilter<"Topic">
+  }
+
+  export type TopicCreateWithoutQuizInput = {
+    id?: string
+    name: string
+    examples?: TopicCreateexamplesInput | string[]
+    Block: BlockCreateNestedOneWithoutTopicInput
+  }
+
+  export type TopicUncheckedCreateWithoutQuizInput = {
+    id?: string
+    name: string
+    blockId: string
+    examples?: TopicCreateexamplesInput | string[]
+  }
+
+  export type TopicCreateOrConnectWithoutQuizInput = {
+    where: TopicWhereUniqueInput
+    create: XOR<TopicCreateWithoutQuizInput, TopicUncheckedCreateWithoutQuizInput>
   }
 
   export type BlockCreateWithoutQuizzesInput = {
@@ -11300,6 +11513,31 @@ export namespace Prisma {
   export type BlockCreateOrConnectWithoutQuizzesInput = {
     where: BlockWhereUniqueInput
     create: XOR<BlockCreateWithoutQuizzesInput, BlockUncheckedCreateWithoutQuizzesInput>
+  }
+
+  export type TopicUpsertWithoutQuizInput = {
+    update: XOR<TopicUpdateWithoutQuizInput, TopicUncheckedUpdateWithoutQuizInput>
+    create: XOR<TopicCreateWithoutQuizInput, TopicUncheckedCreateWithoutQuizInput>
+    where?: TopicWhereInput
+  }
+
+  export type TopicUpdateToOneWithWhereWithoutQuizInput = {
+    where?: TopicWhereInput
+    data: XOR<TopicUpdateWithoutQuizInput, TopicUncheckedUpdateWithoutQuizInput>
+  }
+
+  export type TopicUpdateWithoutQuizInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    examples?: TopicUpdateexamplesInput | string[]
+    Block?: BlockUpdateOneRequiredWithoutTopicNestedInput
+  }
+
+  export type TopicUncheckedUpdateWithoutQuizInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    blockId?: StringFieldUpdateOperationsInput | string
+    examples?: TopicUpdateexamplesInput | string[]
   }
 
   export type BlockUpsertWithoutQuizzesInput = {
@@ -11558,6 +11796,34 @@ export namespace Prisma {
     create: XOR<BlockCreateWithoutTopicInput, BlockUncheckedCreateWithoutTopicInput>
   }
 
+  export type QuizCreateWithoutTopicInput = {
+    id?: string
+    question: string
+    correctAns: string
+    mistake?: string | null
+    options?: QuizCreateoptionsInput | string[]
+    block: BlockCreateNestedOneWithoutQuizzesInput
+  }
+
+  export type QuizUncheckedCreateWithoutTopicInput = {
+    id?: string
+    question: string
+    correctAns: string
+    mistake?: string | null
+    blockId: string
+    options?: QuizCreateoptionsInput | string[]
+  }
+
+  export type QuizCreateOrConnectWithoutTopicInput = {
+    where: QuizWhereUniqueInput
+    create: XOR<QuizCreateWithoutTopicInput, QuizUncheckedCreateWithoutTopicInput>
+  }
+
+  export type QuizCreateManyTopicInputEnvelope = {
+    data: QuizCreateManyTopicInput | QuizCreateManyTopicInput[]
+    skipDuplicates?: boolean
+  }
+
   export type BlockUpsertWithoutTopicInput = {
     update: XOR<BlockUpdateWithoutTopicInput, BlockUncheckedUpdateWithoutTopicInput>
     create: XOR<BlockCreateWithoutTopicInput, BlockUncheckedCreateWithoutTopicInput>
@@ -11593,6 +11859,22 @@ export namespace Prisma {
     FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
+  }
+
+  export type QuizUpsertWithWhereUniqueWithoutTopicInput = {
+    where: QuizWhereUniqueInput
+    update: XOR<QuizUpdateWithoutTopicInput, QuizUncheckedUpdateWithoutTopicInput>
+    create: XOR<QuizCreateWithoutTopicInput, QuizUncheckedCreateWithoutTopicInput>
+  }
+
+  export type QuizUpdateWithWhereUniqueWithoutTopicInput = {
+    where: QuizWhereUniqueInput
+    data: XOR<QuizUpdateWithoutTopicInput, QuizUncheckedUpdateWithoutTopicInput>
+  }
+
+  export type QuizUpdateManyWithWhereWithoutTopicInput = {
+    where: QuizScalarWhereInput
+    data: XOR<QuizUpdateManyMutationInput, QuizUncheckedUpdateManyWithoutTopicInput>
   }
 
   export type BlockCreateManyAuthorInput = {
@@ -11657,11 +11939,12 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake?: string | null
+    topicId?: string | null
     options?: QuizCreateoptionsInput | string[]
   }
 
   export type TopicCreateManyBlockInput = {
-    id: string
+    id?: string
     name: string
     examples?: TopicCreateexamplesInput | string[]
   }
@@ -11711,6 +11994,7 @@ export namespace Prisma {
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
     options?: QuizUpdateoptionsInput | string[]
+    topic?: TopicUpdateOneWithoutQuizNestedInput
   }
 
   export type QuizUncheckedUpdateWithoutBlockInput = {
@@ -11718,6 +12002,7 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
+    topicId?: NullableStringFieldUpdateOperationsInput | string | null
     options?: QuizUpdateoptionsInput | string[]
   }
 
@@ -11726,6 +12011,7 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
+    topicId?: NullableStringFieldUpdateOperationsInput | string | null
     options?: QuizUpdateoptionsInput | string[]
   }
 
@@ -11733,12 +12019,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     examples?: TopicUpdateexamplesInput | string[]
+    Quiz?: QuizUpdateManyWithoutTopicNestedInput
   }
 
   export type TopicUncheckedUpdateWithoutBlockInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     examples?: TopicUpdateexamplesInput | string[]
+    Quiz?: QuizUncheckedUpdateManyWithoutTopicNestedInput
   }
 
   export type TopicUncheckedUpdateManyWithoutBlockInput = {
@@ -11789,6 +12077,42 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type QuizCreateManyTopicInput = {
+    id?: string
+    question: string
+    correctAns: string
+    mistake?: string | null
+    blockId: string
+    options?: QuizCreateoptionsInput | string[]
+  }
+
+  export type QuizUpdateWithoutTopicInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    correctAns?: StringFieldUpdateOperationsInput | string
+    mistake?: NullableStringFieldUpdateOperationsInput | string | null
+    options?: QuizUpdateoptionsInput | string[]
+    block?: BlockUpdateOneRequiredWithoutQuizzesNestedInput
+  }
+
+  export type QuizUncheckedUpdateWithoutTopicInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    correctAns?: StringFieldUpdateOperationsInput | string
+    mistake?: NullableStringFieldUpdateOperationsInput | string | null
+    blockId?: StringFieldUpdateOperationsInput | string
+    options?: QuizUpdateoptionsInput | string[]
+  }
+
+  export type QuizUncheckedUpdateManyWithoutTopicInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    correctAns?: StringFieldUpdateOperationsInput | string
+    mistake?: NullableStringFieldUpdateOperationsInput | string | null
+    blockId?: StringFieldUpdateOperationsInput | string
+    options?: QuizUpdateoptionsInput | string[]
   }
 
 
