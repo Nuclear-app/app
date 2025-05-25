@@ -5,7 +5,9 @@ import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
+import type { Difficulty } from './types';
 import { Mode } from '@/lib/generated/prisma';
+
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -224,8 +226,6 @@ export async function signInWithGoogle() {
 
   return redirect(data.url);
 }
-
-export type Difficulty = Mode;
 
 export async function setMode(mode: Difficulty) {
   const supabase = await createClient();
