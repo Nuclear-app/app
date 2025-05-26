@@ -46,6 +46,7 @@ model Quiz {
   correctAns String
   mistake    String?
   blockId    String
+  used       Boolean  @default(false)
   options    String[]
   topicId    String?
   block      Block    @relation(fields: [blockId], references: [id])

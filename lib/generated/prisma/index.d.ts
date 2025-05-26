@@ -3933,6 +3933,7 @@ export namespace Prisma {
     correctAns: string | null
     mistake: string | null
     blockId: string | null
+    used: boolean | null
     topicId: string | null
   }
 
@@ -3942,6 +3943,7 @@ export namespace Prisma {
     correctAns: string | null
     mistake: string | null
     blockId: string | null
+    used: boolean | null
     topicId: string | null
   }
 
@@ -3951,6 +3953,7 @@ export namespace Prisma {
     correctAns: number
     mistake: number
     blockId: number
+    used: number
     options: number
     topicId: number
     _all: number
@@ -3963,6 +3966,7 @@ export namespace Prisma {
     correctAns?: true
     mistake?: true
     blockId?: true
+    used?: true
     topicId?: true
   }
 
@@ -3972,6 +3976,7 @@ export namespace Prisma {
     correctAns?: true
     mistake?: true
     blockId?: true
+    used?: true
     topicId?: true
   }
 
@@ -3981,6 +3986,7 @@ export namespace Prisma {
     correctAns?: true
     mistake?: true
     blockId?: true
+    used?: true
     options?: true
     topicId?: true
     _all?: true
@@ -4064,6 +4070,7 @@ export namespace Prisma {
     correctAns: string
     mistake: string | null
     blockId: string
+    used: boolean
     options: string[]
     topicId: string | null
     _count: QuizCountAggregateOutputType | null
@@ -4091,6 +4098,7 @@ export namespace Prisma {
     correctAns?: boolean
     mistake?: boolean
     blockId?: boolean
+    used?: boolean
     options?: boolean
     topicId?: boolean
     block?: boolean | BlockDefaultArgs<ExtArgs>
@@ -4103,6 +4111,7 @@ export namespace Prisma {
     correctAns?: boolean
     mistake?: boolean
     blockId?: boolean
+    used?: boolean
     options?: boolean
     topicId?: boolean
     block?: boolean | BlockDefaultArgs<ExtArgs>
@@ -4115,6 +4124,7 @@ export namespace Prisma {
     correctAns?: boolean
     mistake?: boolean
     blockId?: boolean
+    used?: boolean
     options?: boolean
     topicId?: boolean
     block?: boolean | BlockDefaultArgs<ExtArgs>
@@ -4127,11 +4137,12 @@ export namespace Prisma {
     correctAns?: boolean
     mistake?: boolean
     blockId?: boolean
+    used?: boolean
     options?: boolean
     topicId?: boolean
   }
 
-  export type QuizOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "question" | "correctAns" | "mistake" | "blockId" | "options" | "topicId", ExtArgs["result"]["quiz"]>
+  export type QuizOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "question" | "correctAns" | "mistake" | "blockId" | "used" | "options" | "topicId", ExtArgs["result"]["quiz"]>
   export type QuizInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     block?: boolean | BlockDefaultArgs<ExtArgs>
     topic?: boolean | Quiz$topicArgs<ExtArgs>
@@ -4157,6 +4168,7 @@ export namespace Prisma {
       correctAns: string
       mistake: string | null
       blockId: string
+      used: boolean
       options: string[]
       topicId: string | null
     }, ExtArgs["result"]["quiz"]>
@@ -4589,6 +4601,7 @@ export namespace Prisma {
     readonly correctAns: FieldRef<"Quiz", 'String'>
     readonly mistake: FieldRef<"Quiz", 'String'>
     readonly blockId: FieldRef<"Quiz", 'String'>
+    readonly used: FieldRef<"Quiz", 'Boolean'>
     readonly options: FieldRef<"Quiz", 'String[]'>
     readonly topicId: FieldRef<"Quiz", 'String'>
   }
@@ -9377,6 +9390,7 @@ export namespace Prisma {
     correctAns: 'correctAns',
     mistake: 'mistake',
     blockId: 'blockId',
+    used: 'used',
     options: 'options',
     topicId: 'topicId'
   };
@@ -9543,6 +9557,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -9705,6 +9726,7 @@ export namespace Prisma {
     correctAns?: StringFilter<"Quiz"> | string
     mistake?: StringNullableFilter<"Quiz"> | string | null
     blockId?: StringFilter<"Quiz"> | string
+    used?: BoolFilter<"Quiz"> | boolean
     options?: StringNullableListFilter<"Quiz">
     topicId?: StringNullableFilter<"Quiz"> | string | null
     block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
@@ -9717,6 +9739,7 @@ export namespace Prisma {
     correctAns?: SortOrder
     mistake?: SortOrderInput | SortOrder
     blockId?: SortOrder
+    used?: SortOrder
     options?: SortOrder
     topicId?: SortOrderInput | SortOrder
     block?: BlockOrderByWithRelationInput
@@ -9732,6 +9755,7 @@ export namespace Prisma {
     correctAns?: StringFilter<"Quiz"> | string
     mistake?: StringNullableFilter<"Quiz"> | string | null
     blockId?: StringFilter<"Quiz"> | string
+    used?: BoolFilter<"Quiz"> | boolean
     options?: StringNullableListFilter<"Quiz">
     topicId?: StringNullableFilter<"Quiz"> | string | null
     block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
@@ -9744,6 +9768,7 @@ export namespace Prisma {
     correctAns?: SortOrder
     mistake?: SortOrderInput | SortOrder
     blockId?: SortOrder
+    used?: SortOrder
     options?: SortOrder
     topicId?: SortOrderInput | SortOrder
     _count?: QuizCountOrderByAggregateInput
@@ -9760,6 +9785,7 @@ export namespace Prisma {
     correctAns?: StringWithAggregatesFilter<"Quiz"> | string
     mistake?: StringNullableWithAggregatesFilter<"Quiz"> | string | null
     blockId?: StringWithAggregatesFilter<"Quiz"> | string
+    used?: BoolWithAggregatesFilter<"Quiz"> | boolean
     options?: StringNullableListFilter<"Quiz">
     topicId?: StringNullableWithAggregatesFilter<"Quiz"> | string | null
   }
@@ -10132,6 +10158,7 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake?: string | null
+    used?: boolean
     options?: QuizCreateoptionsInput | string[]
     block: BlockCreateNestedOneWithoutQuizzesInput
     topic?: TopicCreateNestedOneWithoutQuizInput
@@ -10143,6 +10170,7 @@ export namespace Prisma {
     correctAns: string
     mistake?: string | null
     blockId: string
+    used?: boolean
     options?: QuizCreateoptionsInput | string[]
     topicId?: string | null
   }
@@ -10152,6 +10180,7 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
+    used?: BoolFieldUpdateOperationsInput | boolean
     options?: QuizUpdateoptionsInput | string[]
     block?: BlockUpdateOneRequiredWithoutQuizzesNestedInput
     topic?: TopicUpdateOneWithoutQuizNestedInput
@@ -10163,6 +10192,7 @@ export namespace Prisma {
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
     blockId?: StringFieldUpdateOperationsInput | string
+    used?: BoolFieldUpdateOperationsInput | boolean
     options?: QuizUpdateoptionsInput | string[]
     topicId?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -10173,6 +10203,7 @@ export namespace Prisma {
     correctAns: string
     mistake?: string | null
     blockId: string
+    used?: boolean
     options?: QuizCreateoptionsInput | string[]
     topicId?: string | null
   }
@@ -10182,6 +10213,7 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
+    used?: BoolFieldUpdateOperationsInput | boolean
     options?: QuizUpdateoptionsInput | string[]
   }
 
@@ -10191,6 +10223,7 @@ export namespace Prisma {
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
     blockId?: StringFieldUpdateOperationsInput | string
+    used?: BoolFieldUpdateOperationsInput | boolean
     options?: QuizUpdateoptionsInput | string[]
     topicId?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -10722,6 +10755,11 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type StringNullableListFilter<$PrismaModel = never> = {
     equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     has?: string | StringFieldRefInput<$PrismaModel> | null
@@ -10746,6 +10784,7 @@ export namespace Prisma {
     correctAns?: SortOrder
     mistake?: SortOrder
     blockId?: SortOrder
+    used?: SortOrder
     options?: SortOrder
     topicId?: SortOrder
   }
@@ -10756,6 +10795,7 @@ export namespace Prisma {
     correctAns?: SortOrder
     mistake?: SortOrder
     blockId?: SortOrder
+    used?: SortOrder
     topicId?: SortOrder
   }
 
@@ -10765,7 +10805,16 @@ export namespace Prisma {
     correctAns?: SortOrder
     mistake?: SortOrder
     blockId?: SortOrder
+    used?: SortOrder
     topicId?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type QuestionCountOrderByAggregateInput = {
@@ -11144,6 +11193,10 @@ export namespace Prisma {
     create?: XOR<TopicCreateWithoutQuizInput, TopicUncheckedCreateWithoutQuizInput>
     connectOrCreate?: TopicCreateOrConnectWithoutQuizInput
     connect?: TopicWhereUniqueInput
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type QuizUpdateoptionsInput = {
@@ -11538,6 +11591,19 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type BlockCreateWithoutAuthorInput = {
     id?: string
     createdAt?: Date | string
@@ -11699,6 +11765,7 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake?: string | null
+    used?: boolean
     options?: QuizCreateoptionsInput | string[]
     topic?: TopicCreateNestedOneWithoutQuizInput
   }
@@ -11708,6 +11775,7 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake?: string | null
+    used?: boolean
     options?: QuizCreateoptionsInput | string[]
     topicId?: string | null
   }
@@ -11878,6 +11946,7 @@ export namespace Prisma {
     correctAns?: StringFilter<"Quiz"> | string
     mistake?: StringNullableFilter<"Quiz"> | string | null
     blockId?: StringFilter<"Quiz"> | string
+    used?: BoolFilter<"Quiz"> | boolean
     options?: StringNullableListFilter<"Quiz">
     topicId?: StringNullableFilter<"Quiz"> | string | null
   }
@@ -12334,6 +12403,7 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake?: string | null
+    used?: boolean
     options?: QuizCreateoptionsInput | string[]
     block: BlockCreateNestedOneWithoutQuizzesInput
   }
@@ -12344,6 +12414,7 @@ export namespace Prisma {
     correctAns: string
     mistake?: string | null
     blockId: string
+    used?: boolean
     options?: QuizCreateoptionsInput | string[]
   }
 
@@ -12511,6 +12582,7 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake?: string | null
+    used?: boolean
     options?: QuizCreateoptionsInput | string[]
     topicId?: string | null
   }
@@ -12565,6 +12637,7 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
+    used?: BoolFieldUpdateOperationsInput | boolean
     options?: QuizUpdateoptionsInput | string[]
     topic?: TopicUpdateOneWithoutQuizNestedInput
   }
@@ -12574,6 +12647,7 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
+    used?: BoolFieldUpdateOperationsInput | boolean
     options?: QuizUpdateoptionsInput | string[]
     topicId?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -12583,6 +12657,7 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
+    used?: BoolFieldUpdateOperationsInput | boolean
     options?: QuizUpdateoptionsInput | string[]
     topicId?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -12693,6 +12768,7 @@ export namespace Prisma {
     correctAns: string
     mistake?: string | null
     blockId: string
+    used?: boolean
     options?: QuizCreateoptionsInput | string[]
   }
 
@@ -12701,6 +12777,7 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
+    used?: BoolFieldUpdateOperationsInput | boolean
     options?: QuizUpdateoptionsInput | string[]
     block?: BlockUpdateOneRequiredWithoutQuizzesNestedInput
   }
@@ -12711,6 +12788,7 @@ export namespace Prisma {
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
     blockId?: StringFieldUpdateOperationsInput | string
+    used?: BoolFieldUpdateOperationsInput | boolean
     options?: QuizUpdateoptionsInput | string[]
   }
 
@@ -12720,6 +12798,7 @@ export namespace Prisma {
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
     blockId?: StringFieldUpdateOperationsInput | string
+    used?: BoolFieldUpdateOperationsInput | boolean
     options?: QuizUpdateoptionsInput | string[]
   }
 
