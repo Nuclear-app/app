@@ -3,6 +3,12 @@ generator client {
   output   = "../lib/generated/prisma"
 }
 
+enum Mode {
+  EASY
+  MEDIUM
+  HARD
+}
+
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
@@ -13,6 +19,7 @@ model User {
   id    String  @id @default(uuid())
   email String  @unique
   name  String?
+  mode  Mode?
   posts Block[]
 }
 
@@ -24,6 +31,7 @@ model Block {
   folderId       String?
   note           Json?
   context        String?
+  points         Int?
   author         User             @relation(fields: [authorId], references: [id])
   folder         Folder?          @relation(fields: [folderId], references: [id])
   FillInTheBlank FillInTheBlank[]
@@ -38,8 +46,9 @@ model Quiz {
   correctAns String
   mistake    String?
   blockId    String
+  used       Boolean  @default(false)
   options    String[]
-  topicId    String?
+  topicId    String
   block      Block    @relation(fields: [blockId], references: [id])
   topic      Topic?   @relation(fields: [topicId], references: [id])
 }
