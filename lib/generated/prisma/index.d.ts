@@ -4072,7 +4072,7 @@ export namespace Prisma {
     blockId: string
     used: boolean
     options: string[]
-    topicId: string | null
+    topicId: string
     _count: QuizCountAggregateOutputType | null
     _min: QuizMinAggregateOutputType | null
     _max: QuizMaxAggregateOutputType | null
@@ -4170,7 +4170,7 @@ export namespace Prisma {
       blockId: string
       used: boolean
       options: string[]
-      topicId: string | null
+      topicId: string
     }, ExtArgs["result"]["quiz"]>
     composites: {}
   }
@@ -9728,7 +9728,7 @@ export namespace Prisma {
     blockId?: StringFilter<"Quiz"> | string
     used?: BoolFilter<"Quiz"> | boolean
     options?: StringNullableListFilter<"Quiz">
-    topicId?: StringNullableFilter<"Quiz"> | string | null
+    topicId?: StringFilter<"Quiz"> | string
     block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
     topic?: XOR<TopicNullableScalarRelationFilter, TopicWhereInput> | null
   }
@@ -9741,7 +9741,7 @@ export namespace Prisma {
     blockId?: SortOrder
     used?: SortOrder
     options?: SortOrder
-    topicId?: SortOrderInput | SortOrder
+    topicId?: SortOrder
     block?: BlockOrderByWithRelationInput
     topic?: TopicOrderByWithRelationInput
   }
@@ -9757,7 +9757,7 @@ export namespace Prisma {
     blockId?: StringFilter<"Quiz"> | string
     used?: BoolFilter<"Quiz"> | boolean
     options?: StringNullableListFilter<"Quiz">
-    topicId?: StringNullableFilter<"Quiz"> | string | null
+    topicId?: StringFilter<"Quiz"> | string
     block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
     topic?: XOR<TopicNullableScalarRelationFilter, TopicWhereInput> | null
   }, "id">
@@ -9770,7 +9770,7 @@ export namespace Prisma {
     blockId?: SortOrder
     used?: SortOrder
     options?: SortOrder
-    topicId?: SortOrderInput | SortOrder
+    topicId?: SortOrder
     _count?: QuizCountOrderByAggregateInput
     _max?: QuizMaxOrderByAggregateInput
     _min?: QuizMinOrderByAggregateInput
@@ -9787,7 +9787,7 @@ export namespace Prisma {
     blockId?: StringWithAggregatesFilter<"Quiz"> | string
     used?: BoolWithAggregatesFilter<"Quiz"> | boolean
     options?: StringNullableListFilter<"Quiz">
-    topicId?: StringNullableWithAggregatesFilter<"Quiz"> | string | null
+    topicId?: StringWithAggregatesFilter<"Quiz"> | string
   }
 
   export type QuestionWhereInput = {
@@ -10172,7 +10172,7 @@ export namespace Prisma {
     blockId: string
     used?: boolean
     options?: QuizCreateoptionsInput | string[]
-    topicId?: string | null
+    topicId: string
   }
 
   export type QuizUpdateInput = {
@@ -10194,7 +10194,7 @@ export namespace Prisma {
     blockId?: StringFieldUpdateOperationsInput | string
     used?: BoolFieldUpdateOperationsInput | boolean
     options?: QuizUpdateoptionsInput | string[]
-    topicId?: NullableStringFieldUpdateOperationsInput | string | null
+    topicId?: StringFieldUpdateOperationsInput | string
   }
 
   export type QuizCreateManyInput = {
@@ -10205,7 +10205,7 @@ export namespace Prisma {
     blockId: string
     used?: boolean
     options?: QuizCreateoptionsInput | string[]
-    topicId?: string | null
+    topicId: string
   }
 
   export type QuizUpdateManyMutationInput = {
@@ -10225,7 +10225,7 @@ export namespace Prisma {
     blockId?: StringFieldUpdateOperationsInput | string
     used?: BoolFieldUpdateOperationsInput | boolean
     options?: QuizUpdateoptionsInput | string[]
-    topicId?: NullableStringFieldUpdateOperationsInput | string | null
+    topicId?: StringFieldUpdateOperationsInput | string
   }
 
   export type QuestionCreateInput = {
@@ -11777,7 +11777,7 @@ export namespace Prisma {
     mistake?: string | null
     used?: boolean
     options?: QuizCreateoptionsInput | string[]
-    topicId?: string | null
+    topicId: string
   }
 
   export type QuizCreateOrConnectWithoutBlockInput = {
@@ -11948,7 +11948,7 @@ export namespace Prisma {
     blockId?: StringFilter<"Quiz"> | string
     used?: BoolFilter<"Quiz"> | boolean
     options?: StringNullableListFilter<"Quiz">
-    topicId?: StringNullableFilter<"Quiz"> | string | null
+    topicId?: StringFilter<"Quiz"> | string
   }
 
   export type TopicUpsertWithWhereUniqueWithoutBlockInput = {
@@ -12584,7 +12584,7 @@ export namespace Prisma {
     mistake?: string | null
     used?: boolean
     options?: QuizCreateoptionsInput | string[]
-    topicId?: string | null
+    topicId: string
   }
 
   export type TopicCreateManyBlockInput = {
@@ -12649,7 +12649,7 @@ export namespace Prisma {
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
     used?: BoolFieldUpdateOperationsInput | boolean
     options?: QuizUpdateoptionsInput | string[]
-    topicId?: NullableStringFieldUpdateOperationsInput | string | null
+    topicId?: StringFieldUpdateOperationsInput | string
   }
 
   export type QuizUncheckedUpdateManyWithoutBlockInput = {
@@ -12659,7 +12659,7 @@ export namespace Prisma {
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
     used?: BoolFieldUpdateOperationsInput | boolean
     options?: QuizUpdateoptionsInput | string[]
-    topicId?: NullableStringFieldUpdateOperationsInput | string | null
+    topicId?: StringFieldUpdateOperationsInput | string
   }
 
   export type TopicUpdateWithoutBlockInput = {
