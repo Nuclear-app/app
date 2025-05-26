@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 import sad from "@/public/quizJonas/sad.svg"
 import happy from "@/public/quizJonas/happy.svg"
+import neutral from "@/public/quizJonas/neutral.svg"
 
 interface QuizProps {
     blockId: string
@@ -75,7 +76,7 @@ export function Quiz({ blockId }: QuizProps) {
     }
 
     return (
-        <div className="h-screen p-4 grid grid-cols-3 gap-4 grid-rows-3">
+        <div className="h-5/6 p-4 grid grid-cols-3 gap-4 grid-rows-3">
             {/* Main content - takes 3 columns */}
             <div className="col-span-2 row-span-3 rounded-xl border-8 border-[#161616] bg-[#292929] p-4">
                 <div className="mb-4">
@@ -155,7 +156,7 @@ export function Quiz({ blockId }: QuizProps) {
                 )}
                 <div className="flex justify-end">
                     <Image 
-                        src={isCorrect ? happy : sad} 
+                        src={isCorrect ? happy : isCorrect === null ? neutral : sad} 
                         alt="Correct" 
                         className="w-3/4 h-3/4"
                     />
