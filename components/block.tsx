@@ -10,8 +10,24 @@ import {
  import { Zap, ScanSearch, Infinity, Upload, FishSymbol, Bone} from "lucide-react"
  import { BentoGrid, BentoCard } from "@/components/ui/bento-grid"
  import Flashcards from "@/public/flashcards.svg"
+import { fetchPoints } from "@/lib/blockFetch"
+import { useState, useEffect } from "react"
 
- export function Block() {
+
+interface BlockProps {
+    blockId: string;
+}
+
+ export function Block({ blockId }: BlockProps) {
+    const [points, setPoints] = useState<number>(0);
+    useEffect(() => {
+        const getPoints = async () => {
+            if (!blockId) return;
+            const pts = await fetchPoints(blockId);
+            setPoints(pts);
+        }
+        getPoints();
+    }, [blockId]);
     return (
        <BentoGrid className="gap-4 grid-cols-4 grid-rows-3">
           {/* <BentoCard
@@ -35,7 +51,7 @@ import {
             >
               <span className="relative z-10 text-black text-2xl font-bold flex items-center gap-2">
                 <Bone className="w-6 h-6" />
-                Points
+                {points}
               </span>
             </div>
           </div>
@@ -45,7 +61,7 @@ import {
              Icon={Zap}
              background={null}
              href="#"
-             cta="Let's Zap"
+             cta="->"
              className="col-span-1 row-span-1"
           />
           <BentoCard
@@ -54,7 +70,7 @@ import {
              Icon={FishSymbol}
              background={null}
              href="#"
-             cta="Quiz Yourself"
+             cta="->"
              className="col-span-1 row-span-1"
           />
           <BentoCard
@@ -63,7 +79,7 @@ import {
              Icon={Upload}
              background={null}
              href="#"
-             cta="Upload Files"
+             cta="->"
              className="col-span-1 row-span-1"
           />
           <BentoCard
@@ -72,7 +88,7 @@ import {
              Icon={Infinity}
              background={null}
              href="#"
-             cta="For all your question needs"
+             cta="->"
              className="col-span-1 row-span-1"
           />
           <BentoCard

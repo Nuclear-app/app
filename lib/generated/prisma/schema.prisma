@@ -3,6 +3,12 @@ generator client {
   output   = "../lib/generated/prisma"
 }
 
+enum Mode {
+  EASY
+  MEDIUM
+  HARD
+}
+
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
@@ -13,6 +19,7 @@ model User {
   id    String  @id @default(uuid())
   email String  @unique
   name  String?
+  mode  Mode?
   posts Block[]
 }
 
@@ -24,6 +31,7 @@ model Block {
   folderId       String?
   note           Json?
   context        String?
+  points         Int?
   author         User             @relation(fields: [authorId], references: [id])
   folder         Folder?          @relation(fields: [folderId], references: [id])
   FillInTheBlank FillInTheBlank[]
@@ -37,11 +45,11 @@ model Quiz {
   question   String
   correctAns String
   mistake    String?
-  topic      Topic?   @relation(fields: [topicId], references: [id])
-  topicId    String?
   blockId    String
   options    String[]
+  topicId    String?
   block      Block    @relation(fields: [blockId], references: [id])
+  topic      Topic?   @relation(fields: [topicId], references: [id])
 }
 
 model Question {
@@ -58,6 +66,9 @@ model Folder {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   blocks    Block[]
+  parentId  String?
+  parent    Folder?  @relation("FolderToFolder", fields: [parentId], references: [id])
+  children  Folder[] @relation("FolderToFolder")
 }
 
 model FillInTheBlank {
@@ -74,6 +85,6 @@ model Topic {
   name     String
   blockId  String
   examples String[]
-  Block    Block    @relation(fields: [blockId], references: [id])
   Quiz     Quiz[]
+  Block    Block    @relation(fields: [blockId], references: [id])
 }

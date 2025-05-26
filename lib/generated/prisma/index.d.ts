@@ -50,6 +50,24 @@ export type FillInTheBlank = $Result.DefaultSelection<Prisma.$FillInTheBlankPayl
 export type Topic = $Result.DefaultSelection<Prisma.$TopicPayload>
 
 /**
+ * Enums
+ */
+export namespace $Enums {
+  export const Mode: {
+  EASY: 'EASY',
+  MEDIUM: 'MEDIUM',
+  HARD: 'HARD'
+};
+
+export type Mode = (typeof Mode)[keyof typeof Mode]
+
+}
+
+export type Mode = $Enums.Mode
+
+export const Mode: typeof $Enums.Mode
+
+/**
  * ##  Prisma Client ʲˢ
  *
  * Type-safe database client for TypeScript & Node.js
@@ -1505,10 +1523,12 @@ export namespace Prisma {
 
   export type FolderCountOutputType = {
     blocks: number
+    children: number
   }
 
   export type FolderCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     blocks?: boolean | FolderCountOutputTypeCountBlocksArgs
+    children?: boolean | FolderCountOutputTypeCountChildrenArgs
   }
 
   // Custom InputTypes
@@ -1527,6 +1547,13 @@ export namespace Prisma {
    */
   export type FolderCountOutputTypeCountBlocksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: BlockWhereInput
+  }
+
+  /**
+   * FolderCountOutputType without action
+   */
+  export type FolderCountOutputTypeCountChildrenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FolderWhereInput
   }
 
 
@@ -1579,18 +1606,21 @@ export namespace Prisma {
     id: string | null
     email: string | null
     name: string | null
+    mode: $Enums.Mode | null
   }
 
   export type UserMaxAggregateOutputType = {
     id: string | null
     email: string | null
     name: string | null
+    mode: $Enums.Mode | null
   }
 
   export type UserCountAggregateOutputType = {
     id: number
     email: number
     name: number
+    mode: number
     _all: number
   }
 
@@ -1599,18 +1629,21 @@ export namespace Prisma {
     id?: true
     email?: true
     name?: true
+    mode?: true
   }
 
   export type UserMaxAggregateInputType = {
     id?: true
     email?: true
     name?: true
+    mode?: true
   }
 
   export type UserCountAggregateInputType = {
     id?: true
     email?: true
     name?: true
+    mode?: true
     _all?: true
   }
 
@@ -1690,6 +1723,7 @@ export namespace Prisma {
     id: string
     email: string
     name: string | null
+    mode: $Enums.Mode | null
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -1713,6 +1747,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     name?: boolean
+    mode?: boolean
     posts?: boolean | User$postsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -1721,21 +1756,24 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     name?: boolean
+    mode?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     email?: boolean
     name?: boolean
+    mode?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
     id?: boolean
     email?: boolean
     name?: boolean
+    mode?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "mode", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     posts?: boolean | User$postsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1752,6 +1790,7 @@ export namespace Prisma {
       id: string
       email: string
       name: string | null
+      mode: $Enums.Mode | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -2179,6 +2218,7 @@ export namespace Prisma {
     readonly id: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly name: FieldRef<"User", 'String'>
+    readonly mode: FieldRef<"User", 'Mode'>
   }
     
 
@@ -2615,8 +2655,18 @@ export namespace Prisma {
 
   export type AggregateBlock = {
     _count: BlockCountAggregateOutputType | null
+    _avg: BlockAvgAggregateOutputType | null
+    _sum: BlockSumAggregateOutputType | null
     _min: BlockMinAggregateOutputType | null
     _max: BlockMaxAggregateOutputType | null
+  }
+
+  export type BlockAvgAggregateOutputType = {
+    points: number | null
+  }
+
+  export type BlockSumAggregateOutputType = {
+    points: number | null
   }
 
   export type BlockMinAggregateOutputType = {
@@ -2626,6 +2676,7 @@ export namespace Prisma {
     authorId: string | null
     folderId: string | null
     context: string | null
+    points: number | null
   }
 
   export type BlockMaxAggregateOutputType = {
@@ -2635,6 +2686,7 @@ export namespace Prisma {
     authorId: string | null
     folderId: string | null
     context: string | null
+    points: number | null
   }
 
   export type BlockCountAggregateOutputType = {
@@ -2645,9 +2697,18 @@ export namespace Prisma {
     folderId: number
     note: number
     context: number
+    points: number
     _all: number
   }
 
+
+  export type BlockAvgAggregateInputType = {
+    points?: true
+  }
+
+  export type BlockSumAggregateInputType = {
+    points?: true
+  }
 
   export type BlockMinAggregateInputType = {
     id?: true
@@ -2656,6 +2717,7 @@ export namespace Prisma {
     authorId?: true
     folderId?: true
     context?: true
+    points?: true
   }
 
   export type BlockMaxAggregateInputType = {
@@ -2665,6 +2727,7 @@ export namespace Prisma {
     authorId?: true
     folderId?: true
     context?: true
+    points?: true
   }
 
   export type BlockCountAggregateInputType = {
@@ -2675,6 +2738,7 @@ export namespace Prisma {
     folderId?: true
     note?: true
     context?: true
+    points?: true
     _all?: true
   }
 
@@ -2716,6 +2780,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: BlockAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: BlockSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: BlockMinAggregateInputType
@@ -2746,6 +2822,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: BlockCountAggregateInputType | true
+    _avg?: BlockAvgAggregateInputType
+    _sum?: BlockSumAggregateInputType
     _min?: BlockMinAggregateInputType
     _max?: BlockMaxAggregateInputType
   }
@@ -2758,7 +2836,10 @@ export namespace Prisma {
     folderId: string | null
     note: JsonValue | null
     context: string | null
+    points: number | null
     _count: BlockCountAggregateOutputType | null
+    _avg: BlockAvgAggregateOutputType | null
+    _sum: BlockSumAggregateOutputType | null
     _min: BlockMinAggregateOutputType | null
     _max: BlockMaxAggregateOutputType | null
   }
@@ -2785,6 +2866,7 @@ export namespace Prisma {
     folderId?: boolean
     note?: boolean
     context?: boolean
+    points?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
     folder?: boolean | Block$folderArgs<ExtArgs>
     FillInTheBlank?: boolean | Block$FillInTheBlankArgs<ExtArgs>
@@ -2802,6 +2884,7 @@ export namespace Prisma {
     folderId?: boolean
     note?: boolean
     context?: boolean
+    points?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
     folder?: boolean | Block$folderArgs<ExtArgs>
   }, ExtArgs["result"]["block"]>
@@ -2814,6 +2897,7 @@ export namespace Prisma {
     folderId?: boolean
     note?: boolean
     context?: boolean
+    points?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
     folder?: boolean | Block$folderArgs<ExtArgs>
   }, ExtArgs["result"]["block"]>
@@ -2826,9 +2910,10 @@ export namespace Prisma {
     folderId?: boolean
     note?: boolean
     context?: boolean
+    points?: boolean
   }
 
-  export type BlockOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "title" | "authorId" | "folderId" | "note" | "context", ExtArgs["result"]["block"]>
+  export type BlockOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "title" | "authorId" | "folderId" | "note" | "context" | "points", ExtArgs["result"]["block"]>
   export type BlockInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
     folder?: boolean | Block$folderArgs<ExtArgs>
@@ -2865,6 +2950,7 @@ export namespace Prisma {
       folderId: string | null
       note: Prisma.JsonValue | null
       context: string | null
+      points: number | null
     }, ExtArgs["result"]["block"]>
     composites: {}
   }
@@ -3301,6 +3387,7 @@ export namespace Prisma {
     readonly folderId: FieldRef<"Block", 'String'>
     readonly note: FieldRef<"Block", 'Json'>
     readonly context: FieldRef<"Block", 'String'>
+    readonly points: FieldRef<"Block", 'Int'>
   }
     
 
@@ -3845,8 +3932,8 @@ export namespace Prisma {
     question: string | null
     correctAns: string | null
     mistake: string | null
-    topicId: string | null
     blockId: string | null
+    topicId: string | null
   }
 
   export type QuizMaxAggregateOutputType = {
@@ -3854,8 +3941,8 @@ export namespace Prisma {
     question: string | null
     correctAns: string | null
     mistake: string | null
-    topicId: string | null
     blockId: string | null
+    topicId: string | null
   }
 
   export type QuizCountAggregateOutputType = {
@@ -3863,9 +3950,9 @@ export namespace Prisma {
     question: number
     correctAns: number
     mistake: number
-    topicId: number
     blockId: number
     options: number
+    topicId: number
     _all: number
   }
 
@@ -3875,8 +3962,8 @@ export namespace Prisma {
     question?: true
     correctAns?: true
     mistake?: true
-    topicId?: true
     blockId?: true
+    topicId?: true
   }
 
   export type QuizMaxAggregateInputType = {
@@ -3884,8 +3971,8 @@ export namespace Prisma {
     question?: true
     correctAns?: true
     mistake?: true
-    topicId?: true
     blockId?: true
+    topicId?: true
   }
 
   export type QuizCountAggregateInputType = {
@@ -3893,9 +3980,9 @@ export namespace Prisma {
     question?: true
     correctAns?: true
     mistake?: true
-    topicId?: true
     blockId?: true
     options?: true
+    topicId?: true
     _all?: true
   }
 
@@ -3976,9 +4063,9 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake: string | null
-    topicId: string | null
     blockId: string
     options: string[]
+    topicId: string | null
     _count: QuizCountAggregateOutputType | null
     _min: QuizMinAggregateOutputType | null
     _max: QuizMaxAggregateOutputType | null
@@ -4003,11 +4090,11 @@ export namespace Prisma {
     question?: boolean
     correctAns?: boolean
     mistake?: boolean
-    topicId?: boolean
     blockId?: boolean
     options?: boolean
-    topic?: boolean | Quiz$topicArgs<ExtArgs>
+    topicId?: boolean
     block?: boolean | BlockDefaultArgs<ExtArgs>
+    topic?: boolean | Quiz$topicArgs<ExtArgs>
   }, ExtArgs["result"]["quiz"]>
 
   export type QuizSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4015,11 +4102,11 @@ export namespace Prisma {
     question?: boolean
     correctAns?: boolean
     mistake?: boolean
-    topicId?: boolean
     blockId?: boolean
     options?: boolean
-    topic?: boolean | Quiz$topicArgs<ExtArgs>
+    topicId?: boolean
     block?: boolean | BlockDefaultArgs<ExtArgs>
+    topic?: boolean | Quiz$topicArgs<ExtArgs>
   }, ExtArgs["result"]["quiz"]>
 
   export type QuizSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4027,11 +4114,11 @@ export namespace Prisma {
     question?: boolean
     correctAns?: boolean
     mistake?: boolean
-    topicId?: boolean
     blockId?: boolean
     options?: boolean
-    topic?: boolean | Quiz$topicArgs<ExtArgs>
+    topicId?: boolean
     block?: boolean | BlockDefaultArgs<ExtArgs>
+    topic?: boolean | Quiz$topicArgs<ExtArgs>
   }, ExtArgs["result"]["quiz"]>
 
   export type QuizSelectScalar = {
@@ -4039,39 +4126,39 @@ export namespace Prisma {
     question?: boolean
     correctAns?: boolean
     mistake?: boolean
-    topicId?: boolean
     blockId?: boolean
     options?: boolean
+    topicId?: boolean
   }
 
-  export type QuizOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "question" | "correctAns" | "mistake" | "topicId" | "blockId" | "options", ExtArgs["result"]["quiz"]>
+  export type QuizOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "question" | "correctAns" | "mistake" | "blockId" | "options" | "topicId", ExtArgs["result"]["quiz"]>
   export type QuizInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    topic?: boolean | Quiz$topicArgs<ExtArgs>
     block?: boolean | BlockDefaultArgs<ExtArgs>
+    topic?: boolean | Quiz$topicArgs<ExtArgs>
   }
   export type QuizIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    topic?: boolean | Quiz$topicArgs<ExtArgs>
     block?: boolean | BlockDefaultArgs<ExtArgs>
+    topic?: boolean | Quiz$topicArgs<ExtArgs>
   }
   export type QuizIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    topic?: boolean | Quiz$topicArgs<ExtArgs>
     block?: boolean | BlockDefaultArgs<ExtArgs>
+    topic?: boolean | Quiz$topicArgs<ExtArgs>
   }
 
   export type $QuizPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Quiz"
     objects: {
-      topic: Prisma.$TopicPayload<ExtArgs> | null
       block: Prisma.$BlockPayload<ExtArgs>
+      topic: Prisma.$TopicPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       question: string
       correctAns: string
       mistake: string | null
-      topicId: string | null
       blockId: string
       options: string[]
+      topicId: string | null
     }, ExtArgs["result"]["quiz"]>
     composites: {}
   }
@@ -4466,8 +4553,8 @@ export namespace Prisma {
    */
   export interface Prisma__QuizClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    topic<T extends Quiz$topicArgs<ExtArgs> = {}>(args?: Subset<T, Quiz$topicArgs<ExtArgs>>): Prisma__TopicClient<$Result.GetResult<Prisma.$TopicPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     block<T extends BlockDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BlockDefaultArgs<ExtArgs>>): Prisma__BlockClient<$Result.GetResult<Prisma.$BlockPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    topic<T extends Quiz$topicArgs<ExtArgs> = {}>(args?: Subset<T, Quiz$topicArgs<ExtArgs>>): Prisma__TopicClient<$Result.GetResult<Prisma.$TopicPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4501,9 +4588,9 @@ export namespace Prisma {
     readonly question: FieldRef<"Quiz", 'String'>
     readonly correctAns: FieldRef<"Quiz", 'String'>
     readonly mistake: FieldRef<"Quiz", 'String'>
-    readonly topicId: FieldRef<"Quiz", 'String'>
     readonly blockId: FieldRef<"Quiz", 'String'>
     readonly options: FieldRef<"Quiz", 'String[]'>
+    readonly topicId: FieldRef<"Quiz", 'String'>
   }
     
 
@@ -5997,6 +6084,7 @@ export namespace Prisma {
     name: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    parentId: string | null
   }
 
   export type FolderMaxAggregateOutputType = {
@@ -6004,6 +6092,7 @@ export namespace Prisma {
     name: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    parentId: string | null
   }
 
   export type FolderCountAggregateOutputType = {
@@ -6011,6 +6100,7 @@ export namespace Prisma {
     name: number
     createdAt: number
     updatedAt: number
+    parentId: number
     _all: number
   }
 
@@ -6020,6 +6110,7 @@ export namespace Prisma {
     name?: true
     createdAt?: true
     updatedAt?: true
+    parentId?: true
   }
 
   export type FolderMaxAggregateInputType = {
@@ -6027,6 +6118,7 @@ export namespace Prisma {
     name?: true
     createdAt?: true
     updatedAt?: true
+    parentId?: true
   }
 
   export type FolderCountAggregateInputType = {
@@ -6034,6 +6126,7 @@ export namespace Prisma {
     name?: true
     createdAt?: true
     updatedAt?: true
+    parentId?: true
     _all?: true
   }
 
@@ -6114,6 +6207,7 @@ export namespace Prisma {
     name: string
     createdAt: Date
     updatedAt: Date
+    parentId: string | null
     _count: FolderCountAggregateOutputType | null
     _min: FolderMinAggregateOutputType | null
     _max: FolderMaxAggregateOutputType | null
@@ -6138,7 +6232,10 @@ export namespace Prisma {
     name?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    parentId?: boolean
     blocks?: boolean | Folder$blocksArgs<ExtArgs>
+    parent?: boolean | Folder$parentArgs<ExtArgs>
+    children?: boolean | Folder$childrenArgs<ExtArgs>
     _count?: boolean | FolderCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["folder"]>
 
@@ -6147,6 +6244,8 @@ export namespace Prisma {
     name?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    parentId?: boolean
+    parent?: boolean | Folder$parentArgs<ExtArgs>
   }, ExtArgs["result"]["folder"]>
 
   export type FolderSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6154,6 +6253,8 @@ export namespace Prisma {
     name?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    parentId?: boolean
+    parent?: boolean | Folder$parentArgs<ExtArgs>
   }, ExtArgs["result"]["folder"]>
 
   export type FolderSelectScalar = {
@@ -6161,26 +6262,36 @@ export namespace Prisma {
     name?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    parentId?: boolean
   }
 
-  export type FolderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt", ExtArgs["result"]["folder"]>
+  export type FolderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "parentId", ExtArgs["result"]["folder"]>
   export type FolderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     blocks?: boolean | Folder$blocksArgs<ExtArgs>
+    parent?: boolean | Folder$parentArgs<ExtArgs>
+    children?: boolean | Folder$childrenArgs<ExtArgs>
     _count?: boolean | FolderCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type FolderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type FolderIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type FolderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    parent?: boolean | Folder$parentArgs<ExtArgs>
+  }
+  export type FolderIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    parent?: boolean | Folder$parentArgs<ExtArgs>
+  }
 
   export type $FolderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Folder"
     objects: {
       blocks: Prisma.$BlockPayload<ExtArgs>[]
+      parent: Prisma.$FolderPayload<ExtArgs> | null
+      children: Prisma.$FolderPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
       createdAt: Date
       updatedAt: Date
+      parentId: string | null
     }, ExtArgs["result"]["folder"]>
     composites: {}
   }
@@ -6576,6 +6687,8 @@ export namespace Prisma {
   export interface Prisma__FolderClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     blocks<T extends Folder$blocksArgs<ExtArgs> = {}>(args?: Subset<T, Folder$blocksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BlockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    parent<T extends Folder$parentArgs<ExtArgs> = {}>(args?: Subset<T, Folder$parentArgs<ExtArgs>>): Prisma__FolderClient<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    children<T extends Folder$childrenArgs<ExtArgs> = {}>(args?: Subset<T, Folder$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6609,6 +6722,7 @@ export namespace Prisma {
     readonly name: FieldRef<"Folder", 'String'>
     readonly createdAt: FieldRef<"Folder", 'DateTime'>
     readonly updatedAt: FieldRef<"Folder", 'DateTime'>
+    readonly parentId: FieldRef<"Folder", 'String'>
   }
     
 
@@ -6858,6 +6972,10 @@ export namespace Prisma {
      */
     data: FolderCreateManyInput | FolderCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -6928,6 +7046,10 @@ export namespace Prisma {
      * Limit how many Folders to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -7018,6 +7140,49 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: BlockScalarFieldEnum | BlockScalarFieldEnum[]
+  }
+
+  /**
+   * Folder.parent
+   */
+  export type Folder$parentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
+    where?: FolderWhereInput
+  }
+
+  /**
+   * Folder.children
+   */
+  export type Folder$childrenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
+    where?: FolderWhereInput
+    orderBy?: FolderOrderByWithRelationInput | FolderOrderByWithRelationInput[]
+    cursor?: FolderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FolderScalarFieldEnum | FolderScalarFieldEnum[]
   }
 
   /**
@@ -8249,8 +8414,8 @@ export namespace Prisma {
     name?: boolean
     blockId?: boolean
     examples?: boolean
-    Block?: boolean | BlockDefaultArgs<ExtArgs>
     Quiz?: boolean | Topic$QuizArgs<ExtArgs>
+    Block?: boolean | BlockDefaultArgs<ExtArgs>
     _count?: boolean | TopicCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["topic"]>
 
@@ -8279,8 +8444,8 @@ export namespace Prisma {
 
   export type TopicOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "blockId" | "examples", ExtArgs["result"]["topic"]>
   export type TopicInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    Block?: boolean | BlockDefaultArgs<ExtArgs>
     Quiz?: boolean | Topic$QuizArgs<ExtArgs>
+    Block?: boolean | BlockDefaultArgs<ExtArgs>
     _count?: boolean | TopicCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TopicIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8293,8 +8458,8 @@ export namespace Prisma {
   export type $TopicPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Topic"
     objects: {
-      Block: Prisma.$BlockPayload<ExtArgs>
       Quiz: Prisma.$QuizPayload<ExtArgs>[]
+      Block: Prisma.$BlockPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -8695,8 +8860,8 @@ export namespace Prisma {
    */
   export interface Prisma__TopicClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    Block<T extends BlockDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BlockDefaultArgs<ExtArgs>>): Prisma__BlockClient<$Result.GetResult<Prisma.$BlockPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     Quiz<T extends Topic$QuizArgs<ExtArgs> = {}>(args?: Subset<T, Topic$QuizArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuizPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    Block<T extends BlockDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BlockDefaultArgs<ExtArgs>>): Prisma__BlockClient<$Result.GetResult<Prisma.$BlockPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9185,7 +9350,8 @@ export namespace Prisma {
   export const UserScalarFieldEnum: {
     id: 'id',
     email: 'email',
-    name: 'name'
+    name: 'name',
+    mode: 'mode'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -9198,7 +9364,8 @@ export namespace Prisma {
     authorId: 'authorId',
     folderId: 'folderId',
     note: 'note',
-    context: 'context'
+    context: 'context',
+    points: 'points'
   };
 
   export type BlockScalarFieldEnum = (typeof BlockScalarFieldEnum)[keyof typeof BlockScalarFieldEnum]
@@ -9209,9 +9376,9 @@ export namespace Prisma {
     question: 'question',
     correctAns: 'correctAns',
     mistake: 'mistake',
-    topicId: 'topicId',
     blockId: 'blockId',
-    options: 'options'
+    options: 'options',
+    topicId: 'topicId'
   };
 
   export type QuizScalarFieldEnum = (typeof QuizScalarFieldEnum)[keyof typeof QuizScalarFieldEnum]
@@ -9231,7 +9398,8 @@ export namespace Prisma {
     id: 'id',
     name: 'name',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    parentId: 'parentId'
   };
 
   export type FolderScalarFieldEnum = (typeof FolderScalarFieldEnum)[keyof typeof FolderScalarFieldEnum]
@@ -9319,6 +9487,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Mode'
+   */
+  export type EnumModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Mode'>
+    
+
+
+  /**
+   * Reference to a field of type 'Mode[]'
+   */
+  export type ListEnumModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Mode[]'>
+    
+
+
+  /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -9358,6 +9540,20 @@ export namespace Prisma {
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
   /**
    * Deep Input Types
    */
@@ -9370,6 +9566,7 @@ export namespace Prisma {
     id?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
     name?: StringNullableFilter<"User"> | string | null
+    mode?: EnumModeNullableFilter<"User"> | $Enums.Mode | null
     posts?: BlockListRelationFilter
   }
 
@@ -9377,6 +9574,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrderInput | SortOrder
+    mode?: SortOrderInput | SortOrder
     posts?: BlockOrderByRelationAggregateInput
   }
 
@@ -9387,6 +9585,7 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     name?: StringNullableFilter<"User"> | string | null
+    mode?: EnumModeNullableFilter<"User"> | $Enums.Mode | null
     posts?: BlockListRelationFilter
   }, "id" | "email">
 
@@ -9394,6 +9593,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrderInput | SortOrder
+    mode?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -9406,6 +9606,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
     name?: StringNullableWithAggregatesFilter<"User"> | string | null
+    mode?: EnumModeNullableWithAggregatesFilter<"User"> | $Enums.Mode | null
   }
 
   export type BlockWhereInput = {
@@ -9419,6 +9620,7 @@ export namespace Prisma {
     folderId?: StringNullableFilter<"Block"> | string | null
     note?: JsonNullableFilter<"Block">
     context?: StringNullableFilter<"Block"> | string | null
+    points?: IntNullableFilter<"Block"> | number | null
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
     folder?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
     FillInTheBlank?: FillInTheBlankListRelationFilter
@@ -9435,6 +9637,7 @@ export namespace Prisma {
     folderId?: SortOrderInput | SortOrder
     note?: SortOrderInput | SortOrder
     context?: SortOrderInput | SortOrder
+    points?: SortOrderInput | SortOrder
     author?: UserOrderByWithRelationInput
     folder?: FolderOrderByWithRelationInput
     FillInTheBlank?: FillInTheBlankOrderByRelationAggregateInput
@@ -9454,6 +9657,7 @@ export namespace Prisma {
     folderId?: StringNullableFilter<"Block"> | string | null
     note?: JsonNullableFilter<"Block">
     context?: StringNullableFilter<"Block"> | string | null
+    points?: IntNullableFilter<"Block"> | number | null
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
     folder?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
     FillInTheBlank?: FillInTheBlankListRelationFilter
@@ -9470,9 +9674,12 @@ export namespace Prisma {
     folderId?: SortOrderInput | SortOrder
     note?: SortOrderInput | SortOrder
     context?: SortOrderInput | SortOrder
+    points?: SortOrderInput | SortOrder
     _count?: BlockCountOrderByAggregateInput
+    _avg?: BlockAvgOrderByAggregateInput
     _max?: BlockMaxOrderByAggregateInput
     _min?: BlockMinOrderByAggregateInput
+    _sum?: BlockSumOrderByAggregateInput
   }
 
   export type BlockScalarWhereWithAggregatesInput = {
@@ -9486,6 +9693,7 @@ export namespace Prisma {
     folderId?: StringNullableWithAggregatesFilter<"Block"> | string | null
     note?: JsonNullableWithAggregatesFilter<"Block">
     context?: StringNullableWithAggregatesFilter<"Block"> | string | null
+    points?: IntNullableWithAggregatesFilter<"Block"> | number | null
   }
 
   export type QuizWhereInput = {
@@ -9496,11 +9704,11 @@ export namespace Prisma {
     question?: StringFilter<"Quiz"> | string
     correctAns?: StringFilter<"Quiz"> | string
     mistake?: StringNullableFilter<"Quiz"> | string | null
-    topicId?: StringNullableFilter<"Quiz"> | string | null
     blockId?: StringFilter<"Quiz"> | string
     options?: StringNullableListFilter<"Quiz">
-    topic?: XOR<TopicNullableScalarRelationFilter, TopicWhereInput> | null
+    topicId?: StringNullableFilter<"Quiz"> | string | null
     block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
+    topic?: XOR<TopicNullableScalarRelationFilter, TopicWhereInput> | null
   }
 
   export type QuizOrderByWithRelationInput = {
@@ -9508,11 +9716,11 @@ export namespace Prisma {
     question?: SortOrder
     correctAns?: SortOrder
     mistake?: SortOrderInput | SortOrder
-    topicId?: SortOrderInput | SortOrder
     blockId?: SortOrder
     options?: SortOrder
-    topic?: TopicOrderByWithRelationInput
+    topicId?: SortOrderInput | SortOrder
     block?: BlockOrderByWithRelationInput
+    topic?: TopicOrderByWithRelationInput
   }
 
   export type QuizWhereUniqueInput = Prisma.AtLeast<{
@@ -9523,11 +9731,11 @@ export namespace Prisma {
     question?: StringFilter<"Quiz"> | string
     correctAns?: StringFilter<"Quiz"> | string
     mistake?: StringNullableFilter<"Quiz"> | string | null
-    topicId?: StringNullableFilter<"Quiz"> | string | null
     blockId?: StringFilter<"Quiz"> | string
     options?: StringNullableListFilter<"Quiz">
-    topic?: XOR<TopicNullableScalarRelationFilter, TopicWhereInput> | null
+    topicId?: StringNullableFilter<"Quiz"> | string | null
     block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
+    topic?: XOR<TopicNullableScalarRelationFilter, TopicWhereInput> | null
   }, "id">
 
   export type QuizOrderByWithAggregationInput = {
@@ -9535,9 +9743,9 @@ export namespace Prisma {
     question?: SortOrder
     correctAns?: SortOrder
     mistake?: SortOrderInput | SortOrder
-    topicId?: SortOrderInput | SortOrder
     blockId?: SortOrder
     options?: SortOrder
+    topicId?: SortOrderInput | SortOrder
     _count?: QuizCountOrderByAggregateInput
     _max?: QuizMaxOrderByAggregateInput
     _min?: QuizMinOrderByAggregateInput
@@ -9551,9 +9759,9 @@ export namespace Prisma {
     question?: StringWithAggregatesFilter<"Quiz"> | string
     correctAns?: StringWithAggregatesFilter<"Quiz"> | string
     mistake?: StringNullableWithAggregatesFilter<"Quiz"> | string | null
-    topicId?: StringNullableWithAggregatesFilter<"Quiz"> | string | null
     blockId?: StringWithAggregatesFilter<"Quiz"> | string
     options?: StringNullableListFilter<"Quiz">
+    topicId?: StringNullableWithAggregatesFilter<"Quiz"> | string | null
   }
 
   export type QuestionWhereInput = {
@@ -9614,7 +9822,10 @@ export namespace Prisma {
     name?: StringFilter<"Folder"> | string
     createdAt?: DateTimeFilter<"Folder"> | Date | string
     updatedAt?: DateTimeFilter<"Folder"> | Date | string
+    parentId?: StringNullableFilter<"Folder"> | string | null
     blocks?: BlockListRelationFilter
+    parent?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
+    children?: FolderListRelationFilter
   }
 
   export type FolderOrderByWithRelationInput = {
@@ -9622,7 +9833,10 @@ export namespace Prisma {
     name?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    parentId?: SortOrderInput | SortOrder
     blocks?: BlockOrderByRelationAggregateInput
+    parent?: FolderOrderByWithRelationInput
+    children?: FolderOrderByRelationAggregateInput
   }
 
   export type FolderWhereUniqueInput = Prisma.AtLeast<{
@@ -9633,7 +9847,10 @@ export namespace Prisma {
     name?: StringFilter<"Folder"> | string
     createdAt?: DateTimeFilter<"Folder"> | Date | string
     updatedAt?: DateTimeFilter<"Folder"> | Date | string
+    parentId?: StringNullableFilter<"Folder"> | string | null
     blocks?: BlockListRelationFilter
+    parent?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
+    children?: FolderListRelationFilter
   }, "id">
 
   export type FolderOrderByWithAggregationInput = {
@@ -9641,6 +9858,7 @@ export namespace Prisma {
     name?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    parentId?: SortOrderInput | SortOrder
     _count?: FolderCountOrderByAggregateInput
     _max?: FolderMaxOrderByAggregateInput
     _min?: FolderMinOrderByAggregateInput
@@ -9654,6 +9872,7 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"Folder"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Folder"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Folder"> | Date | string
+    parentId?: StringNullableWithAggregatesFilter<"Folder"> | string | null
   }
 
   export type FillInTheBlankWhereInput = {
@@ -9719,8 +9938,8 @@ export namespace Prisma {
     name?: StringFilter<"Topic"> | string
     blockId?: StringFilter<"Topic"> | string
     examples?: StringNullableListFilter<"Topic">
-    Block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
     Quiz?: QuizListRelationFilter
+    Block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
   }
 
   export type TopicOrderByWithRelationInput = {
@@ -9728,8 +9947,8 @@ export namespace Prisma {
     name?: SortOrder
     blockId?: SortOrder
     examples?: SortOrder
-    Block?: BlockOrderByWithRelationInput
     Quiz?: QuizOrderByRelationAggregateInput
+    Block?: BlockOrderByWithRelationInput
   }
 
   export type TopicWhereUniqueInput = Prisma.AtLeast<{
@@ -9740,8 +9959,8 @@ export namespace Prisma {
     name?: StringFilter<"Topic"> | string
     blockId?: StringFilter<"Topic"> | string
     examples?: StringNullableListFilter<"Topic">
-    Block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
     Quiz?: QuizListRelationFilter
+    Block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
   }, "id">
 
   export type TopicOrderByWithAggregationInput = {
@@ -9768,6 +9987,7 @@ export namespace Prisma {
     id?: string
     email: string
     name?: string | null
+    mode?: $Enums.Mode | null
     posts?: BlockCreateNestedManyWithoutAuthorInput
   }
 
@@ -9775,6 +9995,7 @@ export namespace Prisma {
     id?: string
     email: string
     name?: string | null
+    mode?: $Enums.Mode | null
     posts?: BlockUncheckedCreateNestedManyWithoutAuthorInput
   }
 
@@ -9782,6 +10003,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
     posts?: BlockUpdateManyWithoutAuthorNestedInput
   }
 
@@ -9789,6 +10011,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
     posts?: BlockUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
@@ -9796,18 +10019,21 @@ export namespace Prisma {
     id?: string
     email: string
     name?: string | null
+    mode?: $Enums.Mode | null
   }
 
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
   }
 
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
   }
 
   export type BlockCreateInput = {
@@ -9816,6 +10042,7 @@ export namespace Prisma {
     title: string
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: string | null
+    points?: number | null
     author: UserCreateNestedOneWithoutPostsInput
     folder?: FolderCreateNestedOneWithoutBlocksInput
     FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
@@ -9832,6 +10059,7 @@ export namespace Prisma {
     folderId?: string | null
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: string | null
+    points?: number | null
     FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
@@ -9844,6 +10072,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     folder?: FolderUpdateOneWithoutBlocksNestedInput
     FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
@@ -9860,6 +10089,7 @@ export namespace Prisma {
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
     FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
@@ -9874,6 +10104,7 @@ export namespace Prisma {
     folderId?: string | null
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: string | null
+    points?: number | null
   }
 
   export type BlockUpdateManyMutationInput = {
@@ -9882,6 +10113,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type BlockUncheckedUpdateManyInput = {
@@ -9892,6 +10124,7 @@ export namespace Prisma {
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type QuizCreateInput = {
@@ -9900,8 +10133,8 @@ export namespace Prisma {
     correctAns: string
     mistake?: string | null
     options?: QuizCreateoptionsInput | string[]
-    topic?: TopicCreateNestedOneWithoutQuizInput
     block: BlockCreateNestedOneWithoutQuizzesInput
+    topic?: TopicCreateNestedOneWithoutQuizInput
   }
 
   export type QuizUncheckedCreateInput = {
@@ -9909,9 +10142,9 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake?: string | null
-    topicId?: string | null
     blockId: string
     options?: QuizCreateoptionsInput | string[]
+    topicId?: string | null
   }
 
   export type QuizUpdateInput = {
@@ -9920,8 +10153,8 @@ export namespace Prisma {
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
     options?: QuizUpdateoptionsInput | string[]
-    topic?: TopicUpdateOneWithoutQuizNestedInput
     block?: BlockUpdateOneRequiredWithoutQuizzesNestedInput
+    topic?: TopicUpdateOneWithoutQuizNestedInput
   }
 
   export type QuizUncheckedUpdateInput = {
@@ -9929,9 +10162,9 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
-    topicId?: NullableStringFieldUpdateOperationsInput | string | null
     blockId?: StringFieldUpdateOperationsInput | string
     options?: QuizUpdateoptionsInput | string[]
+    topicId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type QuizCreateManyInput = {
@@ -9939,9 +10172,9 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake?: string | null
-    topicId?: string | null
     blockId: string
     options?: QuizCreateoptionsInput | string[]
+    topicId?: string | null
   }
 
   export type QuizUpdateManyMutationInput = {
@@ -9957,9 +10190,9 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
-    topicId?: NullableStringFieldUpdateOperationsInput | string | null
     blockId?: StringFieldUpdateOperationsInput | string
     options?: QuizUpdateoptionsInput | string[]
+    topicId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type QuestionCreateInput = {
@@ -10016,6 +10249,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     blocks?: BlockCreateNestedManyWithoutFolderInput
+    parent?: FolderCreateNestedOneWithoutChildrenInput
+    children?: FolderCreateNestedManyWithoutParentInput
   }
 
   export type FolderUncheckedCreateInput = {
@@ -10023,7 +10258,9 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    parentId?: string | null
     blocks?: BlockUncheckedCreateNestedManyWithoutFolderInput
+    children?: FolderUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type FolderUpdateInput = {
@@ -10032,6 +10269,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     blocks?: BlockUpdateManyWithoutFolderNestedInput
+    parent?: FolderUpdateOneWithoutChildrenNestedInput
+    children?: FolderUpdateManyWithoutParentNestedInput
   }
 
   export type FolderUncheckedUpdateInput = {
@@ -10039,7 +10278,9 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
     blocks?: BlockUncheckedUpdateManyWithoutFolderNestedInput
+    children?: FolderUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type FolderCreateManyInput = {
@@ -10047,6 +10288,7 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    parentId?: string | null
   }
 
   export type FolderUpdateManyMutationInput = {
@@ -10061,6 +10303,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type FillInTheBlankCreateInput = {
@@ -10122,8 +10365,8 @@ export namespace Prisma {
     id?: string
     name: string
     examples?: TopicCreateexamplesInput | string[]
-    Block: BlockCreateNestedOneWithoutTopicInput
     Quiz?: QuizCreateNestedManyWithoutTopicInput
+    Block: BlockCreateNestedOneWithoutTopicInput
   }
 
   export type TopicUncheckedCreateInput = {
@@ -10138,8 +10381,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     examples?: TopicUpdateexamplesInput | string[]
-    Block?: BlockUpdateOneRequiredWithoutTopicNestedInput
     Quiz?: QuizUpdateManyWithoutTopicNestedInput
+    Block?: BlockUpdateOneRequiredWithoutTopicNestedInput
   }
 
   export type TopicUncheckedUpdateInput = {
@@ -10200,6 +10443,13 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type EnumModeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.Mode | EnumModeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Mode[] | ListEnumModeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Mode[] | ListEnumModeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumModeNullableFilter<$PrismaModel> | $Enums.Mode | null
+  }
+
   export type BlockListRelationFilter = {
     every?: BlockWhereInput
     some?: BlockWhereInput
@@ -10219,18 +10469,21 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrder
+    mode?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrder
+    mode?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrder
+    mode?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -10269,6 +10522,16 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type EnumModeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Mode | EnumModeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Mode[] | ListEnumModeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Mode[] | ListEnumModeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumModeNullableWithAggregatesFilter<$PrismaModel> | $Enums.Mode | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumModeNullableFilter<$PrismaModel>
+    _max?: NestedEnumModeNullableFilter<$PrismaModel>
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -10301,6 +10564,17 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type UserScalarRelationFilter = {
@@ -10361,6 +10635,11 @@ export namespace Prisma {
     folderId?: SortOrder
     note?: SortOrder
     context?: SortOrder
+    points?: SortOrder
+  }
+
+  export type BlockAvgOrderByAggregateInput = {
+    points?: SortOrder
   }
 
   export type BlockMaxOrderByAggregateInput = {
@@ -10370,6 +10649,7 @@ export namespace Prisma {
     authorId?: SortOrder
     folderId?: SortOrder
     context?: SortOrder
+    points?: SortOrder
   }
 
   export type BlockMinOrderByAggregateInput = {
@@ -10379,6 +10659,11 @@ export namespace Prisma {
     authorId?: SortOrder
     folderId?: SortOrder
     context?: SortOrder
+    points?: SortOrder
+  }
+
+  export type BlockSumOrderByAggregateInput = {
+    points?: SortOrder
   }
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -10421,6 +10706,22 @@ export namespace Prisma {
     _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
   export type StringNullableListFilter<$PrismaModel = never> = {
     equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     has?: string | StringFieldRefInput<$PrismaModel> | null
@@ -10429,14 +10730,14 @@ export namespace Prisma {
     isEmpty?: boolean
   }
 
-  export type TopicNullableScalarRelationFilter = {
-    is?: TopicWhereInput | null
-    isNot?: TopicWhereInput | null
-  }
-
   export type BlockScalarRelationFilter = {
     is?: BlockWhereInput
     isNot?: BlockWhereInput
+  }
+
+  export type TopicNullableScalarRelationFilter = {
+    is?: TopicWhereInput | null
+    isNot?: TopicWhereInput | null
   }
 
   export type QuizCountOrderByAggregateInput = {
@@ -10444,9 +10745,9 @@ export namespace Prisma {
     question?: SortOrder
     correctAns?: SortOrder
     mistake?: SortOrder
-    topicId?: SortOrder
     blockId?: SortOrder
     options?: SortOrder
+    topicId?: SortOrder
   }
 
   export type QuizMaxOrderByAggregateInput = {
@@ -10454,8 +10755,8 @@ export namespace Prisma {
     question?: SortOrder
     correctAns?: SortOrder
     mistake?: SortOrder
-    topicId?: SortOrder
     blockId?: SortOrder
+    topicId?: SortOrder
   }
 
   export type QuizMinOrderByAggregateInput = {
@@ -10463,8 +10764,8 @@ export namespace Prisma {
     question?: SortOrder
     correctAns?: SortOrder
     mistake?: SortOrder
-    topicId?: SortOrder
     blockId?: SortOrder
+    topicId?: SortOrder
   }
 
   export type QuestionCountOrderByAggregateInput = {
@@ -10488,11 +10789,22 @@ export namespace Prisma {
     blockId?: SortOrder
   }
 
+  export type FolderListRelationFilter = {
+    every?: FolderWhereInput
+    some?: FolderWhereInput
+    none?: FolderWhereInput
+  }
+
+  export type FolderOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type FolderCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    parentId?: SortOrder
   }
 
   export type FolderMaxOrderByAggregateInput = {
@@ -10500,6 +10812,7 @@ export namespace Prisma {
     name?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    parentId?: SortOrder
   }
 
   export type FolderMinOrderByAggregateInput = {
@@ -10507,6 +10820,7 @@ export namespace Prisma {
     name?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    parentId?: SortOrder
   }
 
   export type FillInTheBlankCountOrderByAggregateInput = {
@@ -10572,6 +10886,10 @@ export namespace Prisma {
 
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
+  }
+
+  export type NullableEnumModeFieldUpdateOperationsInput = {
+    set?: $Enums.Mode | null
   }
 
   export type BlockUpdateManyWithoutAuthorNestedInput = {
@@ -10672,6 +10990,14 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type UserUpdateOneRequiredWithoutPostsNestedInput = {
@@ -10808,21 +11134,29 @@ export namespace Prisma {
     set: string[]
   }
 
-  export type TopicCreateNestedOneWithoutQuizInput = {
-    create?: XOR<TopicCreateWithoutQuizInput, TopicUncheckedCreateWithoutQuizInput>
-    connectOrCreate?: TopicCreateOrConnectWithoutQuizInput
-    connect?: TopicWhereUniqueInput
-  }
-
   export type BlockCreateNestedOneWithoutQuizzesInput = {
     create?: XOR<BlockCreateWithoutQuizzesInput, BlockUncheckedCreateWithoutQuizzesInput>
     connectOrCreate?: BlockCreateOrConnectWithoutQuizzesInput
     connect?: BlockWhereUniqueInput
   }
 
+  export type TopicCreateNestedOneWithoutQuizInput = {
+    create?: XOR<TopicCreateWithoutQuizInput, TopicUncheckedCreateWithoutQuizInput>
+    connectOrCreate?: TopicCreateOrConnectWithoutQuizInput
+    connect?: TopicWhereUniqueInput
+  }
+
   export type QuizUpdateoptionsInput = {
     set?: string[]
     push?: string | string[]
+  }
+
+  export type BlockUpdateOneRequiredWithoutQuizzesNestedInput = {
+    create?: XOR<BlockCreateWithoutQuizzesInput, BlockUncheckedCreateWithoutQuizzesInput>
+    connectOrCreate?: BlockCreateOrConnectWithoutQuizzesInput
+    upsert?: BlockUpsertWithoutQuizzesInput
+    connect?: BlockWhereUniqueInput
+    update?: XOR<XOR<BlockUpdateToOneWithWhereWithoutQuizzesInput, BlockUpdateWithoutQuizzesInput>, BlockUncheckedUpdateWithoutQuizzesInput>
   }
 
   export type TopicUpdateOneWithoutQuizNestedInput = {
@@ -10833,14 +11167,6 @@ export namespace Prisma {
     delete?: TopicWhereInput | boolean
     connect?: TopicWhereUniqueInput
     update?: XOR<XOR<TopicUpdateToOneWithWhereWithoutQuizInput, TopicUpdateWithoutQuizInput>, TopicUncheckedUpdateWithoutQuizInput>
-  }
-
-  export type BlockUpdateOneRequiredWithoutQuizzesNestedInput = {
-    create?: XOR<BlockCreateWithoutQuizzesInput, BlockUncheckedCreateWithoutQuizzesInput>
-    connectOrCreate?: BlockCreateOrConnectWithoutQuizzesInput
-    upsert?: BlockUpsertWithoutQuizzesInput
-    connect?: BlockWhereUniqueInput
-    update?: XOR<XOR<BlockUpdateToOneWithWhereWithoutQuizzesInput, BlockUpdateWithoutQuizzesInput>, BlockUncheckedUpdateWithoutQuizzesInput>
   }
 
   export type BlockCreateNestedOneWithoutQuestionsInput = {
@@ -10864,11 +11190,31 @@ export namespace Prisma {
     connect?: BlockWhereUniqueInput | BlockWhereUniqueInput[]
   }
 
+  export type FolderCreateNestedOneWithoutChildrenInput = {
+    create?: XOR<FolderCreateWithoutChildrenInput, FolderUncheckedCreateWithoutChildrenInput>
+    connectOrCreate?: FolderCreateOrConnectWithoutChildrenInput
+    connect?: FolderWhereUniqueInput
+  }
+
+  export type FolderCreateNestedManyWithoutParentInput = {
+    create?: XOR<FolderCreateWithoutParentInput, FolderUncheckedCreateWithoutParentInput> | FolderCreateWithoutParentInput[] | FolderUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: FolderCreateOrConnectWithoutParentInput | FolderCreateOrConnectWithoutParentInput[]
+    createMany?: FolderCreateManyParentInputEnvelope
+    connect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+  }
+
   export type BlockUncheckedCreateNestedManyWithoutFolderInput = {
     create?: XOR<BlockCreateWithoutFolderInput, BlockUncheckedCreateWithoutFolderInput> | BlockCreateWithoutFolderInput[] | BlockUncheckedCreateWithoutFolderInput[]
     connectOrCreate?: BlockCreateOrConnectWithoutFolderInput | BlockCreateOrConnectWithoutFolderInput[]
     createMany?: BlockCreateManyFolderInputEnvelope
     connect?: BlockWhereUniqueInput | BlockWhereUniqueInput[]
+  }
+
+  export type FolderUncheckedCreateNestedManyWithoutParentInput = {
+    create?: XOR<FolderCreateWithoutParentInput, FolderUncheckedCreateWithoutParentInput> | FolderCreateWithoutParentInput[] | FolderUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: FolderCreateOrConnectWithoutParentInput | FolderCreateOrConnectWithoutParentInput[]
+    createMany?: FolderCreateManyParentInputEnvelope
+    connect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
   }
 
   export type BlockUpdateManyWithoutFolderNestedInput = {
@@ -10885,6 +11231,30 @@ export namespace Prisma {
     deleteMany?: BlockScalarWhereInput | BlockScalarWhereInput[]
   }
 
+  export type FolderUpdateOneWithoutChildrenNestedInput = {
+    create?: XOR<FolderCreateWithoutChildrenInput, FolderUncheckedCreateWithoutChildrenInput>
+    connectOrCreate?: FolderCreateOrConnectWithoutChildrenInput
+    upsert?: FolderUpsertWithoutChildrenInput
+    disconnect?: FolderWhereInput | boolean
+    delete?: FolderWhereInput | boolean
+    connect?: FolderWhereUniqueInput
+    update?: XOR<XOR<FolderUpdateToOneWithWhereWithoutChildrenInput, FolderUpdateWithoutChildrenInput>, FolderUncheckedUpdateWithoutChildrenInput>
+  }
+
+  export type FolderUpdateManyWithoutParentNestedInput = {
+    create?: XOR<FolderCreateWithoutParentInput, FolderUncheckedCreateWithoutParentInput> | FolderCreateWithoutParentInput[] | FolderUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: FolderCreateOrConnectWithoutParentInput | FolderCreateOrConnectWithoutParentInput[]
+    upsert?: FolderUpsertWithWhereUniqueWithoutParentInput | FolderUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: FolderCreateManyParentInputEnvelope
+    set?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    disconnect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    delete?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    connect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    update?: FolderUpdateWithWhereUniqueWithoutParentInput | FolderUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: FolderUpdateManyWithWhereWithoutParentInput | FolderUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: FolderScalarWhereInput | FolderScalarWhereInput[]
+  }
+
   export type BlockUncheckedUpdateManyWithoutFolderNestedInput = {
     create?: XOR<BlockCreateWithoutFolderInput, BlockUncheckedCreateWithoutFolderInput> | BlockCreateWithoutFolderInput[] | BlockUncheckedCreateWithoutFolderInput[]
     connectOrCreate?: BlockCreateOrConnectWithoutFolderInput | BlockCreateOrConnectWithoutFolderInput[]
@@ -10897,6 +11267,20 @@ export namespace Prisma {
     update?: BlockUpdateWithWhereUniqueWithoutFolderInput | BlockUpdateWithWhereUniqueWithoutFolderInput[]
     updateMany?: BlockUpdateManyWithWhereWithoutFolderInput | BlockUpdateManyWithWhereWithoutFolderInput[]
     deleteMany?: BlockScalarWhereInput | BlockScalarWhereInput[]
+  }
+
+  export type FolderUncheckedUpdateManyWithoutParentNestedInput = {
+    create?: XOR<FolderCreateWithoutParentInput, FolderUncheckedCreateWithoutParentInput> | FolderCreateWithoutParentInput[] | FolderUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: FolderCreateOrConnectWithoutParentInput | FolderCreateOrConnectWithoutParentInput[]
+    upsert?: FolderUpsertWithWhereUniqueWithoutParentInput | FolderUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: FolderCreateManyParentInputEnvelope
+    set?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    disconnect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    delete?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    connect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    update?: FolderUpdateWithWhereUniqueWithoutParentInput | FolderUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: FolderUpdateManyWithWhereWithoutParentInput | FolderUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: FolderScalarWhereInput | FolderScalarWhereInput[]
   }
 
   export type BlockCreateNestedOneWithoutFillInTheBlankInput = {
@@ -10917,17 +11301,17 @@ export namespace Prisma {
     set: string[]
   }
 
-  export type BlockCreateNestedOneWithoutTopicInput = {
-    create?: XOR<BlockCreateWithoutTopicInput, BlockUncheckedCreateWithoutTopicInput>
-    connectOrCreate?: BlockCreateOrConnectWithoutTopicInput
-    connect?: BlockWhereUniqueInput
-  }
-
   export type QuizCreateNestedManyWithoutTopicInput = {
     create?: XOR<QuizCreateWithoutTopicInput, QuizUncheckedCreateWithoutTopicInput> | QuizCreateWithoutTopicInput[] | QuizUncheckedCreateWithoutTopicInput[]
     connectOrCreate?: QuizCreateOrConnectWithoutTopicInput | QuizCreateOrConnectWithoutTopicInput[]
     createMany?: QuizCreateManyTopicInputEnvelope
     connect?: QuizWhereUniqueInput | QuizWhereUniqueInput[]
+  }
+
+  export type BlockCreateNestedOneWithoutTopicInput = {
+    create?: XOR<BlockCreateWithoutTopicInput, BlockUncheckedCreateWithoutTopicInput>
+    connectOrCreate?: BlockCreateOrConnectWithoutTopicInput
+    connect?: BlockWhereUniqueInput
   }
 
   export type QuizUncheckedCreateNestedManyWithoutTopicInput = {
@@ -10942,14 +11326,6 @@ export namespace Prisma {
     push?: string | string[]
   }
 
-  export type BlockUpdateOneRequiredWithoutTopicNestedInput = {
-    create?: XOR<BlockCreateWithoutTopicInput, BlockUncheckedCreateWithoutTopicInput>
-    connectOrCreate?: BlockCreateOrConnectWithoutTopicInput
-    upsert?: BlockUpsertWithoutTopicInput
-    connect?: BlockWhereUniqueInput
-    update?: XOR<XOR<BlockUpdateToOneWithWhereWithoutTopicInput, BlockUpdateWithoutTopicInput>, BlockUncheckedUpdateWithoutTopicInput>
-  }
-
   export type QuizUpdateManyWithoutTopicNestedInput = {
     create?: XOR<QuizCreateWithoutTopicInput, QuizUncheckedCreateWithoutTopicInput> | QuizCreateWithoutTopicInput[] | QuizUncheckedCreateWithoutTopicInput[]
     connectOrCreate?: QuizCreateOrConnectWithoutTopicInput | QuizCreateOrConnectWithoutTopicInput[]
@@ -10962,6 +11338,14 @@ export namespace Prisma {
     update?: QuizUpdateWithWhereUniqueWithoutTopicInput | QuizUpdateWithWhereUniqueWithoutTopicInput[]
     updateMany?: QuizUpdateManyWithWhereWithoutTopicInput | QuizUpdateManyWithWhereWithoutTopicInput[]
     deleteMany?: QuizScalarWhereInput | QuizScalarWhereInput[]
+  }
+
+  export type BlockUpdateOneRequiredWithoutTopicNestedInput = {
+    create?: XOR<BlockCreateWithoutTopicInput, BlockUncheckedCreateWithoutTopicInput>
+    connectOrCreate?: BlockCreateOrConnectWithoutTopicInput
+    upsert?: BlockUpsertWithoutTopicInput
+    connect?: BlockWhereUniqueInput
+    update?: XOR<XOR<BlockUpdateToOneWithWhereWithoutTopicInput, BlockUpdateWithoutTopicInput>, BlockUncheckedUpdateWithoutTopicInput>
   }
 
   export type QuizUncheckedUpdateManyWithoutTopicNestedInput = {
@@ -11004,6 +11388,13 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedEnumModeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.Mode | EnumModeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Mode[] | ListEnumModeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Mode[] | ListEnumModeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumModeNullableFilter<$PrismaModel> | $Enums.Mode | null
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -11062,6 +11453,16 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedEnumModeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Mode | EnumModeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Mode[] | ListEnumModeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Mode[] | ListEnumModeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumModeNullableWithAggregatesFilter<$PrismaModel> | $Enums.Mode | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumModeNullableFilter<$PrismaModel>
+    _max?: NestedEnumModeNullableFilter<$PrismaModel>
+  }
+
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -11110,12 +11511,40 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type BlockCreateWithoutAuthorInput = {
     id?: string
     createdAt?: Date | string
     title: string
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: string | null
+    points?: number | null
     folder?: FolderCreateNestedOneWithoutBlocksInput
     FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
     questions?: QuestionCreateNestedManyWithoutBlockInput
@@ -11130,6 +11559,7 @@ export namespace Prisma {
     folderId?: string | null
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: string | null
+    points?: number | null
     FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
@@ -11173,18 +11603,21 @@ export namespace Prisma {
     folderId?: StringNullableFilter<"Block"> | string | null
     note?: JsonNullableFilter<"Block">
     context?: StringNullableFilter<"Block"> | string | null
+    points?: IntNullableFilter<"Block"> | number | null
   }
 
   export type UserCreateWithoutPostsInput = {
     id?: string
     email: string
     name?: string | null
+    mode?: $Enums.Mode | null
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
     id?: string
     email: string
     name?: string | null
+    mode?: $Enums.Mode | null
   }
 
   export type UserCreateOrConnectWithoutPostsInput = {
@@ -11197,6 +11630,8 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    parent?: FolderCreateNestedOneWithoutChildrenInput
+    children?: FolderCreateNestedManyWithoutParentInput
   }
 
   export type FolderUncheckedCreateWithoutBlocksInput = {
@@ -11204,6 +11639,8 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    parentId?: string | null
+    children?: FolderUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type FolderCreateOrConnectWithoutBlocksInput = {
@@ -11271,8 +11708,8 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake?: string | null
-    topicId?: string | null
     options?: QuizCreateoptionsInput | string[]
+    topicId?: string | null
   }
 
   export type QuizCreateOrConnectWithoutBlockInput = {
@@ -11324,12 +11761,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
   }
 
   export type FolderUpsertWithoutBlocksInput = {
@@ -11348,6 +11787,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parent?: FolderUpdateOneWithoutChildrenNestedInput
+    children?: FolderUpdateManyWithoutParentNestedInput
   }
 
   export type FolderUncheckedUpdateWithoutBlocksInput = {
@@ -11355,6 +11796,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    children?: FolderUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type FillInTheBlankUpsertWithWhereUniqueWithoutBlockInput = {
@@ -11434,9 +11877,9 @@ export namespace Prisma {
     question?: StringFilter<"Quiz"> | string
     correctAns?: StringFilter<"Quiz"> | string
     mistake?: StringNullableFilter<"Quiz"> | string | null
-    topicId?: StringNullableFilter<"Quiz"> | string | null
     blockId?: StringFilter<"Quiz"> | string
     options?: StringNullableListFilter<"Quiz">
+    topicId?: StringNullableFilter<"Quiz"> | string | null
   }
 
   export type TopicUpsertWithWhereUniqueWithoutBlockInput = {
@@ -11465,6 +11908,39 @@ export namespace Prisma {
     examples?: StringNullableListFilter<"Topic">
   }
 
+  export type BlockCreateWithoutQuizzesInput = {
+    id?: string
+    createdAt?: Date | string
+    title: string
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
+    points?: number | null
+    author: UserCreateNestedOneWithoutPostsInput
+    folder?: FolderCreateNestedOneWithoutBlocksInput
+    FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
+    questions?: QuestionCreateNestedManyWithoutBlockInput
+    topic?: TopicCreateNestedManyWithoutBlockInput
+  }
+
+  export type BlockUncheckedCreateWithoutQuizzesInput = {
+    id?: string
+    createdAt?: Date | string
+    title: string
+    authorId: string
+    folderId?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
+    points?: number | null
+    FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
+    questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
+    topic?: TopicUncheckedCreateNestedManyWithoutBlockInput
+  }
+
+  export type BlockCreateOrConnectWithoutQuizzesInput = {
+    where: BlockWhereUniqueInput
+    create: XOR<BlockCreateWithoutQuizzesInput, BlockUncheckedCreateWithoutQuizzesInput>
+  }
+
   export type TopicCreateWithoutQuizInput = {
     id?: string
     name: string
@@ -11484,35 +11960,43 @@ export namespace Prisma {
     create: XOR<TopicCreateWithoutQuizInput, TopicUncheckedCreateWithoutQuizInput>
   }
 
-  export type BlockCreateWithoutQuizzesInput = {
-    id?: string
-    createdAt?: Date | string
-    title: string
-    note?: NullableJsonNullValueInput | InputJsonValue
-    context?: string | null
-    author: UserCreateNestedOneWithoutPostsInput
-    folder?: FolderCreateNestedOneWithoutBlocksInput
-    FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
-    questions?: QuestionCreateNestedManyWithoutBlockInput
-    topic?: TopicCreateNestedManyWithoutBlockInput
-  }
-
-  export type BlockUncheckedCreateWithoutQuizzesInput = {
-    id?: string
-    createdAt?: Date | string
-    title: string
-    authorId: string
-    folderId?: string | null
-    note?: NullableJsonNullValueInput | InputJsonValue
-    context?: string | null
-    FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
-    questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
-    topic?: TopicUncheckedCreateNestedManyWithoutBlockInput
-  }
-
-  export type BlockCreateOrConnectWithoutQuizzesInput = {
-    where: BlockWhereUniqueInput
+  export type BlockUpsertWithoutQuizzesInput = {
+    update: XOR<BlockUpdateWithoutQuizzesInput, BlockUncheckedUpdateWithoutQuizzesInput>
     create: XOR<BlockCreateWithoutQuizzesInput, BlockUncheckedCreateWithoutQuizzesInput>
+    where?: BlockWhereInput
+  }
+
+  export type BlockUpdateToOneWithWhereWithoutQuizzesInput = {
+    where?: BlockWhereInput
+    data: XOR<BlockUpdateWithoutQuizzesInput, BlockUncheckedUpdateWithoutQuizzesInput>
+  }
+
+  export type BlockUpdateWithoutQuizzesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    title?: StringFieldUpdateOperationsInput | string
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
+    author?: UserUpdateOneRequiredWithoutPostsNestedInput
+    folder?: FolderUpdateOneWithoutBlocksNestedInput
+    FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
+    questions?: QuestionUpdateManyWithoutBlockNestedInput
+    topic?: TopicUpdateManyWithoutBlockNestedInput
+  }
+
+  export type BlockUncheckedUpdateWithoutQuizzesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    title?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
+    FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
+    questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
+    topic?: TopicUncheckedUpdateManyWithoutBlockNestedInput
   }
 
   export type TopicUpsertWithoutQuizInput = {
@@ -11540,49 +12024,13 @@ export namespace Prisma {
     examples?: TopicUpdateexamplesInput | string[]
   }
 
-  export type BlockUpsertWithoutQuizzesInput = {
-    update: XOR<BlockUpdateWithoutQuizzesInput, BlockUncheckedUpdateWithoutQuizzesInput>
-    create: XOR<BlockCreateWithoutQuizzesInput, BlockUncheckedCreateWithoutQuizzesInput>
-    where?: BlockWhereInput
-  }
-
-  export type BlockUpdateToOneWithWhereWithoutQuizzesInput = {
-    where?: BlockWhereInput
-    data: XOR<BlockUpdateWithoutQuizzesInput, BlockUncheckedUpdateWithoutQuizzesInput>
-  }
-
-  export type BlockUpdateWithoutQuizzesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    title?: StringFieldUpdateOperationsInput | string
-    note?: NullableJsonNullValueInput | InputJsonValue
-    context?: NullableStringFieldUpdateOperationsInput | string | null
-    author?: UserUpdateOneRequiredWithoutPostsNestedInput
-    folder?: FolderUpdateOneWithoutBlocksNestedInput
-    FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
-    questions?: QuestionUpdateManyWithoutBlockNestedInput
-    topic?: TopicUpdateManyWithoutBlockNestedInput
-  }
-
-  export type BlockUncheckedUpdateWithoutQuizzesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    title?: StringFieldUpdateOperationsInput | string
-    authorId?: StringFieldUpdateOperationsInput | string
-    folderId?: NullableStringFieldUpdateOperationsInput | string | null
-    note?: NullableJsonNullValueInput | InputJsonValue
-    context?: NullableStringFieldUpdateOperationsInput | string | null
-    FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
-    questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
-    topic?: TopicUncheckedUpdateManyWithoutBlockNestedInput
-  }
-
   export type BlockCreateWithoutQuestionsInput = {
     id?: string
     createdAt?: Date | string
     title: string
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: string | null
+    points?: number | null
     author: UserCreateNestedOneWithoutPostsInput
     folder?: FolderCreateNestedOneWithoutBlocksInput
     FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
@@ -11598,6 +12046,7 @@ export namespace Prisma {
     folderId?: string | null
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: string | null
+    points?: number | null
     FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
     topic?: TopicUncheckedCreateNestedManyWithoutBlockInput
@@ -11625,6 +12074,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     folder?: FolderUpdateOneWithoutBlocksNestedInput
     FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
@@ -11640,6 +12090,7 @@ export namespace Prisma {
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
     FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
     topic?: TopicUncheckedUpdateManyWithoutBlockNestedInput
@@ -11651,6 +12102,7 @@ export namespace Prisma {
     title: string
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: string | null
+    points?: number | null
     author: UserCreateNestedOneWithoutPostsInput
     FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
     questions?: QuestionCreateNestedManyWithoutBlockInput
@@ -11665,6 +12117,7 @@ export namespace Prisma {
     authorId: string
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: string | null
+    points?: number | null
     FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
@@ -11678,6 +12131,57 @@ export namespace Prisma {
 
   export type BlockCreateManyFolderInputEnvelope = {
     data: BlockCreateManyFolderInput | BlockCreateManyFolderInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type FolderCreateWithoutChildrenInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    blocks?: BlockCreateNestedManyWithoutFolderInput
+    parent?: FolderCreateNestedOneWithoutChildrenInput
+  }
+
+  export type FolderUncheckedCreateWithoutChildrenInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parentId?: string | null
+    blocks?: BlockUncheckedCreateNestedManyWithoutFolderInput
+  }
+
+  export type FolderCreateOrConnectWithoutChildrenInput = {
+    where: FolderWhereUniqueInput
+    create: XOR<FolderCreateWithoutChildrenInput, FolderUncheckedCreateWithoutChildrenInput>
+  }
+
+  export type FolderCreateWithoutParentInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    blocks?: BlockCreateNestedManyWithoutFolderInput
+    children?: FolderCreateNestedManyWithoutParentInput
+  }
+
+  export type FolderUncheckedCreateWithoutParentInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    blocks?: BlockUncheckedCreateNestedManyWithoutFolderInput
+    children?: FolderUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type FolderCreateOrConnectWithoutParentInput = {
+    where: FolderWhereUniqueInput
+    create: XOR<FolderCreateWithoutParentInput, FolderUncheckedCreateWithoutParentInput>
+  }
+
+  export type FolderCreateManyParentInputEnvelope = {
+    data: FolderCreateManyParentInput | FolderCreateManyParentInput[]
     skipDuplicates?: boolean
   }
 
@@ -11697,12 +12201,69 @@ export namespace Prisma {
     data: XOR<BlockUpdateManyMutationInput, BlockUncheckedUpdateManyWithoutFolderInput>
   }
 
+  export type FolderUpsertWithoutChildrenInput = {
+    update: XOR<FolderUpdateWithoutChildrenInput, FolderUncheckedUpdateWithoutChildrenInput>
+    create: XOR<FolderCreateWithoutChildrenInput, FolderUncheckedCreateWithoutChildrenInput>
+    where?: FolderWhereInput
+  }
+
+  export type FolderUpdateToOneWithWhereWithoutChildrenInput = {
+    where?: FolderWhereInput
+    data: XOR<FolderUpdateWithoutChildrenInput, FolderUncheckedUpdateWithoutChildrenInput>
+  }
+
+  export type FolderUpdateWithoutChildrenInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    blocks?: BlockUpdateManyWithoutFolderNestedInput
+    parent?: FolderUpdateOneWithoutChildrenNestedInput
+  }
+
+  export type FolderUncheckedUpdateWithoutChildrenInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    blocks?: BlockUncheckedUpdateManyWithoutFolderNestedInput
+  }
+
+  export type FolderUpsertWithWhereUniqueWithoutParentInput = {
+    where: FolderWhereUniqueInput
+    update: XOR<FolderUpdateWithoutParentInput, FolderUncheckedUpdateWithoutParentInput>
+    create: XOR<FolderCreateWithoutParentInput, FolderUncheckedCreateWithoutParentInput>
+  }
+
+  export type FolderUpdateWithWhereUniqueWithoutParentInput = {
+    where: FolderWhereUniqueInput
+    data: XOR<FolderUpdateWithoutParentInput, FolderUncheckedUpdateWithoutParentInput>
+  }
+
+  export type FolderUpdateManyWithWhereWithoutParentInput = {
+    where: FolderScalarWhereInput
+    data: XOR<FolderUpdateManyMutationInput, FolderUncheckedUpdateManyWithoutParentInput>
+  }
+
+  export type FolderScalarWhereInput = {
+    AND?: FolderScalarWhereInput | FolderScalarWhereInput[]
+    OR?: FolderScalarWhereInput[]
+    NOT?: FolderScalarWhereInput | FolderScalarWhereInput[]
+    id?: StringFilter<"Folder"> | string
+    name?: StringFilter<"Folder"> | string
+    createdAt?: DateTimeFilter<"Folder"> | Date | string
+    updatedAt?: DateTimeFilter<"Folder"> | Date | string
+    parentId?: StringNullableFilter<"Folder"> | string | null
+  }
+
   export type BlockCreateWithoutFillInTheBlankInput = {
     id?: string
     createdAt?: Date | string
     title: string
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: string | null
+    points?: number | null
     author: UserCreateNestedOneWithoutPostsInput
     folder?: FolderCreateNestedOneWithoutBlocksInput
     questions?: QuestionCreateNestedManyWithoutBlockInput
@@ -11718,6 +12279,7 @@ export namespace Prisma {
     folderId?: string | null
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: string | null
+    points?: number | null
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
     topic?: TopicUncheckedCreateNestedManyWithoutBlockInput
@@ -11745,6 +12307,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     folder?: FolderUpdateOneWithoutBlocksNestedInput
     questions?: QuestionUpdateManyWithoutBlockNestedInput
@@ -11760,40 +12323,10 @@ export namespace Prisma {
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
     topic?: TopicUncheckedUpdateManyWithoutBlockNestedInput
-  }
-
-  export type BlockCreateWithoutTopicInput = {
-    id?: string
-    createdAt?: Date | string
-    title: string
-    note?: NullableJsonNullValueInput | InputJsonValue
-    context?: string | null
-    author: UserCreateNestedOneWithoutPostsInput
-    folder?: FolderCreateNestedOneWithoutBlocksInput
-    FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
-    questions?: QuestionCreateNestedManyWithoutBlockInput
-    quizzes?: QuizCreateNestedManyWithoutBlockInput
-  }
-
-  export type BlockUncheckedCreateWithoutTopicInput = {
-    id?: string
-    createdAt?: Date | string
-    title: string
-    authorId: string
-    folderId?: string | null
-    note?: NullableJsonNullValueInput | InputJsonValue
-    context?: string | null
-    FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
-    questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
-    quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
-  }
-
-  export type BlockCreateOrConnectWithoutTopicInput = {
-    where: BlockWhereUniqueInput
-    create: XOR<BlockCreateWithoutTopicInput, BlockUncheckedCreateWithoutTopicInput>
   }
 
   export type QuizCreateWithoutTopicInput = {
@@ -11824,41 +12357,37 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type BlockUpsertWithoutTopicInput = {
-    update: XOR<BlockUpdateWithoutTopicInput, BlockUncheckedUpdateWithoutTopicInput>
+  export type BlockCreateWithoutTopicInput = {
+    id?: string
+    createdAt?: Date | string
+    title: string
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
+    points?: number | null
+    author: UserCreateNestedOneWithoutPostsInput
+    folder?: FolderCreateNestedOneWithoutBlocksInput
+    FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
+    questions?: QuestionCreateNestedManyWithoutBlockInput
+    quizzes?: QuizCreateNestedManyWithoutBlockInput
+  }
+
+  export type BlockUncheckedCreateWithoutTopicInput = {
+    id?: string
+    createdAt?: Date | string
+    title: string
+    authorId: string
+    folderId?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
+    points?: number | null
+    FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
+    questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
+    quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
+  }
+
+  export type BlockCreateOrConnectWithoutTopicInput = {
+    where: BlockWhereUniqueInput
     create: XOR<BlockCreateWithoutTopicInput, BlockUncheckedCreateWithoutTopicInput>
-    where?: BlockWhereInput
-  }
-
-  export type BlockUpdateToOneWithWhereWithoutTopicInput = {
-    where?: BlockWhereInput
-    data: XOR<BlockUpdateWithoutTopicInput, BlockUncheckedUpdateWithoutTopicInput>
-  }
-
-  export type BlockUpdateWithoutTopicInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    title?: StringFieldUpdateOperationsInput | string
-    note?: NullableJsonNullValueInput | InputJsonValue
-    context?: NullableStringFieldUpdateOperationsInput | string | null
-    author?: UserUpdateOneRequiredWithoutPostsNestedInput
-    folder?: FolderUpdateOneWithoutBlocksNestedInput
-    FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
-    questions?: QuestionUpdateManyWithoutBlockNestedInput
-    quizzes?: QuizUpdateManyWithoutBlockNestedInput
-  }
-
-  export type BlockUncheckedUpdateWithoutTopicInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    title?: StringFieldUpdateOperationsInput | string
-    authorId?: StringFieldUpdateOperationsInput | string
-    folderId?: NullableStringFieldUpdateOperationsInput | string | null
-    note?: NullableJsonNullValueInput | InputJsonValue
-    context?: NullableStringFieldUpdateOperationsInput | string | null
-    FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
-    questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
-    quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
   }
 
   export type QuizUpsertWithWhereUniqueWithoutTopicInput = {
@@ -11877,6 +12406,45 @@ export namespace Prisma {
     data: XOR<QuizUpdateManyMutationInput, QuizUncheckedUpdateManyWithoutTopicInput>
   }
 
+  export type BlockUpsertWithoutTopicInput = {
+    update: XOR<BlockUpdateWithoutTopicInput, BlockUncheckedUpdateWithoutTopicInput>
+    create: XOR<BlockCreateWithoutTopicInput, BlockUncheckedCreateWithoutTopicInput>
+    where?: BlockWhereInput
+  }
+
+  export type BlockUpdateToOneWithWhereWithoutTopicInput = {
+    where?: BlockWhereInput
+    data: XOR<BlockUpdateWithoutTopicInput, BlockUncheckedUpdateWithoutTopicInput>
+  }
+
+  export type BlockUpdateWithoutTopicInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    title?: StringFieldUpdateOperationsInput | string
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
+    author?: UserUpdateOneRequiredWithoutPostsNestedInput
+    folder?: FolderUpdateOneWithoutBlocksNestedInput
+    FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
+    questions?: QuestionUpdateManyWithoutBlockNestedInput
+    quizzes?: QuizUpdateManyWithoutBlockNestedInput
+  }
+
+  export type BlockUncheckedUpdateWithoutTopicInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    title?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
+    FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
+    questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
+    quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
+  }
+
   export type BlockCreateManyAuthorInput = {
     id?: string
     createdAt?: Date | string
@@ -11884,6 +12452,7 @@ export namespace Prisma {
     folderId?: string | null
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: string | null
+    points?: number | null
   }
 
   export type BlockUpdateWithoutAuthorInput = {
@@ -11892,6 +12461,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
     folder?: FolderUpdateOneWithoutBlocksNestedInput
     FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
     questions?: QuestionUpdateManyWithoutBlockNestedInput
@@ -11906,6 +12476,7 @@ export namespace Prisma {
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
     FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
@@ -11919,6 +12490,7 @@ export namespace Prisma {
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type FillInTheBlankCreateManyBlockInput = {
@@ -11939,8 +12511,8 @@ export namespace Prisma {
     question: string
     correctAns: string
     mistake?: string | null
-    topicId?: string | null
     options?: QuizCreateoptionsInput | string[]
+    topicId?: string | null
   }
 
   export type TopicCreateManyBlockInput = {
@@ -12002,8 +12574,8 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
-    topicId?: NullableStringFieldUpdateOperationsInput | string | null
     options?: QuizUpdateoptionsInput | string[]
+    topicId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type QuizUncheckedUpdateManyWithoutBlockInput = {
@@ -12011,8 +12583,8 @@ export namespace Prisma {
     question?: StringFieldUpdateOperationsInput | string
     correctAns?: StringFieldUpdateOperationsInput | string
     mistake?: NullableStringFieldUpdateOperationsInput | string | null
-    topicId?: NullableStringFieldUpdateOperationsInput | string | null
     options?: QuizUpdateoptionsInput | string[]
+    topicId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TopicUpdateWithoutBlockInput = {
@@ -12042,6 +12614,14 @@ export namespace Prisma {
     authorId: string
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: string | null
+    points?: number | null
+  }
+
+  export type FolderCreateManyParentInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type BlockUpdateWithoutFolderInput = {
@@ -12050,6 +12630,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
     questions?: QuestionUpdateManyWithoutBlockNestedInput
@@ -12064,6 +12645,7 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
     FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
@@ -12077,6 +12659,32 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     note?: NullableJsonNullValueInput | InputJsonValue
     context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type FolderUpdateWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    blocks?: BlockUpdateManyWithoutFolderNestedInput
+    children?: FolderUpdateManyWithoutParentNestedInput
+  }
+
+  export type FolderUncheckedUpdateWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    blocks?: BlockUncheckedUpdateManyWithoutFolderNestedInput
+    children?: FolderUncheckedUpdateManyWithoutParentNestedInput
+  }
+
+  export type FolderUncheckedUpdateManyWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type QuizCreateManyTopicInput = {
