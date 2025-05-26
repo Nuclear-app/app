@@ -19,116 +19,53 @@ export const fetchQuiz = async (blockId: string): Promise<Quiz[]> => {
       throw new Error("Block ID is required");
     }
 
-    // First, get all topics for this block
-    const topics = await prisma.topic.findMany({
-      where: { blockId },
-      select: { id: true }
-    });
+    // Get all topics and quizzes in a single transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Get topics
+      const topics = await tx.topic.findMany({
+        where: { blockId },
+        select: { id: true }
+      });
 
-    if (!topics.length) {
-      throw new Error("No topics found for this block");
-    }
+      if (!topics.length) {
+        throw new Error("No topics found for this block");
+      }
 
-    // Get topics that have questions with mistakes
-    const topicsWithMistakes = await prisma.quiz.findMany({
-      where: {
-        topicId: { in: topics.map(t => t.id) },
-        mistake: { not: null }
-      },
-      select: { topicId: true },
-      distinct: ['topicId'],
-      take: 10 // Limit to prevent memory issues
-    });
+      // Get topics with mistakes
+      const topicsWithMistakes = await tx.quiz.findMany({
+        where: {
+          topicId: { in: topics.map(t => t.id) },
+          mistake: { not: null }
+        },
+        select: { topicId: true },
+        distinct: ['topicId'],
+        take: 10
+      });
 
-    // For each topic, get questions
-    const quizzesByTopic = await Promise.all(
-      topics.map(async (topic) => {
-        let retryCount = 0;
-        const MAX_RETRIES = 3;
-        
-        // First, get 2 random unused quizzes
-        let quizzes = await prisma.quiz.findMany({
+      // Get all needed quizzes in one query
+      const quizzes = await tx.quiz.findMany({
+        where: {
+          topicId: { in: topics.map(t => t.id) },
+          used: false
+        },
+        take: 10
+      });
+
+      // Mark quizzes as used
+      if (quizzes.length > 0) {
+        await tx.quiz.updateMany({
           where: {
-            topicId: topic.id,
-            used: false
+            id: { in: quizzes.map(q => q.id) }
           },
-          take: 2,
-          orderBy: {
-            id: 'asc'
-          }
+          data: { used: true }
         });
+      }
 
-        // If this topic has mistakes, get 1 more question
-        if (topicsWithMistakes.some(t => t.topicId === topic.id)) {
-          const extraQuizzes = await prisma.quiz.findMany({
-            where: {
-              topicId: topic.id,
-              used: false
-            },
-            take: 1,
-            orderBy: {
-              id: 'asc'
-            }
-          });
-          quizzes = [...quizzes, ...extraQuizzes];
-        }
+      return quizzes;
+    });
 
-        // If we don't have enough questions, generate new ones
-        while (quizzes.length < 2 && retryCount < MAX_RETRIES) {
-          const block = await prisma.block.findUnique({
-            where: { id: blockId },
-            select: { context: true }
-          });
-
-          if (block?.context) {
-            await generateQuizzes(block.context, blockId);
-            
-            const newQuizzes = await prisma.quiz.findMany({
-              where: {
-                topicId: topic.id,
-                used: false
-              },
-              take: 2,
-              orderBy: {
-                id: 'asc'
-              }
-            });
-            quizzes = [...quizzes, ...newQuizzes];
-          }
-          retryCount++;
-        }
-
-        // Mark these quizzes as used using a transaction
-        if (quizzes.length > 0) {
-          await prisma.$transaction(async (tx) => {
-            await tx.quiz.updateMany({
-              where: {
-                id: {
-                  in: quizzes.map(q => q.id)
-                }
-              },
-              data: {
-                used: true
-              }
-            });
-          });
-        }
-
-        return quizzes;
-      })
-    );
-
-    // Flatten the array of quizzes and shuffle them
-    let allQuizzes = quizzesByTopic.flat();
-    
-    // Limit to 10 questions
-    if (allQuizzes.length > 10) {
-      allQuizzes = allQuizzes.slice(0, 10);
-    }
-    
-    const shuffledQuizzes = allQuizzes.sort(() => Math.random() - 0.5);
-
-    return shuffledQuizzes;
+    // Shuffle and return
+    return result.sort(() => Math.random() - 0.5);
   } catch (error) {
     console.error("Error fetching quizzes:", error);
     throw new Error("Failed to fetch quizzes");
