@@ -2,7 +2,6 @@ import DeployButton from "@/components/deploy-button";
 import { EnvVarWarning } from "@/components/env-var-warning";
 import HeaderAuth from "@/components/header-auth";
 import { ThemeSwitcher } from "@/components/theme-switcher";
-import DifficultyToggle from "@/components/difficulty-toggle";
 import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
@@ -47,7 +46,6 @@ export default function RootLayout({
                     <Link href={"/"}>Nuclear</Link>
                     <div className="flex items-center gap-2">
                       <DeployButton />
-                      <DifficultyToggle />
                       <ThemeSwitcher />
                     </div>
                   </div>

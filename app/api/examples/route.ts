@@ -3,6 +3,24 @@ import { generateExamples } from '@/lib/examplesPerplexity';
 import prisma from '@/lib/prisma';
 import { nanoid } from 'nanoid';
 
+
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const blockId = searchParams.get('blockId');
+  const text = searchParams.get('text');
+
+  const topics = await prisma.topic.findMany({
+    where: {
+      blockId: blockId as string,
+    },
+  });
+
+  return NextResponse.json({ topics });
+}
+
+
+
+
 export async function POST(req: Request) {
   try {
     const { blockId, text } = await req.json();
@@ -17,6 +35,7 @@ export async function POST(req: Request) {
     // Generate examples using the perplexity model
     const examples = await generateExamples(text);
 
+    console.log(examples);
     // Create topics in the database
     const createdTopics = await Promise.all(
       examples.topics.map(async (topic) => {

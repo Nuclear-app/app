@@ -209,9 +209,6 @@ cusert as with ill OC
 revoove nth from`
 
     return (
-
-        <div>
-           <Examples blockID="91382eeb-f5ef-408f-a378-0f16c329f519"  text={hardCodedExample}/>
-        </div>
+        <Examples blockID="3dcebc5d-4087-4b14-8cd2-6e074b0baf2b" text={hardCodedExample} />
     );
 }

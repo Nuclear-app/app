@@ -1,6 +1,7 @@
 'use client';
-
-import { useState } from 'react';
+import { useState, useEffect } from "react";
+import { getExamples } from "@/lib/examplesPerplexity";
+import Topic from "./topic";
 
 interface Topic {
   id: string;
@@ -11,82 +12,56 @@ interface Topic {
 
 interface ExamplesProps {
   blockID: string;
-  text: string;
 }
 
-export default function Examples({ blockID, text }: ExamplesProps) {
+export default function Examples({ blockID }: ExamplesProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [topics, setTopics] = useState<Topic[]>([]);
 
-  const handleGenerateExamples = async () => {
-    setIsLoading(true);
-    setError(null);
-    setTopics([]);
-
-    try {
-      const response = await fetch('/api/examples', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          blockId: blockID,
-          text: text, // Replace with actual text from your application
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate examples');
+  useEffect(() => {
+    const fetchTopics = async () => {
+      try {
+        setIsLoading(true);
+        const fetchedTopics = await getExamples(blockID);
+        setTopics(fetchedTopics);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch examples');
+      } finally {
+        setIsLoading(false);
       }
+    };
 
-      if (data.success) {
-        setTopics(data.data);
-      } else {
-        setError(data.error);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to generate examples');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    fetchTopics();
+  }, [blockID]);
+
+  if (isLoading) {
+    return <div className="text-center">Loading examples...</div>;
+  }
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <button
-        onClick={handleGenerateExamples}
-        disabled={isLoading}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
-      >
-        {isLoading ? 'Generating...' : 'Generate Examples'}
-      </button>
-
+    <div className="w-full mx-auto">
       {error && (
-        <div className="mt-4 text-red-500">
+        <div className="p-4 text-sm text-destructive bg-destructive/10 rounded-lg">
           {error}
         </div>
       )}
-
-      {topics.length > 0 && (
-        <div className="mt-4 space-y-4">
-          <h2 className="text-xl font-semibold">Generated Topics and Examples:</h2>
+      <div className="space-y-6 overflow-y-auto flex-1 pr-2 bg-[#292929] border-[#161616] border-8 p-4 rounded-xl">
+        <div className="leading-none">
+          <h2 className="text-2xl font-bold mb-4">Examples</h2>
+          <p className="text-sm text-muted-foreground">Here are some examples to help you understand the concepts better.</p>
+        </div>
+        <div className="space grid grid-cols-1 gap-2 md:grid-cols-2">
           {topics.map((topic) => (
-            <div key={topic.id} className="p-4 bg-gray-50 rounded-lg">
-              <h3 className="font-medium text-lg">{topic.name}</h3>
-              <ul className="mt-2 space-y-2">
-                {topic.examples.map((example, index) => (
-                  <li key={index} className="text-sm text-gray-600">
-                    {example}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <Topic 
+              key={topic.id}
+              topicName={topic.name}
+              examples={topic.examples}
+            />
           ))}
         </div>
-      )}
+      </div>
     </div>
   );
-} 
+}
