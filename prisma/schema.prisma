@@ -48,7 +48,7 @@ model Quiz {
   blockId    String
   used       Boolean  @default(false)
   options    String[]
-  topicId    String?
+  topicId    String
   block      Block    @relation(fields: [blockId], references: [id])
   topic      Topic?   @relation(fields: [topicId], references: [id])
 }

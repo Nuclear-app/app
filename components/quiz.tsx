@@ -36,7 +36,7 @@ export function Quiz({ blockId }: QuizProps) {
     useEffect(() => {
         const loadQuizzes = async () => {
             const quizData = await fetchQuiz(blockId)
-            setQuizzes(quizData)
+            setQuizzes(quizData as Quiz[])
         }
         loadQuizzes()
     }, [blockId])
@@ -105,7 +105,7 @@ export function Quiz({ blockId }: QuizProps) {
 
                 {selectedAnswer && (
                     <div className="space-y-4 mt-4">
-                        <div className={`p-4 rounded-lg ${isCorrect ? "bg-green-100 dark:bg-green-900" : "bg-red-100 dark:bg-red-900"}`}>
+                        {/* <div className={`p-4 rounded-lg ${isCorrect ? "bg-green-100 dark:bg-green-900" : "bg-red-100 dark:bg-red-900"}`}>
                             <p className="font-medium">
                                 {isCorrect ? "Correct!" : "Incorrect!"}
                             </p>
@@ -114,7 +114,7 @@ export function Quiz({ blockId }: QuizProps) {
                                     Correct answer: {currentQuiz.correctAns}
                                 </p>
                             )}
-                        </div>
+                        </div> */}
                         <Button className="w-full" onClick={handleNext}>
                             {currentQuizIndex < quizzes.length - 1 ? "Next Question" : "Finish Quiz"}
                         </Button>
