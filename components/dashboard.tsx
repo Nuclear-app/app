@@ -140,11 +140,21 @@ export default function Dashboard() {
             <div className="col-span-2 row-span-1 rounded-xl bg-[#161616] border-2 border-nuclear p-4 font-black text-3xl flex items-center">
                 <h1>Nuclear</h1>
             </div>
-            <div className="col-span-1 flex flex-col justify-between rounded-xl p-4 border-2 row-span-8 bg-[#161616]">
-                <h1 className="text-2xl font-black">Hi, I'm Jonas!</h1>
-                <Image src={jonas} alt="Jonas" className="flex-1" />
-                <div className="flex flex-col text-lg">Start off with a note today!</div>
-                <Button className="w-full bg-[#292929] h-12 hover:bg-[#333333] text-white text-xl">Notetaking</Button>
+            <div className="col-span-1 flex flex-col justify-between rounded-xl p-4 border-2 row-span-8 bg-[#161616] relative">
+                <div className="absolute inset-0 z-0 flex justify-end">
+                    <Image 
+                        src={jonas} 
+                        alt="Jonas" 
+                        className="w-3/4 h-3/4 object-cover"
+                    />
+                </div>
+                <div className="relative z-10">
+                    <h1 className="text-2xl font-black">Hi, I'm Jonas!</h1>
+                </div>
+                <div>
+                    <div className="relative z-10 flex flex-col text-lg">Start off with a note today!</div>
+                    <Button className="relative z-10 w-full bg-[#292929] h-12 hover:bg-[#333333] text-white text-xl">Notetaking</Button>
+                </div>
             </div>
             <div className="col-span-2 row-span-4 bg-[#161616] rounded-xl border-2 p-4 overflow-y-auto">
                 <h1 className="text-2xl font-black mb-4">Blocks</h1>
