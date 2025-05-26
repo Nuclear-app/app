@@ -10,7 +10,7 @@ import {
  import { Zap, ScanSearch, Infinity, Upload, FishSymbol, Bone} from "lucide-react"
  import { BentoGrid, BentoCard } from "@/components/ui/bento-grid"
  import Flashcards from "@/public/flashcards.svg"
-import { fetchPoints } from "@/lib/blockFetch"
+import { fetchPoints, fetchNotesAsText } from "@/lib/blockFetch"
 import { useState, useEffect } from "react"
 
 
@@ -20,6 +20,7 @@ interface BlockProps {
 
  export function Block({ blockId }: BlockProps) {
     const [points, setPoints] = useState<number>(0);
+    const [notes, setNotes] = useState<string | null>(null);
     useEffect(() => {
         const getPoints = async () => {
             if (!blockId) return;
@@ -28,6 +29,16 @@ interface BlockProps {
         }
         getPoints();
     }, [blockId]);
+
+    useEffect(() => {
+        const getNotes = async () => {
+            if (!blockId) return;
+            const text = await fetchNotesAsText(blockId);
+            setNotes(text);
+        };
+        getNotes();
+    }, [blockId]);
+
     return (
        <BentoGrid className="gap-4 grid-cols-4 grid-rows-3">
           {/* <BentoCard
@@ -93,7 +104,7 @@ interface BlockProps {
           />
           <BentoCard
              name="Notes"
-             description="Search through all your files in one place."
+             description={notes || 'No notes yet'}
              Icon={FileTextIcon}
              background={null}
              href="#"
