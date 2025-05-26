@@ -39,7 +39,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
             className={`flex items-center py-1.5 px-2 rounded-md transition-colors duration-200
             hover:bg-gray-100/50 cursor-pointer
             ${isSelected ? 'bg-blue-100/50' : ''}
-            ${isInCurrentPath ? 'bg-gray-50' : ''}`}
+            ${isInCurrentPath ? 'bg-black/50' : ''}`}
             style={{ paddingLeft: `${level * 16}px` }}
             onClick={() => {
                 onSelect(item);

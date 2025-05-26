@@ -11,7 +11,7 @@ export async function updateContext(data: { blockId: string, context: string }) 
   })
 }
 
-const blockId = "3dcebc5d-4087-4b14-8cd2-6e074b0baf2b"
-const context = "This is a test context"
+// const blockId = "3dcebc5d-4087-4b14-8cd2-6e074b0baf2b"
+// const context = "This is a test context"
 
-updateContext({ blockId, context })
+// updateContext({ blockId, context })
