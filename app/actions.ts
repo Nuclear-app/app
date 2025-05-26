@@ -21,33 +21,33 @@ export const signUpAction = async (formData: FormData) => {
   }
 
   try {
-    // Sign up with Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${origin}/auth/callback`,
-      },
-    });
+  // Sign up with Supabase Auth
+  const { data: authData, error: authError } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: `${origin}/auth/callback`,
+    },
+  });
 
-    if (authError) {
-      console.error(authError.code + " " + authError.message);
-      return encodedRedirect("error", "/sign-up", authError.message);
-    }
+  if (authError) {
+    console.error(authError.code + " " + authError.message);
+    return encodedRedirect("error", "/sign-up", authError.message);
+  }
 
     if (!authData.user) {
       return encodedRedirect("error", "/sign-up", "Failed to create user account");
     }
 
-    try {
-      // Create user in Prisma database
-      await prisma.user.create({
-        data: {
+  try {
+    // Create user in Prisma database
+    await prisma.user.create({
+      data: {
           id: authData.user.id,
-          email: email,
-          name: null, // Can be updated later
-        },
-      });
+        email: email,
+        name: null, // Can be updated later
+      },
+    });
     } catch (prismaError: any) {
       // If the error is because the user already exists, that's fine
       // The user can still proceed with email verification

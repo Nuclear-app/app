@@ -17,7 +17,7 @@ import {
     Dog,
     Egg,
     Origami,
-    Panda,
+    // Panda,
     Shell,
     Squirrel,
     LandPlot,
@@ -37,6 +37,14 @@ import {
 import Image from "next/image";
 import jonas from "@/public/jonas.svg";
 import { Button } from "./ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 
 interface DashboardProps {
     userId: string;
@@ -75,7 +83,7 @@ const iconMap: { [key: string]: any } = {
     dog: Dog,
     egg: Egg,
     origami: Origami,
-    panda: Panda,
+    // panda: Panda,
     shell: Shell,
     squirrel: Squirrel,
     landPlot: LandPlot,
@@ -172,9 +180,47 @@ export default function Dashboard() {
             <div className="col-span-2 row-span-3  bg-[#161616] rounded-xl border-2 p-4 overflow-y-auto">
                 <h1 className="text-2xl font-black mb-4">Crates</h1>
                 <div className="grid grid-cols-9 gap-4">
-                    <div className="col-span-1 bg-[#292929] rounded-xl border-2 p-4 flex items-center justify-center hover:bg-[#333333] cursor-pointer transition-colors aspect-square">
-                        <Plus className="w-6 h-6" />
-                    </div>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <div className="col-span-1 bg-[#292929] rounded-xl border-2 p-4 flex items-center justify-center hover:bg-[#333333] cursor-pointer transition-colors aspect-square">
+                                <Plus className="w-6 h-6" />
+                            </div>
+                        </DialogTrigger>
+                        <DialogContent className="bg-[#161616] border-2 ">
+                            <DialogHeader>
+                                <DialogTitle className="text-2xl font-black">Create New Crate</DialogTitle>
+                                <DialogDescription className="text-gray-400">
+                                    Choose an icon and name for your new crate.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="grid gap-4 py-4">
+                                <div className="grid gap-2">
+                                    <label htmlFor="title" className="text-sm font-medium">Title</label>
+                                    <input
+                                        id="title"
+                                        className="flex h-10 w-full rounded-md border bg-[#292929] px-3 py-2 text-sm text-white"
+                                        placeholder="Enter crate title"
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <label className="text-sm font-medium">Icon</label>
+                                    <div className="grid grid-cols-6 gap-2 max-h-[200px] overflow-y-auto p-2">
+                                        {Object.entries(iconMap).map(([key, Icon]) => (
+                                            <div
+                                                key={key}
+                                                className="aspect-square rounded-lg border-2 bg-[#292929] p-2 flex items-center justify-center hover:bg-[#333333] cursor-pointer"
+                                            >
+                                                <Icon className="w-6 h-6" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex justify-end gap-2">
+                                <Button className="">Create Crate</Button>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
                     {crates.map((crate) => {
                         const Icon = iconMap[crate.icon.toLowerCase()];
                         return (
