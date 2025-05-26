@@ -3,18 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import TreeItem from './treeItem';
 import { FileSystemComponent, Folder, Block } from '@/lib/types';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
+import NavigationHeader from './navigationHeader';
+import ActionButtons from './actionButtons';
+import CreateItemForm from './createItemForm';
+import FileSystemTree from './fileSystemTree';
 
 export default function FileSystem() {
     const router = useRouter();
@@ -108,93 +101,24 @@ export default function FileSystem() {
 
     return (
         <div className="h-full flex flex-col border rounded-lg shadow-sm">
-            <div className="flex items-center gap-2 p-2 border-b rounded-t-lg">
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0"
-                    onClick={handleNavigateUp}
-                    disabled={currentPath.length <= 1}
-                >
-                    <ChevronLeft size={16} />
-                </Button>
-                <Breadcrumb>
-                    <BreadcrumbList>
-                        {currentPath.map((pathItem, index) => (
-                            <React.Fragment key={pathItem}>
-                                <BreadcrumbItem>
-                                    {index === currentPath.length - 1 ? (
-                                        <BreadcrumbPage>{pathItem}</BreadcrumbPage>
-                                    ) : (
-                                        <BreadcrumbLink
-                                            onClick={() => updatePath(currentPath.slice(0, index + 1))}
-                                            className="cursor-pointer"
-                                        >
-                                            {pathItem}
-                                        </BreadcrumbLink>
-                                    )}
-                                </BreadcrumbItem>
-                                {index < currentPath.length - 1 && <BreadcrumbSeparator />}
-                            </React.Fragment>
-                        ))}
-                    </BreadcrumbList>
-                </Breadcrumb>
-            </div>
-
-            <div className="flex items-center gap-2 p-2 border-b">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                        setIsCreatingNew(true);
-                        setNewItemType('folder');
-                    }}
-                >
-                    <Plus size={16} className="mr-1.5" />
-                    New Folder
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                        setIsCreatingNew(true);
-                        setNewItemType('block');
-                    }}
-                >
-                    <Plus size={16} className="mr-1.5" />
-                    New Block
-                </Button>
-            </div>
-
-            {isCreatingNew && (
-                <div className="flex items-center gap-2 p-2 border-b bg-gray-50/50">
-                    <Input
-                        className="h-8"
-                        placeholder={`Enter ${newItemType} name...`}
-                        value={newItemName}
-                        onChange={(e) => setNewItemName(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                handleCreateNew();
-                            } else if (e.key === 'Escape') {
-                                setIsCreatingNew(false);
-                                setNewItemName('');
-                            }
-                        }}
-                        autoFocus
-                    />
-                    <Button size="sm" onClick={handleCreateNew}>
-                        Create
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => setIsCreatingNew(false)}>
-                        Cancel
-                    </Button>
-                </div>
-            )}
-
-            <div className="flex-1 overflow-auto p-2">
-                {renderTree(root)}
-            </div>
+          <NavigationHeader
+            currentPath={currentPath}
+            handleNavigateUp={handleNavigateUp}
+            updatePath={updatePath}
+          />
+          <ActionButtons
+            setIsCreatingNew={setIsCreatingNew}
+            setNewItemType={setNewItemType}
+          />
+          <CreateItemForm
+            isCreatingNew={isCreatingNew}
+            newItemType={newItemType}
+            newItemName={newItemName}
+            setNewItemName={setNewItemName}
+            handleCreateNew={handleCreateNew}
+            setIsCreatingNew={setIsCreatingNew}
+          />
+          <FileSystemTree root={root} renderTree={renderTree} />
         </div>
-    );
+      );
 }
