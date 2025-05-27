@@ -1,63 +1,97 @@
 "use server"
 
 import prisma from "@/lib/prisma";
+import { generateQuizzes } from "@/lib/quizGen";
 
-// Fetch all quizzes for a block
-export const fetchQuizzes = async (blockId: string) => {
-  const quizzes = await prisma.quiz.findMany({
-    where: { 
-      blockId: blockId 
-    },
-    include: {
-      questions: {
-        include: {
-          options: true
-        }
+interface Quiz {
+  id: string;
+  topicId: string;
+  used: boolean;
+  mistake: string | null;
+  question: string;
+  correctAns: string;
+  options: string[];
+}
+
+export const fetchQuiz = async (blockId: string): Promise<Quiz[]> => {
+  try {
+    if (!blockId) {
+      throw new Error("Block ID is required");
+    }
+
+    // Get all topics and quizzes in a single transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Get topics
+      const topics = await tx.topic.findMany({
+        where: { blockId },
+        select: { id: true }
+      });
+
+      if (!topics.length) {
+        throw new Error("No topics found for this block");
       }
-    }
-  });
-  return quizzes;
-};
 
-// Fetch a single quiz by ID
-export const fetchQuizById = async (quizId: string) => {
-  const quiz = await prisma.quiz.findUnique({
-    where: { 
-      id: quizId 
-    },
-    include: {
-      questions: {
-        include: {
-          options: true
-        }
+      // Get topics with mistakes
+      const topicsWithMistakes = await tx.quiz.findMany({
+        where: {
+          topicId: { in: topics.map(t => t.id) },
+          mistake: { not: null }
+        },
+        select: { topicId: true },
+        distinct: ['topicId'],
+        take: 10
+      });
+
+      // Get all needed quizzes in one query
+      const quizzes = await tx.quiz.findMany({
+        where: {
+          topicId: { in: topics.map(t => t.id) },
+          used: false
+        },
+        take: 10
+      });
+
+      // Mark quizzes as used
+      if (quizzes.length > 0) {
+        await tx.quiz.updateMany({
+          where: {
+            id: { in: quizzes.map(q => q.id) }
+          },
+          data: { used: true }
+        });
       }
-    }
-  });
-  return quiz;
+
+      return quizzes;
+    });
+
+    // Shuffle and return
+    return result.sort(() => Math.random() - 0.5);
+  } catch (error) {
+    console.error("Error fetching quizzes:", error);
+    throw new Error("Failed to fetch quizzes");
+  }
 };
 
-// Fetch questions for a specific quiz
-export const fetchQuizQuestions = async (quizId: string) => {
-  const questions = await prisma.question.findMany({
-    where: { 
-      quizId: quizId 
-    },
-    include: {
-      options: true
-    }
-  });
-  return questions;
+export const updateMistake = async (quizId: string, mistake: string) => {
+  try {
+    await prisma.quiz.update({
+      where: { id: quizId },
+      data: { mistake }
+    });
+  } catch (error) {
+    console.error("Failed to update mistake:", error);
+    throw new Error("Failed to update mistake in database");
+  }
 };
-
-// Fetch a single question with its options
-export const fetchQuestion = async (questionId: string) => {
-  const question = await prisma.question.findUnique({
-    where: { 
-      id: questionId 
-    },
-    include: {
-      options: true
-    }
-  });
-  return question;
+    
+export const updatePoints = async (blockID: string, points: number) => {
+  try {
+    await prisma.block.update({
+      where: { id: blockID },
+      data: { points: { increment: points } }
+    });
+  } catch (error) {
+    console.error("Failed to update points:", error);
+    throw new Error("Failed to update points in database");
+  }
 };
