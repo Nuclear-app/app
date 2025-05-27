@@ -48,29 +48,17 @@ export const fetchNotesAsText = async (blockId: string) => {
   const block = await prisma.block.findUnique({
     where: { id: blockId },
     select: { 
-      note: true,
-      context: true 
+      note: true
     },
   });
   
-  if (!block) return null;
+  if (!block || !block.note) return null;
   
-  let content = '';
-  
-  // Add context if it exists
-  if (block.context) {
-    content += block.context;
+  try {
+    const html = generateHTML(block.note as JSONContent, [StarterKit]);
+    return html.replace(/<[^>]*>/g, '');
+  } catch (error) {
+    console.error('Error parsing note content:', error);
+    return null;
   }
-  
-  // Add note content if it exists and is valid JSONContent
-  if (block.note) {
-    try {
-      const html = generateHTML(block.note as JSONContent, [StarterKit]);
-      content += '\n\n' + html.replace(/<[^>]*>/g, '');
-    } catch (error) {
-      console.error('Error parsing note content:', error);
-    }
-  }
-  
-  return content;
 };

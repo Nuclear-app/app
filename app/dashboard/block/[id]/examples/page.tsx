@@ -8,7 +8,7 @@ interface Props {
     params: Promise<{ id: string }>;
 }
 
-export default function FAQPage({ params }: Props) {
+export default function ExamplesPage({ params }: Props) {
     const { id } = use(params);
     const [context, setContext] = useState("");
     const [isLoading, setIsLoading] = useState(true);

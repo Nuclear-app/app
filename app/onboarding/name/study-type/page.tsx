@@ -47,17 +47,17 @@ export default function StudyTypePage() {
         <CardContent className="w-3/4 flex flex-col md:flex-row justify-center gap-6 mx-auto">
           <SelectStudyType 
             image={sandbox}
-            title="Sandbox"
+            title="Deathmarch"
             description="I have some things in my mind, and I want to start notetaking right away."
             onClick={() => handleModeSelect('sandbox', '/modeSpecific/notetaking')} />
           <SelectStudyType 
             image={campaign}
-            title="Campaign"
+            title="Story & Sword"
             description="I have some resources, but I need help to actually learn them."
             onClick={() => handleModeSelect('campaign', '/modeSpecific/fileInput')} />
           <SelectStudyType 
             image={story}
-            title="Story"
+            title="Just the Story"
             description="I just want to dump everything I have and have summaries made for me."
             onClick={() => handleModeSelect('story', '/modeSpecific/fileInput')} />
         </CardContent>

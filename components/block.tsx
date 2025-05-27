@@ -12,6 +12,8 @@ import {
  import Flashcards from "@/public/flashcards.svg"
 import { fetchPoints, fetchNotesAsText } from "@/lib/blockFetch"
 import { useState, useEffect } from "react"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 
 interface BlockProps {
@@ -51,7 +53,10 @@ interface BlockProps {
              className="col-span-1 row-span-1"
           /> */}
           <div className="col-span-1 row-span-1 flex flex-col gap-4 h-full">
-            <div className="w-full flex flex-row rounded-xl flex-1 bg-[#161616] items-center justify-center">Back Button</div>
+            <Link className="w-full flex flex-row rounded-xl flex-1 bg-[#161616] items-center justify-center" href={`/dashboard`}>
+            {/* <div>Back Button</div> */}
+            <Button className="w-full flex flex-row rounded-xl flex-1 bg-[#161616] items-center justify-center">Back Button</Button>
+            </Link>
             <div
               className="w-full rounded-xl flex-1 flex flex-row items-center justify-center relative overflow-hidden"
               style={{

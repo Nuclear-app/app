@@ -66,7 +66,7 @@ export async function generateFillInTheBlank(text: string) {
 
   const model = new ChatPerplexity({
     apiKey: process.env.PERPLEXITY_API_KEY,
-    model: "sonar-medium-online", // Using the SONAR model
+    model: "sonar", // Using the SONAR model
   });
 
   const formatInstructions = parser.getFormatInstructions();
