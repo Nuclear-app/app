@@ -4,14 +4,22 @@ import { createClient } from "@/utils/supabase/server"
 import prisma from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import { generateHTML } from '@tiptap/html'
-import StarterKit from '@tiptap/starter-kit'
+import { generateExamples } from "@/lib/examplesPerplexity"
+import { generateQuizzes } from "@/lib/quizGen"
 
 export async function updateContext(data: { blockId: string, context: string }) {  
   await prisma.block.update({
     where: { id: data.blockId },
     data: { context: data.context }
   })
-}
+
+  await generateExamples(data.context, data.blockId)
+  await generateQuizzes(data.context, data.blockId)
+
+  
+} 
+
+
 
 export async function fetchNotes(blockId: string): Promise<string> {
   try {
