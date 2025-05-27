@@ -8,7 +8,7 @@ import NavigationHeader from './navigationHeader';
 import ActionButtons from './actionButtons';
 import CreateItemForm from './createItemForm';
 import FileSystemTree from './fileSystemTree';
-import { DatabaseItem } from '@/app/dashboardTest/actions';
+import { DatabaseItem } from '@/app/testPages/dashboardTest/actions';
 
 const rootFolderId = "58b06f68-4d5b-4eef-8a5a-8f83de7a0aba";
 

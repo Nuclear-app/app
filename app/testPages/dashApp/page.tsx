@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { fetchFileSystemStructure, addBlock, addFolder } from '@/app/dashboardTest/actions';
-import { DatabaseItem } from '@/app/dashboardTest/actions';
+import { fetchFileSystemStructure, addBlock, addFolder } from '@/app/testPages/dashboardTest/actions';
+import { DatabaseItem } from '@/app/testPages/dashboardTest/actions';
 
 interface DisplayItem {
     id: string;

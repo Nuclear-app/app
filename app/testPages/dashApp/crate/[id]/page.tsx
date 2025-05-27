@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { fetchFileSystemStructure, addBlock, addFolder } from '@/app/dashboardTest/actions';
+import { fetchFileSystemStructure, addBlock, addFolder } from '@/app/testPages/dashboardTest/actions';
 
 interface DisplayItem {
     id: string;
