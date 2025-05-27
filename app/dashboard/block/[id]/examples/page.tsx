@@ -1,9 +1,15 @@
-import { Quiz } from "@/components/quiz";
-import { useEffect, useState } from "react";
+'use client';
+
+import Examples from "@/components/examples";
+import { useEffect, useState, use } from "react";
 import { getBlockContext } from "../../actions";
 
-export default async function QuizzesPage({ params }: { params: { id: string } }) {
-    const { id } = params;
+interface Props {
+    params: Promise<{ id: string }>;
+}
+
+export default function FAQPage({ params }: Props) {
+    const { id } = use(params);
     const [context, setContext] = useState("");
     const [isLoading, setIsLoading] = useState(true);
 
@@ -42,9 +48,10 @@ export default async function QuizzesPage({ params }: { params: { id: string } }
     if (isLoading) {
         return <div>Loading context...</div>;
     }
+
     return (
         <div>
-            <Quiz blockId={id} />
+            <Examples blockID={id} />
         </div>
     );
 }
