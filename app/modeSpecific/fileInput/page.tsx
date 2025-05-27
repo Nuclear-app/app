@@ -15,7 +15,9 @@ import { getAudioURL, deleteAudio } from "@/lib/audioURL";
 
 import { createBrowserClient } from '@supabase/ssr'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+
+import { updateContext, fetchNotes } from './actions';
 
 const acceptedFileTypes = {
 
@@ -29,8 +31,18 @@ const acceptedFileTypes = {
 
 export default function FileInputPage() {
   const [context, setContext] = useState('')
+  const [mode, setMode] = useState<string>('');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const blockId = searchParams.get('blockId');
 
-  const router = useRouter()
+  useEffect(() => {
+    // Get the mode from localStorage
+    const storedMode = localStorage.getItem('selectedMode');
+    if (storedMode) {
+      setMode(storedMode);
+    }
+  }, []);
 
   useEffect(() => { //check if user is logged in
 
@@ -101,7 +113,27 @@ export default function FileInputPage() {
       setContext(prevContext => prevContext + newContext)
 
       console.log('Final context:', newContext)
-
+      
+      // Save context to block if blockId is available
+      if (blockId) {
+        // Get existing notes
+        const existingNotes = await fetchNotes(blockId);
+        
+        // Combine existing notes with new context
+        const combinedContext = existingNotes 
+          ? `${existingNotes}\n\n${newContext}` 
+          : newContext;
+        
+        // Update the block with combined context
+        await updateContext({ blockId, context: combinedContext });
+      }
+      
+      // After context is generated and saved, navigate to the appropriate page
+      const redirectPath = mode === 'campaign' 
+        ? `/modeSpecific/fillInTheBlanks?blockId=${blockId}` 
+        : `/dashboard/block/${blockId}`;
+      router.push(redirectPath);
+      
     } catch (error) {
 
       console.error('Error handling files:', error)
@@ -114,13 +146,13 @@ export default function FileInputPage() {
 
     <div>
 
-      <FileUpload returnFiles={handleFiles} />
+      <FileUpload returnFiles={handleFiles} mode={mode} />
 
       {context && (
 
         <div className="mt-4 p-4 bg-gray-100 rounded">
 
-          <h3 className="text-lg font-semibold mb-2">Transcription Result:</h3>
+          <h3 className="text-lg font-semibold mb-2">Processing Files...</h3>
 
           <p className="whitespace-pre-wrap" > {context}</p >
 

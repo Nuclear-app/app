@@ -71,7 +71,7 @@ interface BlockProps {
              description="Coming Soon..."
              Icon={Zap}
              background={null}
-             href="#"
+             href={`/dashboard/block/${blockId}/flashcards`}
              cta="->"
              className="col-span-1 row-span-1"
           />
@@ -80,7 +80,7 @@ interface BlockProps {
              description=""
              Icon={FishSymbol}
              background={null}
-             href="#"
+             href={`/dashboard/block/${blockId}/quizzes`}
              cta="->"
              className="col-span-1 row-span-1"
           />
@@ -89,7 +89,7 @@ interface BlockProps {
              description=""
              Icon={Upload}
              background={null}
-             href="#"
+             href={`/modeSpecific/fileInput?blockId=${blockId}`}
              cta="->"
              className="col-span-1 row-span-1"
           />
@@ -98,7 +98,7 @@ interface BlockProps {
              description=""
              Icon={Infinity}
              background={null}
-             href="#"
+             href={`/dashboard/block/${blockId}/faq`}
              cta="->"
              className="col-span-1 row-span-1"
           />
@@ -107,7 +107,7 @@ interface BlockProps {
              description={notes || 'No notes yet'}
              Icon={FileTextIcon}
              background={null}
-             href="#"
+             href={`/modeSpecific/notetaking?blockId=${blockId}`}
              cta="Learn more"
              className="col-span-2 row-span-2"
           />
@@ -125,7 +125,7 @@ interface BlockProps {
              description=""
              Icon={ScanSearch}
              background={null}
-             href="#"
+             href={`/dashboard/block/${blockId}/examples`}
              cta="->"
              className="col-span-1 row-span-1"
           />

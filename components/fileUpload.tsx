@@ -8,6 +8,7 @@ import { useCallback, useRef, useState } from "react";
 import { SubmitButton } from "./submit-button";
 import upload from "@/public/upload.svg";
 import Image from "next/image";
+
 const acceptedFileTypes = {
   'application/pdf': ['.pdf'],
   'image/*': ['.png', '.jpg', '.jpeg', '.heic'],
@@ -16,6 +17,7 @@ const acceptedFileTypes = {
 
 interface FileUploadProps {
   returnFiles: (files: FileState[]) => void
+  mode: string
 }
 
 
@@ -24,11 +26,13 @@ export interface FileState {
   preview?: string;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ returnFiles }) => {
+const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode }) => {
   const [files, setFiles] = useState<FileState[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
   // This is important
   const maxSizeInMB = 100;
 
@@ -124,9 +128,16 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles }) => {
     };
   }, []);
 
+  const handleUploadClick = () => {
+    setIsUploading(true);
+    returnFiles(files);
+  };
+
   return (
     <div className="lg:w-1/2 md:w-full mx-auto border-2 rounded-lg ">
-        <div className="text-2xl font-semibold text-primary self-start p-4 pr-1">Upload Files</div>
+        <div className="text-2xl font-semibold text-primary self-start p-4 pr-1">
+          {isUploading ? "Uploading Files..." : "Upload Files"}
+        </div>
 
       <div
         className={ny(
@@ -159,7 +170,6 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles }) => {
               <Image src={upload} alt="upload" width={50} height={50} />
             </button>
             <div className="text-sm text-muted-foreground">Supported: PDFs, Docs, Slides, Images, etc</div>
-           
           </div>
           
         </div>
@@ -203,7 +213,15 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles }) => {
 
 
       <div className="flex justify-center mt-6 w-full">
-        {files.length > 0 && <SubmitButton className="w-full" onClick={() => returnFiles(files)}>Start learning</SubmitButton>}
+        {files.length > 0 && 
+          <SubmitButton 
+            className="w-full" 
+            onClick={handleUploadClick}
+            disabled={isUploading}
+          >
+            {isUploading ? "Processing..." : "Start learning"}
+          </SubmitButton>
+        }
       </div>
     </div>
   );

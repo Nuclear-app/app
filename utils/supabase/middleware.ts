@@ -37,24 +37,47 @@ export const updateSession = async (request: NextRequest) => {
 
     // This will refresh session if expired - required for Server Components
     // https://supabase.com/docs/guides/auth/server-side/nextjs
-    const user = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
     
-    if (!user) {
-      return NextResponse.redirect("/authentication/sign-in");
-    }  
+    // Check if this is a new sign up by looking at the created_at timestamp
+    // If the user was created within the last minute, they are considered new
+    const isNewUser = user && (
+      new Date().getTime() - new Date(user.created_at).getTime() < 60000 || // within last minute
+      user.user_metadata?.is_new_signup // or has new signup flag
+    );
 
-    // protected routes
-    if ((request.nextUrl.pathname.startsWith("/protected") || 
-         request.nextUrl.pathname.startsWith("/dashboard")||
-         request.nextUrl.pathname.startsWith("/mode-specific")||
-         request.nextUrl.pathname.startsWith("/onboarding")) && 
-        user.error)
+    // Redirect unauthenticated users to sign-in for protected routes
+    if ((request.nextUrl.pathname.startsWith("/dashboard") ||
+         request.nextUrl.pathname.startsWith("/mode-specific")) && 
+        error)
     {
       return NextResponse.redirect(new URL("/sign-in", request.url));
     }
 
-    if (request.nextUrl.pathname === "/" && !user.error) {
-      return NextResponse.redirect(new URL("/protected", request.url));
+    // Handle root path and post-authentication redirects
+    if (!error) {
+      // For root path or /protected path
+      if (request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/protected") {
+        if (isNewUser) {
+          return NextResponse.redirect(new URL("/onboarding/name", request.url));
+        } else {
+          return NextResponse.redirect(new URL("/dashboard", request.url));
+        }
+      }
+
+      // Prevent authenticated users from accessing auth pages
+      if (request.nextUrl.pathname.startsWith("/sign-in") || 
+          request.nextUrl.pathname.startsWith("/sign-up")) 
+      {
+        if (isNewUser) {
+          return NextResponse.redirect(new URL("/onboarding/name", request.url));
+        } else {
+          return NextResponse.redirect(new URL("/dashboard", request.url));
+        }
+      }
     }
 
     return response;

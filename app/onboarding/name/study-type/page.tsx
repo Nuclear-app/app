@@ -1,11 +1,41 @@
+'use client'
+
 import SelectStudyType from "@/components/select-study-type"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import sandbox from "@/public/sandbox-study-type.svg"
 import campaign from "@/public/campaign-study-type.svg"
 import story from "@/public/story-study-type.svg"
+import { createInitialBlock } from "@/app/actions/create-initial-block"
 
 export default function StudyTypePage() {
+  const router = useRouter();
+
+  const handleModeSelect = async (mode: 'sandbox' | 'campaign' | 'story', path: string) => {
+    if (mode === 'campaign' || mode === 'story') {
+      localStorage.setItem('selectedMode', mode);
+    }
+
+    try {
+      const result = await createInitialBlock(mode);
+      if (!result.success || !result.data) {
+        console.error('Failed to create initial block:', result.error);
+        return;
+      }
+      
+      // For sandbox mode, add the block ID to the notetaking URL
+      // For other modes, add it to the file input URL
+      if (mode === 'sandbox') {
+        router.push(`${path}?blockId=${result.data.id}`);
+      } else {
+        router.push(`${path}?blockId=${result.data.id}`);
+      }
+    } catch (error) {
+      console.error('Error creating initial block:', error);
+    }
+  };
+
   return (
     <div className="
     border rounded-3xl w-11/12 container flex items-center justify-center min-h-screen py-12 w-full
@@ -19,17 +49,17 @@ export default function StudyTypePage() {
             image={sandbox}
             title="Sandbox"
             description="I have some things in my mind, and I want to start notetaking right away."
-            link="/notetaking" />
+            onClick={() => handleModeSelect('sandbox', '/modeSpecific/notetaking')} />
           <SelectStudyType 
             image={campaign}
             title="Campaign"
             description="I have some resources, but I need help to actually learn them."
-            link="#" />
+            onClick={() => handleModeSelect('campaign', '/modeSpecific/fileInput')} />
           <SelectStudyType 
             image={story}
             title="Story"
             description="I just want to dump everything I have and have summaries made for me."
-            link="/notetaking" />
+            onClick={() => handleModeSelect('story', '/modeSpecific/fileInput')} />
         </CardContent>
         <CardFooter className="flex justify-center">
             <div>

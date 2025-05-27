@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-export default async function BlockPage({ params }: { params: { id: string } }) {
+export default function BlockPage({ params }: { params: { id: string } }) {
     return (
         <div className="p-6">
             <div className="flex gap-4 mb-4">

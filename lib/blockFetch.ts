@@ -11,32 +11,66 @@ export const fetchPoints = async (blockId: string) => {
     select: { points: true },
   });
   return block?.points ?? 0;
-
 };
-
 
 export const fetchNotes = async (blockId: string) => {
   const block = await prisma.block.findUnique({
     where: { id: blockId },
-    select: { note: true },
+    select: { 
+      note: true,
+      context: true 
+    },
   });
   
-  if (!block?.note) return null;
+  if (!block) return null;
   
-  // Cast the note to JSONContent type
-  const html = generateHTML(block.note as JSONContent, [StarterKit])
-  return html;
+  let content = '';
+  
+  // Add context if it exists
+  if (block.context) {
+    content += block.context;
+  }
+  
+  // Add note content if it exists and is valid JSONContent
+  if (block.note) {
+    try {
+      const html = generateHTML(block.note as JSONContent, [StarterKit]);
+      content += '\n\n' + html;
+    } catch (error) {
+      console.error('Error parsing note content:', error);
+    }
+  }
+  
+  return content;
 };
 
 export const fetchNotesAsText = async (blockId: string) => {
   const block = await prisma.block.findUnique({
     where: { id: blockId },
-    select: { note: true },
+    select: { 
+      note: true,
+      context: true 
+    },
   });
   
-  if (!block?.note) return null;
+  if (!block) return null;
   
-  const html = generateHTML(block.note as JSONContent, [StarterKit]);
-  // Convert HTML to text by stripping tags
-  return html.replace(/<[^>]*>/g, '');
+  let content = '';
+  
+  // Add context if it exists
+  if (block.context) {
+    content += block.context;
+  }
+  
+  // Add note content if it exists and is valid JSONContent
+  if (block.note) {
+    try {
+      const html = generateHTML(block.note as JSONContent, [StarterKit]);
+      content += '\n\n' + html.replace(/<[^>]*>/g, '');
+    } catch (error) {
+      console.error('Error parsing note content:', error);
+    }
+  }
+  
+  return content;
 };
