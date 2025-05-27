@@ -3,12 +3,6 @@ generator client {
   output   = "../lib/generated/prisma"
 }
 
-enum Mode {
-  EASY
-  MEDIUM
-  HARD
-}
-
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
@@ -46,11 +40,11 @@ model Quiz {
   correctAns String
   mistake    String?
   blockId    String
-  used       Boolean  @default(false)
   options    String[]
   topicId    String
+  used       Boolean  @default(false)
   block      Block    @relation(fields: [blockId], references: [id])
-  topic      Topic?   @relation(fields: [topicId], references: [id])
+  topic      Topic    @relation(fields: [topicId], references: [id])
 }
 
 model Question {
@@ -66,8 +60,9 @@ model Folder {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  blocks    Block[]
   parentId  String?
+  blocks    Block[]
+  icon      String?
   parent    Folder?  @relation("FolderToFolder", fields: [parentId], references: [id])
   children  Folder[] @relation("FolderToFolder")
 }
@@ -88,4 +83,10 @@ model Topic {
   examples String[]
   Quiz     Quiz[]
   Block    Block    @relation(fields: [blockId], references: [id])
+}
+
+enum Mode {
+  EASY
+  MEDIUM
+  HARD
 }
