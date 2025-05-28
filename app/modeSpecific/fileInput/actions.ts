@@ -15,6 +15,7 @@ export async function updateContext(data: { blockId: string, context: string }) 
   })
 
   await generateExamples(data.context, data.blockId)
+  
   await generateQuizzes(data.context, data.blockId)
 } 
 
