@@ -6,6 +6,7 @@ import { redirect } from "next/navigation"
 import { generateHTML } from '@tiptap/html'
 import { generateExamples } from "@/lib/examplesPerplexity"
 import { generateQuizzes } from "@/lib/quizGen"
+import { StarterKit } from "@tiptap/starter-kit"
 
 export async function updateContext(data: { blockId: string, context: string }) {  
   await prisma.block.update({
@@ -14,9 +15,8 @@ export async function updateContext(data: { blockId: string, context: string }) 
   })
 
   await generateExamples(data.context, data.blockId)
-  await generateQuizzes(data.context, data.blockId)
-
   
+  await generateQuizzes(data.context, data.blockId)
 } 
 
 

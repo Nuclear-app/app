@@ -198,7 +198,7 @@ export default function Dashboard() {
             blockForm.reset();
             setBlockDialogOpen(false);
             // Navigate to the new block
-            router.push(`/onboarding/name/study-type?blockId=${block.id}&newBlock=true`);
+            router.push(`/onboarding/name/study-type?blockId=${block.id}&newBlock=false`);
         } catch (error) {
             console.error("Failed to create block:", error);
         }

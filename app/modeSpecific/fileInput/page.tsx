@@ -148,19 +148,6 @@ export default function FileInputPage() {
 
       <FileUpload returnFiles={handleFiles} mode={mode} />
 
-      {context && (
-
-        <div className="mt-4 p-4 bg-gray-100 rounded">
-
-          <h3 className="text-lg font-semibold mb-2">Processing Files...</h3>
-
-          {/* <p className="whitespace-pre-wrap" > {context}</p > */}
-
-        </div >
-
-      )
-      }
-
     </div >
 
   )
