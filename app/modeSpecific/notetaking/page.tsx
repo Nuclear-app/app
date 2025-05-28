@@ -52,10 +52,10 @@ export default function EditorPage() {
 
   return (
     <div className="p-4">
-      <Link href="/dashboard">
+      <Link href={`/dashboard/block/${blockId}`}>
         <Button className="mb-4 bg-foreground text-background">
           <ArrowLeftIcon className="w-4 h-4" />
-          Back to Dashboard
+          Block
         </Button>
       </Link>
       <TailwindAdvancedEditor 
