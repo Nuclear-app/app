@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
 import { Block } from "@/lib/generated/prisma";
 
-const ROOT_FOLDER_ID = "58b06f68-4d5b-4eef-8a5a-8f83de7a0aba";
+const ROOT_FOLDER_ID = "f2120a35-5e3f-488e-be86-f0753af42e77";
 
 type BlockResponse = {
   success: boolean;
@@ -12,7 +12,7 @@ type BlockResponse = {
   error?: string;
 }
 
-export async function createInitialBlock(mode: 'sandbox' | 'campaign' | 'story'): Promise<BlockResponse> {
+export async function createInitialBlock(mode?: 'sandbox' | 'campaign' | 'story'): Promise<BlockResponse> {
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();

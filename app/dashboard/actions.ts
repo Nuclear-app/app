@@ -1,10 +1,10 @@
 "use server"
 
 import prisma from "@/lib/prisma";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 
-const ROOT_FOLDER_ID = "58b06f68-4d5b-4eef-8a5a-8f83de7a0aba";
+const ROOT_FOLDER_ID = "f2120a35-5e3f-488e-be86-f0753af42e77";
 
 export interface DatabaseItem {
     id: string;
@@ -27,11 +27,8 @@ export interface Folder {
 
 const getUser = async () => {
     try {
-        const supabase = createClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-        )
-        const { data: { user }, error } = await supabase.auth.getUser()
+        const supabase = await createClient();
+        const { data: { user }, error } = await supabase.auth.getUser();
         
         if (error) {
             console.error("Auth error:", error);
@@ -78,7 +75,11 @@ export const fetchDashboardItems = async () => {
             where: {
                 NOT: {
                     parentId: null
-                }
+                },
+                parent: {
+                    authorId: userId
+                },
+                authorId: userId
             },
             select: {
                 id: true,

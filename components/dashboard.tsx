@@ -112,6 +112,14 @@ export default function Dashboard() {
     const [blockDialogOpen, setBlockDialogOpen] = useState(false);
     const [crateDialogOpen, setCrateDialogOpen] = useState(false);
 
+    // useEffect(() => {
+    //     const loadData = async () => {
+    //         const block = await initializeBlock();
+    //         setBlockId(block?.id || "");
+    //     };
+    //     loadData();
+    // }, []);
+
     useEffect(() => {
         const loadData = async () => {
             try {

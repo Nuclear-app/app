@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { generateHTML } from '@tiptap/html'
 import StarterKit from '@tiptap/starter-kit'
 import { JSONContent } from '@tiptap/react'
+import { createInitialBlock } from "@/app/actions/create-initial-block";
 
 export const fetchPoints = async (blockId: string) => {
   const block = await prisma.block.findUnique({

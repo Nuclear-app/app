@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 
-const rootFolderId = "58b06f68-4d5b-4eef-8a5a-8f83de7a0aba";
+const rootFolderId = "f2120a35-5e3f-488e-be86-f0753af42e77";
 
 export interface DatabaseItem {
     id: string;

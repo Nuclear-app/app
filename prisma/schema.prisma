@@ -16,6 +16,7 @@ model User {
   name  String?
   mode  Mode?
   posts Block[]
+  folders Folder[] @relation("UserToFolder")
 }
 
 model Block {
@@ -62,10 +63,12 @@ model Folder {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   parentId  String?
+  authorId  String?
   blocks    Block[]
   icon      String?
   parent    Folder?  @relation("FolderToFolder", fields: [parentId], references: [id])
   children  Folder[] @relation("FolderToFolder")
+  User User[] @relation("UserToFolder")
 }
 
 model FillInTheBlank {
