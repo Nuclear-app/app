@@ -91,20 +91,25 @@ export async function generateExamples(text: string, blockId: string) {
   try {
     const response = await model.invoke(prompt);
     const parsedOutput = await parser.parse(response.content.toString());
-    const storedTopics = await prisma.topic.createMany({
-      data: parsedOutput.topics.map((topic) => ({
-        name: topic.topic,
-        examples: topic.examples.map((example) => example.example),
-        blockId: blockId,
-      })),
-    });
+    
+    // Use Promise.all to wait for all topics to be created
+    const storedTopics = await Promise.all(
+      parsedOutput.topics.map((topic) => 
+        prisma.topic.create({
+          data: {
+            name: topic.topic,
+            examples: topic.examples.map((example) => example.example),
+            blockId: blockId,
+          },
+        })
+      )
+    );
+    
     return storedTopics;
   } catch (error) {
     console.error("Error generating Examples:", error);
     throw new Error("Failed to generate Examples");
   }
-
-
 }
 
 
