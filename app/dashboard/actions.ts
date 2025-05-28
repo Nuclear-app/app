@@ -29,16 +29,16 @@ const getUser = async () => {
     try {
         const supabase = await createClient();
         const { data: { user }, error } = await supabase.auth.getUser();
-        
+
         if (error) {
             console.error("Auth error:", error);
             throw new Error("Authentication failed");
         }
-        
+
         if (!user) {
             throw new Error("No authenticated user found");
         }
-        
+
         return user.id;
     } catch (error) {
         console.error("Failed to get user:", error);
@@ -50,13 +50,10 @@ export const fetchDashboardItems = async () => {
     try {
         const userId = await getUser();
 
-        // Fetch only blocks that belong to the authenticated user
+        // Simply fetch all blocks belonging to the user
         const blocks = await prisma.block.findMany({
             where: {
-                authorId: userId,
-                NOT: {
-                    folderId: null
-                }
+                authorId: userId
             },
             select: {
                 id: true,
@@ -70,15 +67,9 @@ export const fetchDashboardItems = async () => {
             }
         });
 
-        // Fetch folders (crates)
+        // Simply fetch all folders belonging to the user
         const folders = await prisma.folder.findMany({
             where: {
-                NOT: {
-                    parentId: null
-                },
-                parent: {
-                    authorId: userId
-                },
                 authorId: userId
             },
             select: {
@@ -220,9 +211,12 @@ export const fetchBlocks = async () => {
 
 export const fetchCrates = async () => {
     try {
+        const userId = await getUser();
+
         const folders = await prisma.folder.findMany({
             where: {
-                parentId: null // Only root level folders
+                parentId: null, // Only root level folders
+                authorId: userId // Only folders belonging to the current user
             },
             select: {
                 id: true,
@@ -291,11 +285,25 @@ export const addBlock = async (title: string, folderId: string | null = ROOT_FOL
 
 export const addCrate = async (name: string, icon: string | null = null, parentId: string | null = ROOT_FOLDER_ID) => {
     try {
+        // Get authenticated user
+        const userId = await getUser();
+
+        // Validate folder exists if provided
+        if (parentId) {
+            const folder = await prisma.folder.findUnique({
+                where: { id: parentId }
+            });
+            if (!folder) {
+                throw new Error(`Folder with ID ${parentId} not found`);
+            }
+        }
+
         const folder = await prisma.folder.create({
             data: {
                 name,
                 parentId,
-                icon
+                icon,
+                authorId: userId
             },
             select: {
                 id: true,
