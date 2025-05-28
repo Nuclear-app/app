@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import {
     Ampersands,
     Anvil,
@@ -47,6 +50,16 @@ import {
 } from "@/components/ui/dialog"
 import { fetchDashboardItems, addBlock, addCrate } from "@/app/dashboard/actions";
 import Link from "next/link";
+import { Input } from "./ui/input";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { useRouter } from "next/navigation";
 
 interface DashboardProps {
     userId: string;
@@ -69,7 +82,7 @@ const truncateText = (text: string, maxLength: number) => {
 };
 
 // Update the iconMap to include all icons
-const iconMap: { [key: string]: any } = {
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
     ampersands: Ampersands,
     anvil: Anvil,
     atom: Atom,
@@ -103,7 +116,26 @@ const iconMap: { [key: string]: any } = {
     plus: Plus
 };
 
+// Form schemas
+const blockFormSchema = z.object({
+    title: z.string().min(1, {
+        message: "Title is required.",
+    }).max(50, {
+        message: "Title must be less than 50 characters.",
+    }),
+});
+
+const crateFormSchema = z.object({
+    title: z.string().min(1, {
+        message: "Title is required.",
+    }).max(50, {
+        message: "Title must be less than 50 characters.",
+    }),
+    icon: z.string(),
+});
+
 export default function Dashboard() {
+    const router = useRouter();
     const [blocks, setBlocks] = useState<Block[]>([]);
     const [crates, setCrates] = useState<Crate[]>([]);
     const [newBlockTitle, setNewBlockTitle] = useState("");
@@ -142,41 +174,44 @@ export default function Dashboard() {
         loadData();
     }, []);
 
-    const handleCreateBlock = async () => {
-        if (!newBlockTitle.trim()) return;
+    // Block form
+    const blockForm = useForm<z.infer<typeof blockFormSchema>>({
+        resolver: zodResolver(blockFormSchema),
+        defaultValues: {
+            title: "",
+        },
+    });
+
+    // Crate form
+    const crateForm = useForm<z.infer<typeof crateFormSchema>>({
+        resolver: zodResolver(crateFormSchema),
+        defaultValues: {
+            title: "",
+            icon: "blocks",
+        },
+    });
+
+    const handleCreateBlock = async (values: z.infer<typeof blockFormSchema>) => {
         try {
-            const block = await addBlock(newBlockTitle);
+            const block = await addBlock(values.title);
             setBlocks(prev => [...prev, { id: block.id, title: block.title }]);
-            setNewBlockTitle("");
+            blockForm.reset();
             setBlockDialogOpen(false);
+            // Navigate to the new block
+            router.push(`/onboarding/name/study-type?blockId=${block.id}&newBlock=true`);
         } catch (error) {
             console.error("Failed to create block:", error);
         }
     };
 
-    const handleCreateCrate = async () => {
-        if (!newCrateTitle.trim()) return;
+    const handleCreateCrate = async (values: z.infer<typeof crateFormSchema>) => {
         try {
-            const crate = await addCrate(newCrateTitle, newCrateIcon);
+            const crate = await addCrate(values.title, values.icon);
             setCrates(prev => [...prev, { id: crate.id, title: crate.name, icon: crate.icon || "blocks" }]);
-            setNewCrateTitle("");
+            crateForm.reset();
             setCrateDialogOpen(false);
         } catch (error) {
             console.error("Failed to create crate:", error);
-        }
-    };
-
-    const handleBlockKeyPress = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            handleCreateBlock();
-        }
-    };
-
-    const handleCrateKeyPress = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            handleCreateCrate();
         }
     };
 
@@ -217,19 +252,24 @@ export default function Dashboard() {
                                     Enter a name for your new block.
                                 </DialogDescription>
                             </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid gap-2">
-                                    <label htmlFor="blockTitle" className="text-sm font-medium">Title</label>
-                                    <input
-                                        id="blockTitle"
-                                        value={newBlockTitle}
-                                        onChange={(e) => setNewBlockTitle(e.target.value)}
-                                        onKeyPress={handleBlockKeyPress}
-                                        className="bg-[#292929] border rounded-md p-2"
+                            <Form {...blockForm}>
+                                <form onSubmit={blockForm.handleSubmit(handleCreateBlock)} className="space-y-4">
+                                    <FormField
+                                        control={blockForm.control}
+                                        name="title"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Title</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} className="bg-[#292929] border rounded-md p-2" />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
                                     />
-                                </div>
-                                <Button onClick={handleCreateBlock}>Create Block</Button>
-                            </div>
+                                    <Button type="submit">Create Block</Button>
+                                </form>
+                            </Form>
                         </DialogContent>
                     </Dialog>
                     {blocks.map((block) => (
@@ -259,33 +299,47 @@ export default function Dashboard() {
                                     Choose an icon and name for your new crate.
                                 </DialogDescription>
                             </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid gap-2">
-                                    <label htmlFor="crateTitle" className="text-sm font-medium">Title</label>
-                                    <input
-                                        id="crateTitle"
-                                        value={newCrateTitle}
-                                        onChange={(e) => setNewCrateTitle(e.target.value)}
-                                        onKeyPress={handleCrateKeyPress}
-                                        className="bg-[#292929] border rounded-md p-2"
+                            <Form {...crateForm}>
+                                <form onSubmit={crateForm.handleSubmit(handleCreateCrate)} className="space-y-4">
+                                    <FormField
+                                        control={crateForm.control}
+                                        name="title"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Title</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} className="bg-[#292929] border rounded-md p-2" />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
                                     />
-                                </div>
-                                <div className="grid gap-2">
-                                    <label className="text-sm font-medium">Icon</label>
-                                    <div className="grid grid-cols-6 gap-2">
-                                        {Object.entries(iconMap).map(([key, Icon]) => (
-                                            <div
-                                                key={key}
-                                                onClick={() => setNewCrateIcon(key)}
-                                                className={`p-2 rounded-md cursor-pointer ${newCrateIcon === key ? 'bg-[#333333]' : 'hover:bg-[#292929]'}`}
-                                            >
-                                                <Icon className="w-6 h-6" />
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                                <Button onClick={handleCreateCrate}>Create Crate</Button>
-                            </div>
+                                    <FormField
+                                        control={crateForm.control}
+                                        name="icon"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Icon</FormLabel>
+                                                <FormControl>
+                                                    <div className="grid grid-cols-6 gap-2">
+                                                        {Object.entries(iconMap).map(([key, Icon]) => (
+                                                            <div
+                                                                key={key}
+                                                                onClick={() => field.onChange(key)}
+                                                                className={`p-2 rounded-md cursor-pointer ${field.value === key ? 'bg-[#333333]' : 'hover:bg-[#292929]'}`}
+                                                            >
+                                                                <Icon className="w-6 h-6" />
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <Button type="submit">Create Crate</Button>
+                                </form>
+                            </Form>
                         </DialogContent>
                     </Dialog>
                     {crates.map((crate) => {
