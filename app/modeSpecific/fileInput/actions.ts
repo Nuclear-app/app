@@ -6,6 +6,7 @@ import { redirect } from "next/navigation"
 import { generateHTML } from '@tiptap/html'
 import { generateExamples } from "@/lib/examplesPerplexity"
 import { generateQuizzes } from "@/lib/quizGen"
+import { StarterKit } from "@tiptap/starter-kit"
 
 export async function updateContext(data: { blockId: string, context: string }) {  
   await prisma.block.update({
@@ -13,10 +14,20 @@ export async function updateContext(data: { blockId: string, context: string }) 
     data: { context: data.context }
   })
 
+  // First generate and wait for examples to be fully created
   await generateExamples(data.context, data.blockId)
-  await generateQuizzes(data.context, data.blockId)
-
   
+  // Verify topics exist before proceeding
+  const topics = await prisma.topic.findMany({
+    where: { blockId: data.blockId }
+  })
+  
+  if (!topics.length) {
+    throw new Error("No topics were created. Cannot generate quizzes.")
+  }
+
+  // Now generate quizzes once we're sure topics exist
+  await generateQuizzes(data.context, data.blockId)
 } 
 
 
