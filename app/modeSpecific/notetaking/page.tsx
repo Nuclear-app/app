@@ -4,6 +4,9 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getNoteContent } from './actions';
 import { type JSONContent } from "novel";
+import { Button } from "@/components/ui/button";
+import { ArrowLeftIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
 
 export default function EditorPage() {
   const searchParams = useSearchParams();
@@ -49,6 +52,12 @@ export default function EditorPage() {
 
   return (
     <div className="p-4">
+      <Link href="/dashboard">
+        <Button className="mb-4 bg-foreground text-background">
+          <ArrowLeftIcon className="w-4 h-4" />
+          Back to Dashboard
+        </Button>
+      </Link>
       <TailwindAdvancedEditor 
         blockId={blockId} 
         initialContent={initialContent}
