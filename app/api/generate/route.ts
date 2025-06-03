@@ -1,28 +1,32 @@
-import { openai } from "@ai-sdk/openai";
-import { Ratelimit } from "@upstash/ratelimit";
-import { kv } from "@vercel/kv";
-import { streamText } from "ai";
+import { ChatPerplexity } from "@langchain/community/chat_models/perplexity";
 import { match } from "ts-pattern";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
 // IMPORTANT! Set the runtime to edge: https://vercel.com/docs/functions/edge-functions/edge-runtime
 export const runtime = "edge";
 
+// Create a new ratelimiter that allows 50 requests per day
+const ratelimit = new Ratelimit({
+  redis: new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL!,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+  }),
+  limiter: Ratelimit.slidingWindow(50, "1 d"),
+});
+
 export async function POST(req: Request): Promise<Response> {
-  // Check if the OPENAI_API_KEY is set, if not return 400
-  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === "") {
-    return new Response("Missing OPENAI_API_KEY - make sure to add it to your .env file.", {
+  // Check if the PERPLEXITY_API_KEY is set, if not return 400
+  if (!process.env.PERPLEXITY_API_KEY || process.env.PERPLEXITY_API_KEY === "") {
+    return new Response("Missing PERPLEXITY_API_KEY - make sure to add it to your .env file.", {
       status: 400,
     });
   }
-  if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
-    const ip = req.headers.get("x-forwarded-for");
-    const ratelimit = new Ratelimit({
-      redis: kv,
-      limiter: Ratelimit.slidingWindow(50, "1 d"),
-    });
 
-    const { success, limit, reset, remaining } = await ratelimit.limit(`novel_ratelimit_${ip}`);
-
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+    const { success, limit, reset, remaining } = await ratelimit.limit(ip);
+    
     if (!success) {
       return new Response("You have reached your request limit for the day.", {
         status: 429,
@@ -115,15 +119,28 @@ export async function POST(req: Request): Promise<Response> {
     ])
     .run();
 
-  const result = await streamText({
-    prompt: messages[messages.length - 1].content,
-    maxTokens: 4096,
-    temperature: 0.7,
-    topP: 1,
-    frequencyPenalty: 0,
-    presencePenalty: 0,
-    model: openai("gpt-4o-mini"),
+  const model = new ChatPerplexity({
+    apiKey: process.env.PERPLEXITY_API_KEY,
+    model: "sonar",
   });
 
-  return result.toDataStreamResponse();
+  const response = await model.invoke(messages[messages.length - 1].content);
+  const content = typeof response.content === 'string' 
+    ? response.content 
+    : JSON.stringify(response.content);
+  
+  // Return the response as a stream
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream({
+    async start(controller) {
+      controller.enqueue(encoder.encode(content));
+      controller.close();
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+    },
+  });
 }
