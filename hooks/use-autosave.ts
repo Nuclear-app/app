@@ -1,65 +1,42 @@
-import { useCallback, useEffect, useRef } from 'react';
-import { JSONContent } from '@tiptap/react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
-import { ToastAction } from "@/components/ui/toast"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 
 interface UseAutosaveProps {
-  content: JSONContent | null;
-  blockId: string;
-  onSave?: () => void;
+  data: any;
+  onSave: (data: any) => Promise<void>;
+  debounceMs?: number;
 }
 
-export function useAutosave({ content, blockId, onSave }: UseAutosaveProps) {
+export function useAutosave({ data, onSave, debounceMs = 2000 }: UseAutosaveProps) {
+  const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [debouncedData] = useDebounce(data, debounceMs, { leading: true });
   const { toast } = useToast();
-  const saveTimeoutRef = useRef<NodeJS.Timeout>();
-  const [debouncedContent] = useDebounce(content, 2000); // Wait 2 seconds after last change
 
-  const saveContent = useCallback(async () => {
-    if (!debouncedContent) return;
-
+  const save = useCallback(async () => {
     try {
-      const response = await fetch(`/api/blocks/${blockId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          Note: debouncedContent,
-        }),
+      setStatus('saving');
+      await onSave(debouncedData);
+      setStatus('saved');
+      toast({
+        title: "Saved",
+        description: "Your changes have been saved."
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to save');
-      }
-
-      onSave?.();
     } catch (error) {
-      console.error('Error saving content:', error);
+      setStatus('error');
       toast({
         title: "Error",
-        description: "Failed to save changes. Please try again.",
-        variant: "destructive",
+        description: "Failed to save your changes. Please try again.",
+        variant: "destructive"
       });
     }
-  }, [debouncedContent, blockId, onSave, toast]);
+  }, [debouncedData, onSave, toast]);
 
   useEffect(() => {
-    if (debouncedContent) {
-      saveContent();
+    if (debouncedData) {
+      save();
     }
-  }, [debouncedContent, saveContent]);
+  }, [debouncedData, save]);
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  return {
-    isSaving: !!saveTimeoutRef.current,
-  };
+  return { status };
 } 

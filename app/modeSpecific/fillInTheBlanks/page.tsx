@@ -4,7 +4,7 @@ import { FillInBlank } from "@/components/fill-in-blank";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { createFillInTheBlanks, getFillInTheBlanks, deleteFillInTheBlanks } from './actions';
 
 interface FillInTheBlankQuestion {
@@ -19,7 +19,7 @@ interface AnswerState {
     [key: string]: boolean;
 }
 
-export default function FillInTheBlanksPage() {
+function FillInTheBlanksContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const blockId = searchParams.get('blockId');
@@ -101,5 +101,13 @@ export default function FillInTheBlanksPage() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function FillInTheBlanksPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <FillInTheBlanksContent />
+        </Suspense>
     );
 }

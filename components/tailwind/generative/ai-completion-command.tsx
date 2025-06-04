@@ -1,6 +1,7 @@
 import { CommandGroup, CommandItem, CommandSeparator } from "../ui/command";
 import { useEditor } from "novel";
 import { Check, TextQuote, TrashIcon } from "lucide-react";
+import { Editor } from "@tiptap/core";
 
 const AICompletionCommands = ({
   completion,
@@ -10,27 +11,40 @@ const AICompletionCommands = ({
   onDiscard: () => void;
 }) => {
   const { editor } = useEditor();
+
+  const handleReplace = () => {
+    if (!editor) return;
+    const selection = editor.view.state.selection;
+    editor
+      .chain()
+      .focus()
+      .insertContentAt(
+        {
+          from: selection.from,
+          to: selection.to,
+        },
+        completion,
+      )
+      .run();
+  };
+
+  const handleInsert = () => {
+    if (!editor) return;
+    const selection = editor.view.state.selection;
+    editor
+      .chain()
+      .focus()
+      .insertContentAt(selection.to + 1, completion)
+      .run();
+  };
+
   return (
     <>
       <CommandGroup>
         <CommandItem
           className="gap-2 px-4"
           value="replace"
-          onSelect={() => {
-            const selection = editor.view.state.selection;
-
-            editor
-              .chain()
-              .focus()
-              .insertContentAt(
-                {
-                  from: selection.from,
-                  to: selection.to,
-                },
-                completion,
-              )
-              .run();
-          }}
+          onSelect={handleReplace}
         >
           <Check className="h-4 w-4 text-muted-foreground" />
           Replace selection
@@ -38,14 +52,7 @@ const AICompletionCommands = ({
         <CommandItem
           className="gap-2 px-4"
           value="insert"
-          onSelect={() => {
-            const selection = editor.view.state.selection;
-            editor
-              .chain()
-              .focus()
-              .insertContentAt(selection.to + 1, completion)
-              .run();
-          }}
+          onSelect={handleInsert}
         >
           <TextQuote className="h-4 w-4 text-muted-foreground" />
           Insert below

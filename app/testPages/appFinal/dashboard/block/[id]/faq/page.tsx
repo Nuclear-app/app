@@ -1,10 +1,14 @@
 import FAQ from "@/components/faq";
 
-export default async function FAQPage({ params }: { params: { id: string } }) {
+type Params = Promise<{ slug: string[] }>
+
+export default async function FAQPage({ params }: { params: Params }) {
+    const { slug } = await params
+    const id = slug[0]
     const context = 'This is a test context';
     return (
         <div>
-            <FAQ blockId={params.id} text={context} />
+            <FAQ blockId={id} text={context} />
         </div>
     );
 }

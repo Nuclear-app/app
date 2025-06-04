@@ -131,25 +131,28 @@ export const suggestionItems = createSuggestionItems([
     searchTerms: ["video", "youtube", "embed"],
     icon: <Youtube size={18} />,
     command: ({ editor, range }) => {
-      const videoLink = prompt("Please enter Youtube Video Link");
+      const videoLink = prompt("Enter YouTube video URL:");
+
+      if (!videoLink) return;
+
       //From https://regexr.com/3dj5t
       const ytregex = new RegExp(
         /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/,
       );
 
-      if (ytregex.test(videoLink)) {
+      const videoUrl = videoLink as string;
+
+      if (ytregex.test(videoUrl)) {
         editor
           .chain()
           .focus()
           .deleteRange(range)
           .setYoutubeVideo({
-            src: videoLink,
+            src: videoUrl,
           })
           .run();
       } else {
-        if (videoLink !== null) {
-          alert("Please enter a correct Youtube Video Link");
-        }
+        alert("Please enter a valid YouTube URL");
       }
     },
   },
@@ -160,21 +163,24 @@ export const suggestionItems = createSuggestionItems([
     icon: <Twitter size={18} />,
     command: ({ editor, range }) => {
       const tweetLink = prompt("Please enter Twitter Link");
+      
+      if (!tweetLink) return;
+
       const tweetRegex = new RegExp(/^https?:\/\/(www\.)?x\.com\/([a-zA-Z0-9_]{1,15})(\/status\/(\d+))?(\/\S*)?$/);
 
-      if (tweetRegex.test(tweetLink)) {
+      const tweetUrl = tweetLink as string;
+
+      if (tweetRegex.test(tweetUrl)) {
         editor
           .chain()
           .focus()
           .deleteRange(range)
           .setTweet({
-            src: tweetLink,
+            src: tweetUrl,
           })
           .run();
       } else {
-        if (tweetLink !== null) {
-          alert("Please enter a correct Twitter Link");
-        }
+        alert("Please enter a valid Twitter URL");
       }
     },
   },

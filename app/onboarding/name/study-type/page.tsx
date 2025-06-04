@@ -8,12 +8,12 @@ import sandbox from "@/public/sandbox-study-type.svg"
 import campaign from "@/public/campaign-study-type.svg"
 import story from "@/public/story-study-type.svg"
 import { createInitialBlock } from "@/app/actions/create-initial-block"
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import { toast } from "sonner"
 
 type StudyMode = 'sandbox' | 'campaign' | 'story';
 
-export default function StudyTypePage() {
+function StudyTypeContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [isLoading, setIsLoading] = useState<StudyMode | null>(null);
@@ -98,5 +98,13 @@ export default function StudyTypePage() {
                 </CardFooter>
             </Card>
         </div>
+    );
+}
+
+export default function StudyTypePage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <StudyTypeContent />
+        </Suspense>
     );
 } 

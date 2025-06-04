@@ -2,7 +2,11 @@
 
 import Link from 'next/link';
 
-export default function BlockPage({ params }: { params: { id: string } }) {
+type Params = Promise<{ slug: string[] }>
+
+export default async function BlockPage({ params }: { params: Params }) {
+    const { slug } = await params
+    const id = slug[0]
     return (
         <div className="p-6">
             <div className="flex gap-4 mb-4">
@@ -28,7 +32,7 @@ export default function BlockPage({ params }: { params: { id: string } }) {
                     Quizzes
                 </Link>
             </div>
-            <h1 className="text-2xl font-bold mb-6">Block: {params.id}</h1>
+            <h1 className="text-2xl font-bold mb-6">Block: {id}</h1>
         </div>
     );
 } 

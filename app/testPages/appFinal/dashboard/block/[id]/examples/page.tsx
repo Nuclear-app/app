@@ -1,8 +1,13 @@
 import Examples from "@/components/examples"
 
-export default async function ExamplesPage({ params }: { params: { id: string } }) {
+type Params = Promise<{ slug: string[] }>
+
+export default async function ExamplesPage({ params }: { params: Params }) {
+    const { slug } = await params
+    const id = slug[0]
     return (
         <div>
-            <Examples blockID={params.id} />
-        </div>);
+            <Examples blockID={id} />
+        </div>
+    );
 }

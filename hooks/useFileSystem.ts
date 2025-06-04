@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Folder, Block, TreeResponse } from '@/lib/types';
+import { Folder, Block, FileSystemResponse, CreateFolderResponse, CreateBlockResponse } from '@/lib/types';
 
 interface UseFileSystemReturn {
   folders: Folder[];
@@ -21,7 +21,7 @@ export function useFileSystem(): UseFileSystemReturn {
     try {
       setLoading(true);
       const response = await fetch('/api/filesystem');
-      const data: TreeResponse = await response.json();
+      const data: FileSystemResponse = await response.json();
 
       if (data.error) {
         throw new Error(data.error);
@@ -53,7 +53,7 @@ export function useFileSystem(): UseFileSystemReturn {
         }),
       });
 
-      const data = await response.json();
+      const data: CreateFolderResponse = await response.json();
       if (data.error) {
         throw new Error(data.error);
       }
@@ -84,7 +84,7 @@ export function useFileSystem(): UseFileSystemReturn {
         }),
       });
 
-      const data = await response.json();
+      const data: CreateBlockResponse = await response.json();
       if (data.error) {
         throw new Error(data.error);
       }

@@ -1,7 +1,6 @@
-// use client would have to be removed ultimately!!
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 
 import { FileState } from "@/components/fileUpload";
 
@@ -29,7 +28,7 @@ const acceptedFileTypes = {
 
 };
 
-export default function FileInputPage() {
+function FileInputContent() {
   const [context, setContext] = useState('')
   const [mode, setMode] = useState<string>('');
   const router = useRouter();
@@ -148,8 +147,29 @@ export default function FileInputPage() {
 
       <FileUpload returnFiles={handleFiles} mode={mode} />
 
+      {context && (
+
+        <div className="mt-4 p-4 bg-gray-100 rounded">
+
+          <h3 className="text-lg font-semibold mb-2">Processing Files...</h3>
+
+          <p className="whitespace-pre-wrap" > {context}</p >
+
+        </div >
+
+      )
+      }
+
     </div >
 
   )
 
+}
+
+export default function FileInputPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <FileInputContent />
+    </Suspense>
+  )
 }

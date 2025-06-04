@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import FileSystem from '@/components/dashboardComp/fileSystem';
 import { addBlock, addFolder, getRootFolder, fetchFileSystemStructure, DatabaseItem } from './actions';
 import { FileSystemItem } from '@/components/dashboardComp/fileSystem';
+import { useSearchParams } from 'next/navigation';
 
 interface ExistingItems {
     [key: string]: {
@@ -13,7 +14,8 @@ interface ExistingItems {
     }
 }
 
-export default function DashboardTest() {
+function DashboardContent() {
+    const searchParams = useSearchParams();
     const [existingItems, setExistingItems] = useState<ExistingItems>({});
     const [initialData, setInitialData] = useState<DatabaseItem[] | undefined>();
     const processingRef = useRef(false);
@@ -99,5 +101,13 @@ export default function DashboardTest() {
                 />
             </div>
         </div>
+    );
+}
+
+export default function DashboardTest() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <DashboardContent />
+        </Suspense>
     );
 } 

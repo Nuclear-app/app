@@ -92,3 +92,30 @@ export interface FileSystemItem {
   size: number;
   children?: FileSystemItem[];
 }
+
+export interface TreeResponse {
+  id: string;
+  name: string;
+  type: FileSystemComponentType;
+  children?: TreeResponse[];
+  content?: any;
+  createdAt: Date;
+  updatedAt: Date;
+  error?: string;
+}
+
+export interface FileSystemResponse {
+  error?: string;
+  folders: Folder[];
+  blocks: Block[];
+}
+
+export interface CreateFolderResponse {
+  error?: string;
+  folder: Folder;
+}
+
+export interface CreateBlockResponse {
+  error?: string;
+  block: Block;
+}

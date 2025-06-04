@@ -1,9 +1,13 @@
 import { Quiz } from "@/components/quiz";
 
-export default function QuizzesPage({ params }: { params: { id: string } }) {
+type Params = Promise<{ slug: string[] }>
+
+export default async function QuizzesPage({ params }: { params: Params }) {
+    const { slug } = await params
+    const id = slug[0]
     return (
         <div>
-            <Quiz blockId={params.id} />
+            <Quiz blockId={id} />
         </div>
     );
 }

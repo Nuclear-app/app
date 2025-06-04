@@ -5,59 +5,58 @@ import { EditorBubbleItem, useEditor } from "novel";
 import type { SelectorItem } from "./node-selector";
 import { ny } from "@/lib/utils";
 
-export const TextButtons = () => {
+const items: SelectorItem[] = [
+  {
+    name: "Bold",
+    icon: BoldIcon,
+    command: (editor) => editor.chain().focus().toggleBold().run(),
+    isActive: (editor) => editor.isActive("bold"),
+  },
+  {
+    name: "Italic",
+    icon: ItalicIcon,
+    command: (editor) => editor.chain().focus().toggleItalic().run(),
+    isActive: (editor) => editor.isActive("italic"),
+  },
+  {
+    name: "Underline",
+    icon: UnderlineIcon,
+    command: (editor) => editor.chain().focus().toggleUnderline().run(),
+    isActive: (editor) => editor.isActive("underline"),
+  },
+  {
+    name: "Strikethrough",
+    icon: StrikethroughIcon,
+    command: (editor) => editor.chain().focus().toggleStrike().run(),
+    isActive: (editor) => editor.isActive("strike"),
+  },
+  {
+    name: "Code",
+    icon: CodeIcon,
+    command: (editor) => editor.chain().focus().toggleCode().run(),
+    isActive: (editor) => editor.isActive("code"),
+  },
+];
+
+export function TextButtons() {
   const { editor } = useEditor();
+
   if (!editor) return null;
-  const items: SelectorItem[] = [
-    {
-      name: "bold",
-      isActive: (editor) => editor.isActive("bold"),
-      command: (editor) => editor.chain().focus().toggleBold().run(),
-      icon: BoldIcon,
-    },
-    {
-      name: "italic",
-      isActive: (editor) => editor.isActive("italic"),
-      command: (editor) => editor.chain().focus().toggleItalic().run(),
-      icon: ItalicIcon,
-    },
-    {
-      name: "underline",
-      isActive: (editor) => editor.isActive("underline"),
-      command: (editor) => editor.chain().focus().toggleUnderline().run(),
-      icon: UnderlineIcon,
-    },
-    {
-      name: "strike",
-      isActive: (editor) => editor.isActive("strike"),
-      command: (editor) => editor.chain().focus().toggleStrike().run(),
-      icon: StrikethroughIcon,
-    },
-    {
-      name: "code",
-      isActive: (editor) => editor.isActive("code"),
-      command: (editor) => editor.chain().focus().toggleCode().run(),
-      icon: CodeIcon,
-    },
-  ];
+
   return (
-    <div className="flex">
+    <div className="flex items-center gap-1">
       {items.map((item) => (
         <EditorBubbleItem
           key={item.name}
-          onSelect={(editor) => {
-            item.command(editor);
-          }}
+          onSelect={() => item.command(editor)}
+          className={ny(
+            "flex h-8 w-8 items-center justify-center rounded-md hover:bg-accent",
+            item.isActive(editor) && "bg-accent"
+          )}
         >
-          <Button size="sm" className="rounded-none" variant="ghost" type="button">
-            <item.icon
-              className={ny("h-4 w-4", {
-                "text-blue-500": item.isActive(editor),
-              })}
-            />
-          </Button>
+          <item.icon className="h-4 w-4" />
         </EditorBubbleItem>
       ))}
     </div>
   );
-};
+}

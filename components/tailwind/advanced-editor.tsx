@@ -20,9 +20,9 @@ import { useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { defaultExtensions } from "./extensions";
 import { ColorSelector } from "./selectors/color-selector";
-import { LinkSelector } from "./selectors/link-selector";
+import LinkSelector from "./selectors/link-selector";
 import { MathSelector } from "./selectors/math-selector";
-import { NodeSelector } from "./selectors/node-selector";
+import NodeSelector from "./selectors/node-selector";
 import { Separator } from "@/components/ui/separator";
 
 import GenerativeMenuSwitch from "./generative/generative-menu-switch";
@@ -40,7 +40,7 @@ interface AdvancedEditorProps {
   initialContent?: JSONContent;
 }
 
-export function AdvancedEditor({ blockId: initialBlockId, initialContent }: AdvancedEditorProps) {
+const AdvancedEditor = ({ blockId: initialBlockId, initialContent }: AdvancedEditorProps) => {
   const [content, setContent] = useState<JSONContent | null>(initialContent || null);
   const [saveStatus, setSaveStatus] = useState("Saved");
   const [charsCount, setCharsCount] = useState();

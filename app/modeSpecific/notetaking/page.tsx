@@ -1,14 +1,14 @@
 'use client'
 import TailwindAdvancedEditor from "@/components/tailwind/advanced-editor";
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { getNoteContent } from './actions';
 import { type JSONContent } from "novel";
 import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 
-export default function EditorPage() {
+function NotetakingContent() {
   const searchParams = useSearchParams();
   const blockId = searchParams.get('blockId');
   const [initialContent, setInitialContent] = useState<JSONContent | undefined>(undefined);
@@ -63,5 +63,13 @@ export default function EditorPage() {
         initialContent={initialContent}
       />
     </div>
+  );
+}
+
+export default function EditorPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <NotetakingContent />
+    </Suspense>
   );
 }

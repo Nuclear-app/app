@@ -13,13 +13,12 @@ COPY . .
 # generate Prisma client
 RUN bunx prisma generate
 
-# build the application
-ENV NODE_ENV=production
+# set environment variables
+ENV NODE_ENV=development
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN bun run build
 
 # expose the port
 EXPOSE 3000
 
 # start the application
-CMD ["bun", "run", "start"]
+CMD ["bun", "run", "dev"]

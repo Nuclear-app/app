@@ -9,17 +9,27 @@ interface Item {
     type: 'block' | 'crate';
 }
 
-export default async function CratePage({ params }: { params: { id: string } }) {
+type Params = Promise<{ slug: string[] }>
+
+export default function CratePage({ params }: { params: Params }) {
     const [items, setItems] = useState<Item[]>([]);
     const [newItemName, setNewItemName] = useState('');
+    const [crateId, setCrateId] = useState('');
 
-    // Load items from localStorage on mount
+    // Resolve params and load items from localStorage
     useEffect(() => {
-        const savedItems = localStorage.getItem(`crate-${params.id}`);
-        if (savedItems) {
-            setItems(JSON.parse(savedItems));
-        }
-    }, [params.id]);
+        const loadData = async () => {
+            const { slug } = await params;
+            const id = slug[0];
+            setCrateId(id);
+            
+            const savedItems = localStorage.getItem(`crate-${id}`);
+            if (savedItems) {
+                setItems(JSON.parse(savedItems));
+            }
+        };
+        loadData();
+    }, [params]);
 
     const createItem = (type: 'block' | 'crate') => {
         const newItem: Item = {
@@ -30,7 +40,7 @@ export default async function CratePage({ params }: { params: { id: string } }) 
         const updatedItems = [...items, newItem];
         setItems(updatedItems);
         // Save to localStorage with crate-specific key
-        localStorage.setItem(`crate-${params.id}`, JSON.stringify(updatedItems));
+        localStorage.setItem(`crate-${crateId}`, JSON.stringify(updatedItems));
         setNewItemName('');
     };
 
@@ -43,7 +53,7 @@ export default async function CratePage({ params }: { params: { id: string } }) 
                     ← Back to Root
                 </Link>
             </div>
-            <h1 className="text-2xl font-bold mb-6">Crate: {params.id}</h1>
+            <h1 className="text-2xl font-bold mb-6">Crate: {crateId}</h1>
             
             <div className="mb-6">
                 <input

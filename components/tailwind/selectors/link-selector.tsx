@@ -1,11 +1,14 @@
-import { Button } from "@/components/tailwind/ui/button";
+import { Button } from "../ui/button";
 import { PopoverContent } from "@/components/tailwind/ui/popover";
 
 import { Popover, PopoverTrigger } from "@radix-ui/react-popover";
 import { Check, Trash } from "lucide-react";
 import { useEditor } from "novel";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, Fragment } from "react";
 import { ny } from "@/lib/utils";
+import { Input } from "../../ui/input";
+import { Link2, Unlink } from "lucide-react";
+import { EditorBubble } from "novel";
 
 export function isValidUrl(url: string) {
   try {
@@ -30,72 +33,80 @@ interface LinkSelectorProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
   const { editor } = useEditor();
+  const [url, setUrl] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  // Autofocus on input by default
   useEffect(() => {
-    inputRef.current?.focus();
-  });
-  if (!editor) return null;
+    if (open && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [open]);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (url) {
+      editor?.chain().focus().setLink({ href: url }).run();
+      setUrl("");
+      onOpenChange(false);
+    }
+  };
 
   return (
-    <Popover modal={true} open={open} onOpenChange={onOpenChange}>
-      <PopoverTrigger asChild>
-        <Button size="sm" variant="ghost" className="gap-2 rounded-none border-none">
-          <p className="text-base">↗</p>
-          <p
-            className={ny("underline decoration-stone-400 underline-offset-4", {
-              "text-blue-500": editor.isActive("link"),
-            })}
-          >
-            Link
-          </p>
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent align="start" className="w-60 p-0" sideOffset={10}>
-        <form
-          onSubmit={(e) => {
-            const target = e.currentTarget as HTMLFormElement;
-            e.preventDefault();
-            const input = target[0] as HTMLInputElement;
-            const url = getUrlFromString(input.value);
-            if (url) {
-              editor.chain().focus().setLink({ href: url }).run();
-              onOpenChange(false);
-            }
-          }}
-          className="flex  p-1 "
-        >
-          <input
+    <EditorBubble
+      tippyOptions={{
+        placement: "bottom",
+        onHidden: () => {
+          onOpenChange(false);
+        },
+      }}
+      className="flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl"
+    >
+      {open && (
+        <form onSubmit={handleSubmit} className="flex items-center gap-2 p-2">
+          <Input
             ref={inputRef}
-            type="text"
-            placeholder="Paste a link"
-            className="flex-1 bg-background p-1 text-sm outline-none"
-            defaultValue={editor.getAttributes("link").href || ""}
+            type="url"
+            placeholder="Enter URL..."
+            value={url}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUrl(e.target.value)}
+            className="h-8 w-[200px]"
           />
-          {editor.getAttributes("link").href ? (
-            <Button
-              size="icon"
-              variant="outline"
-              type="button"
-              className="flex h-8 items-center rounded-sm p-1 text-red-600 transition-all hover:bg-red-100 dark:hover:bg-red-800"
-              onClick={() => {
-                editor.chain().focus().unsetLink().run();
+          <Button size="sm" type="submit" className="h-8">
+            Add
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8"
+            onClick={() => {
+              editor?.chain().focus().unsetLink().run();
+              if (inputRef.current) {
                 inputRef.current.value = "";
-                onOpenChange(false);
-              }}
-            >
-              <Trash className="h-4 w-4" />
-            </Button>
-          ) : (
-            <Button size="icon" className="h-8">
-              <Check className="h-4 w-4" />
-            </Button>
-          )}
+              }
+              onOpenChange(false);
+            }}
+          >
+            <Unlink className="h-4 w-4" />
+          </Button>
         </form>
-      </PopoverContent>
-    </Popover>
+      )}
+      {!open && (
+        <Fragment>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="gap-1 rounded-none text-purple-500"
+            onClick={() => onOpenChange(true)}
+          >
+            <Link2 className="h-4 w-4" />
+            Add Link
+          </Button>
+        </Fragment>
+      )}
+    </EditorBubble>
   );
 };
+
+export default LinkSelector;
