@@ -10,14 +10,13 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-
 model User {
-  id    String  @id @default(uuid())
-  email String  @unique
-  name  String?
-  mode  Mode?
-  posts Block[]
-  folders Folder[] @relation("UserToFolder")
+  id     String   @id @default(uuid())
+  email  String   @unique
+  name   String?
+  mode   Mode?
+  posts  Block[]
+  Folder Folder[]
 }
 
 model Block {
@@ -64,12 +63,12 @@ model Folder {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   parentId  String?
+  icon      String?
   authorId  String?
   blocks    Block[]
-  icon      String?
+  User      User?    @relation(fields: [authorId], references: [id])
   parent    Folder?  @relation("FolderToFolder", fields: [parentId], references: [id])
   children  Folder[] @relation("FolderToFolder")
-  User User[] @relation("UserToFolder")
 }
 
 model FillInTheBlank {
