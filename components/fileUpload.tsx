@@ -8,6 +8,7 @@ import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 import FilePondPluginFileEncode from 'filepond-plugin-file-encode';
+import { createPortal } from 'react-dom';
 
 // Import FilePond styles
 import 'filepond/dist/filepond.min.css';
@@ -15,10 +16,6 @@ import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 
 // Custom FilePond styles
 const filePondStyles = `
-
-
-
-
   .filepond--drop-label {
     color: #eeeeee;
   }
@@ -31,8 +28,6 @@ const filePondStyles = `
     background-color: #221D1D;
     border-radius: 0.5em;
   }
-
-
 `;
 
 // Register plugins
@@ -56,9 +51,24 @@ export interface FileState {
 const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode }) => {
   const [files, setFiles] = useState<FileState[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pondRef = useRef<HTMLInputElement>(null);
+  const pondInstanceRef = useRef<FilePond.FilePond | null>(null);
 
   useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    // Cleanup previous instance if it exists
+    if (pondInstanceRef.current) {
+      pondInstanceRef.current.destroy();
+    }
+
+    // Only initialize if the ref exists
     if (pondRef.current) {
       const pond = FilePond.create(pondRef.current, {
         allowMultiple: true,
@@ -92,23 +102,28 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode }) => {
         }
       });
 
-      return () => {
-        pond.destroy();
-      };
+      pondInstanceRef.current = pond;
     }
-  }, []);
+
+    return () => {
+      if (pondInstanceRef.current) {
+        pondInstanceRef.current.destroy();
+        pondInstanceRef.current = null;
+      }
+    };
+  }, [mounted]);
 
   const handleUploadClick = () => {
     setIsUploading(true);
     returnFiles(files);
   };
 
-  return (
-    <div className="lg:w-1/2 md:w-full mx-auto border-2 rounded-lg">
+  const content = (
+    <div className="lg:w-full md:w-full mx-auto border-2 rounded-lg">
       <style>{filePondStyles}</style>
-      <div className="text-2xl font-semibold text-primary self-start p-4 pr-1">
+      {/* <div className="text-2xl font-semibold text-primary self-start p-4 pr-1">
         {isUploading ? "Uploading Files..." : "Upload Files"}
-      </div>
+      </div> */}
 
       <div className="p-4">
         <input
@@ -131,6 +146,10 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode }) => {
       </div>
     </div>
   );
+
+  if (!mounted) return null;
+
+  return content;
 };
 
 export default FileUpload;
