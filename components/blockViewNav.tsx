@@ -8,10 +8,11 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, Upload } from "lucide-react"
+import { ChevronLeft, ChevronRight, ChevronsLeft, Upload } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import getBreadcrumb, { getBlockPoints } from "@/lib/blockViewNav"
+import { FeatureDock } from "./featureDock"
 
 interface blockViewNavProps {
     blockId: string
@@ -60,15 +61,15 @@ export function BlockViewNav({ blockId }: blockViewNavProps) {
         }
         fetchBreadcrumbs()
     }, [blockId])
-    
+
     return (
-        <div className="flex items-center justify-between w-full p-4 border rounded-3xl bg-[#221D1D]">
+        <div className="flex items-center justify-between w-full py-2 pl-4 pr-2 border rounded-3xl bg-[#221D1D]">
             <div className="flex items-center gap-4">
-                <Button 
-                    className="bg-[#3C3535] text-white hover:opacity-50"
+                <Button
+                    className="bg-[#3C3535] text-white hover:opacity-50 rounded-xl aspect-square p-0"
                     onClick={() => router.back()}
                 >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronsLeft  />
                 </Button>
                 <Breadcrumb>
                     <BreadcrumbList>
@@ -109,14 +110,15 @@ export function BlockViewNav({ blockId }: blockViewNavProps) {
                 </Breadcrumb>
             </div>
 
-            <div className="flex flex-col md:flex-row items-center gap-4">
-                <Button 
-                    className="bg-custom-gradient rounded-xl text-xl font-semibold hover:opacity-90 px-8 py-4 h-10"
+            <div className="flex flex-col md:flex-row items-center gap-1">
+                <Button
+                    className="bg-custom-gradient rounded-xl text-lg font-semibold hover:opacity-90 px-4 py-4 h-10"
                     disabled={isPointsLoading}
                 >
                     {isPointsLoading ? 'Loading...' : `${points ?? 0} Points`}
                 </Button>
-                <Upload className="rounded-xl bg-[#3C3535] text-white p-2 w-10 h-10" />
+                <FeatureDock />
+
             </div>
         </div>
     )

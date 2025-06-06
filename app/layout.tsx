@@ -30,8 +30,8 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.className} dark`} suppressHydrationWarning>
       <body className="bg-background text-white">
         <div className="noise" />
-        <main className="min-h-screen flex flex-col items-center">
-          <div className="flex-1 w-full flex flex-col gap-20 items-center">
+        <main className="min-h-screen flex flex-col ">
+          <div className="flex-1 w-full flex flex-col ">
             {/* <nav className="w-full flex justify-center border-b border-white/10 h-16">
               <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
                 <div className="flex gap-5 items-center font-semibold">
@@ -40,7 +40,7 @@ export default function RootLayout({
                 {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
               </div>
             </nav> */}
-            <div className="flex flex-col gap-20 w-full p-5 pt-28">
+            <div className="flex flex-col w-full p-5 ">
               {children}
             </div>
           </div>

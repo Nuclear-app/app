@@ -6,30 +6,27 @@ import ex from "@/public/features/ex.svg"
 import nu from "@/public/features/nu.svg"
 import qz from "@/public/features/qz.svg"
 import Image from "next/image"
+import { Upload } from "lucide-react"
 
 export type IconProps = React.HTMLAttributes<SVGElement>
 
 export function FeatureDock() {
     return (
-        <div className="relative">
-            <Dock magnification={60} distance={100} className="bg-[#221D1D] rounded-xl ">
-                <DockIcon size={500} className=" rounded-xl bg-gradient-to-b from-[#EEEEEE]/70 to-[#EEEEEE]/70 bg-[radial-gradient(70.71%_70.71%_at_50%_50%,#9000FF_0%,#E46300_100%)] ">
+            <Dock direction="middle" className="border-none"> 
+                <DockIcon size={500} className="rounded-xl bg-gradient-to-b from-[#EEEEEE]/70 to-[#EEEEEE]/70 bg-[radial-gradient(70.71%_70.71%_at_50%_50%,#9000FF_0%,#E46300_100%)] ">
                     <Image src={ex} alt="examples" className="p-2" />
                 </DockIcon>
-                <Separator orientation="vertical" className="h-8" />
-
                 <DockIcon size={500} className="rounded-xl bg-gradient-to-b from-[#EEEEEE]/70 to-[#EEEEEE]/70 bg-[radial-gradient(70.71%_70.71%_at_50%_50%,#E46300_13.75%,#00D3BE_97.99%)] ">
                     <Image src={nu} alt="FAQs" className="p-2" />
                 </DockIcon>
-                <Separator orientation="vertical" className="h-8" />
-
                 <DockIcon size={500} className="rounded-xl bg-gradient-to-b from-[#EEEEEE]/70 to-[#EEEEEE]/70 bg-[radial-gradient(70.71%_70.71%_at_50%_50%,#00D3BE_0%,#9000FF_100%)] ">
                     <Image src={qz} alt="quizzes" className="p-2" />
                 </DockIcon>
+                <DockIcon className="bg-[#3C3535] rounded-xl">
+                    <Upload></Upload>
+                </DockIcon>
             </Dock>
 
-
-        </div>
     )
 }
 
