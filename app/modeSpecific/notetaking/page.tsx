@@ -7,6 +7,8 @@ import { type JSONContent } from "novel";
 import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
+import { BlockViewNav } from "@/components/blockViewNav";
+import { FeatureDock } from "@/components/featureDock";
 
 function NotetakingContent() {
   const searchParams = useSearchParams();
@@ -51,13 +53,8 @@ function NotetakingContent() {
   }
 
   return (
-    <div className="p-4">
-      <Link href={`/dashboard/block/${blockId}`}>
-        <Button className="mb-4 bg-foreground text-background">
-          <ArrowLeftIcon className="w-4 h-4" />
-          Block
-        </Button>
-      </Link>
+    <div className="flex flex-col gap-4">
+      <BlockViewNav blockId={blockId} />
       <TailwindAdvancedEditor 
         blockId={blockId} 
         initialContent={initialContent}

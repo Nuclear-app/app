@@ -1,139 +1,124 @@
 import {
-    BellIcon,
-    CalendarIcon,
-    FileTextIcon,
-    GlobeIcon,
-    InputIcon,
+   BellIcon,
+   CalendarIcon,
+   FileTextIcon,
+   GlobeIcon,
+   InputIcon,
 
- } from "@radix-ui/react-icons"
+} from "@radix-ui/react-icons"
 
- import { Zap, ScanSearch, Infinity, Upload, FishSymbol, Bone} from "lucide-react"
- import { BentoGrid, BentoCard } from "@/components/ui/bento-grid"
- import Flashcards from "@/public/flashcards.svg"
+import { Zap, ScanSearch, Infinity, Upload, FishSymbol, Bone } from "lucide-react"
+import { BentoGrid, BentoCard } from "@/components/ui/bento-grid"
+import Flashcards from "@/public/flashcards.svg"
 import { fetchPoints, fetchNotesAsText } from "@/lib/blockFetch"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { Label } from "./ui/label"
+import { Input } from "./ui/input"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
+import FileUpload, { FileState } from "@/components/fileUpload"
 
 
 interface BlockProps {
-    blockId: string;
+   blockId: string;
 }
 
- export function Block({ blockId }: BlockProps) {
-    const [points, setPoints] = useState<number>(0);
-    const [notes, setNotes] = useState<string | null>(null);
-    useEffect(() => {
-        const getPoints = async () => {
-            if (!blockId) return;
-            const pts = await fetchPoints(blockId);
-            setPoints(pts);
-        }
-        getPoints();
-    }, [blockId]);
+export function Block({ blockId }: BlockProps) {
+   const [points, setPoints] = useState<number>(0);
+   const [notes, setNotes] = useState<string | null>(null);
+   const [isDialogOpen, setIsDialogOpen] = useState(false);
+   const [mounted, setMounted] = useState(false);
 
-    useEffect(() => {
-        const getNotes = async () => {
-            if (!blockId) return;
-            const text = await fetchNotesAsText(blockId);
-            setNotes(text);
-        };
-        getNotes();
-    }, [blockId]);
+   useEffect(() => {
+      const getPoints = async () => {
+         if (!blockId) return;
+         const pts = await fetchPoints(blockId);
+         setPoints(pts);
+      }
+      getPoints();
+   }, [blockId]);
 
-    return (
-       <BentoGrid className="gap-4 grid-cols-4 grid-rows-3">
-          {/* <BentoCard
-             name="points and back button"
-             description="We automatically save your files as you type."
-             Icon={FileTextIcon}
-             background={null}
-             href="#"
-             cta="Learn more"
-             className="col-span-1 row-span-1"
-          /> */}
-          <div className="col-span-1 row-span-1 flex flex-col gap-4 h-full">
-            <Link className="w-full flex flex-row rounded-xl flex-1 bg-[#161616] items-center justify-center" href={`/dashboard`}>
-            {/* <div>Back Button</div> */}
-            <Button className="w-full flex flex-row rounded-xl flex-1 bg-[#161616] items-center justify-center">Back Button</Button>
-            </Link>
-            <div
-              className="w-full rounded-xl flex-1 flex flex-row items-center justify-center relative overflow-hidden"
-              style={{
-                backgroundImage: "url('/pointsBg.svg')",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            >
-              <span className="relative z-10 text-black text-2xl font-bold flex items-center gap-2">
-                <Bone className="w-6 h-6" />
-                {points}
-              </span>
+   useEffect(() => {
+      const getNotes = async () => {
+         if (!blockId) return;
+         const text = await fetchNotesAsText(blockId);
+         setNotes(text);
+      };
+      getNotes();
+   }, [blockId]);
+
+   useEffect(() => {
+      setMounted(true);
+      return () => setMounted(false);
+   }, []);
+
+   const handleFileUpload = (files: FileState[]) => {
+      console.log('Uploaded files:', files);
+      // Handle the uploaded files here
+   };
+
+   return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background">
+         <div className="w-full  p-8">
+            <div className="flex justify-between items-center mb-8">
+               <h1 className="text-4xl font-bold text-primary">Learning Block</h1>
+               <Button onClick={() => setIsDialogOpen(true)}>Upload Files</Button>
             </div>
-          </div>
-          <BentoCard
-             name="Flashcards"
-             description="Coming Soon..."
-             Icon={Zap}
-             background={null}
-             href={`/dashboard/block/${blockId}/flashcards`}
-             cta="->"
-             className="col-span-1 row-span-1"
-          />
-          <BentoCard
-             name="Nucleated Quizzes"
-             description=""
-             Icon={FishSymbol}
-             background={null}
-             href={`/dashboard/block/${blockId}/quizzes`}
-             cta="->"
-             className="col-span-1 row-span-1"
-          />
-          <BentoCard
-             name="Upload Files"
-             description=""
-             Icon={Upload}
-             background={null}
-             href={`/modeSpecific/fileInput?blockId=${blockId}`}
-             cta="->"
-             className="col-span-1 row-span-1"
-          />
-          <BentoCard
-             name="Ask Nuclear"
-             description=""
-             Icon={Infinity}
-             background={null}
-             href={`/dashboard/block/${blockId}/faq`}
-             cta="->"
-             className="col-span-1 row-span-1"
-          />
-          <BentoCard
-             name="Notes"
-             description={notes || 'No notes yet'}
-             Icon={FileTextIcon}
-             background={null}
-             href={`/modeSpecific/notetaking?blockId=${blockId}`}
-             cta="Learn more"
-             className="col-span-2 row-span-2"
-          />
-          <BentoCard
-             name="To-do List"
-             description="Search through all your files in one place."
-             Icon={FileTextIcon}
-             background={null}
-             href="#"
-             cta="Learn more"
-             className="col-span-1 row-span-2"
-          />
-          <BentoCard
-             name="Examples"
-             description=""
-             Icon={ScanSearch}
-             background={null}
-             href={`/dashboard/block/${blockId}/examples`}
-             cta="->"
-             className="col-span-1 row-span-1"
-          />
-       </BentoGrid>
-    )
- }
+
+            {mounted && (
+               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogContent className="sm:max-w-[425px]">
+                     <DialogHeader>
+                        <DialogTitle>Upload Files</DialogTitle>
+                        <DialogDescription>
+                           Upload your learning materials here. You can drag and drop files or click to browse.
+                        </DialogDescription>
+                     </DialogHeader>
+                     <FileUpload returnFiles={handleFileUpload} mode="upload" />
+                  </DialogContent>
+               </Dialog>
+            )}
+
+            <BentoGrid className="max-w-4xl mx-auto">
+               <BentoCard
+                  name="FAQ"
+                  description="Search through all your files in one place."
+                  Icon={Infinity}
+                  background={null}
+                  href={`/dashboard/block/${blockId}/faq`}
+                  cta="->"
+                  className="col-span-1 row-span-1"
+               />
+               <BentoCard
+                  name="Notes"
+                  description={notes || 'No notes yet'}
+                  Icon={FileTextIcon}
+                  background={null}
+                  href={`/modeSpecific/notetaking?blockId=${blockId}`}
+                  cta="Learn more"
+                  className="col-span-2 row-span-2"
+               />
+               <BentoCard
+                  name="To-do List"
+                  description="Search through all your files in one place."
+                  Icon={FileTextIcon}
+                  background={null}
+                  href="#"
+                  cta="Learn more"
+                  className="col-span-1 row-span-2"
+               />
+               <BentoCard
+                  name="Examples"
+                  description=""
+                  Icon={ScanSearch}
+                  background={null}
+                  href={`/dashboard/block/${blockId}/examples`}
+                  cta="->"
+                  className="col-span-1 row-span-1"
+               />
+            </BentoGrid>
+         </div>
+      </div>
+   );
+}
