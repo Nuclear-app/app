@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Folder, Block, FileSystemResponse, CreateFolderResponse, CreateBlockResponse } from '@/lib/types';
+import { Folder, Block, FileSystemResponse, CreateFolderResponse, CreateBlockResponse } from '@/lib/FSTypes';
 
 interface UseFileSystemReturn {
   folders: Folder[];

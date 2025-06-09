@@ -1,6 +1,6 @@
-import { FileSystemComponent, Folder, Block } from '@/lib/types';
+import { FileSystemComponent, Folder, Block } from '@/lib/FSTypes';
 import React from 'react';
-import TreeItem from '@/components/dashboardComp/treeItem';
+import TreeItem from '@/components/fileStructure/treeItem';
 
 
 interface CreateItemParams {

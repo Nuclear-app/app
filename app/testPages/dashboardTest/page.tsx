@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useRef, Suspense } from 'react';
-import FileSystem from '@/components/dashboardComp/fileSystem';
+import FileSystem from '@/components/fileStructure/fileSystem';
 import { addBlock, addFolder, getRootFolder, fetchFileSystemStructure, DatabaseItem } from './actions';
-import { FileSystemItem } from '@/components/dashboardComp/fileSystem';
+import { FileSystemItem } from '@/components/fileStructure/fileSystem';
 import { useSearchParams } from 'next/navigation';
 
 interface ExistingItems {

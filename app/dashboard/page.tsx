@@ -1,4 +1,4 @@
-import Dashboard from "@/components/dashboard";
+import Dashboard from "@/components/dashboardComp/dashboard";
 
 export default async function DashboardPage() {
   return (

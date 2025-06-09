@@ -1,4 +1,4 @@
-import { FileSystemComponent } from "@/lib/types";
+import { FileSystemComponent } from "@/lib/FSTypes";
 
 interface FileSystemTreeProps {
     root: FileSystemComponent;

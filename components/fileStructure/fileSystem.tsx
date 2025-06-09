@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import TreeItem from './treeItem';
-import { FileSystemComponent, Folder, Block } from '@/lib/types';
+import { FileSystemComponent, Folder, Block } from '@/lib/FSTypes';
 import { useRouter, useSearchParams } from 'next/navigation';
 import NavigationHeader from './navigationHeader';
 import ActionButtons from './actionButtons';

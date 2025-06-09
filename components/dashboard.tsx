@@ -40,6 +40,8 @@ import {
 import Image from "next/image";
 import jonas from "@/public/jonas.svg";
 import { Button } from "./ui/button";
+import { Checkbox } from "./ui/checkbox";
+import { Separator } from "./ui/separator";
 import {
     Dialog,
     DialogContent,
@@ -69,7 +71,6 @@ interface DashboardProps {
 interface Block {
     id: string;
     title: string;
-    emoji?: string;
 }
 
 interface Crate {
@@ -128,9 +129,6 @@ const blockFormSchema = z.object({
         message: "Title is required.",
     }).max(50, {
         message: "Title must be less than 50 characters.",
-    }),
-    emoji: z.string().min(1, {
-        message: "Emoji is required.",
     }),
 });
 
@@ -208,7 +206,6 @@ export default function Dashboard() {
         resolver: zodResolver(blockFormSchema),
         defaultValues: {
             title: "",
-            emoji: "📝",
         },
     });
 
@@ -221,12 +218,10 @@ export default function Dashboard() {
         },
     });
 
-    const emojis = ["📝", "📚", "🎯", "💡", "🔍", "📊", "🎨", "🧮", "🔬", "🧪", "📱", "💻", "🌟", "⭐", "🎉", "🚀", "🎮", "🎲", "🎼", "🎵", "🎹", "🎸", "🎺", "🎭", "🎨", "📷", "🎥", "📺", "📻", "📱"];
-
     const handleCreateBlock = async (values: z.infer<typeof blockFormSchema>) => {
         try {
             const block = await addBlock(values.title);
-            setBlocks(prev => [...prev, { id: block.id, title: block.title, emoji: values.emoji }]);
+            setBlocks(prev => [...prev, { id: block.id, title: block.title }]);
             blockForm.reset();
             setBlockDialogOpen(false);
             router.push(`/onboarding/name/study-type?blockId=${block.id}&newBlock=false`);
@@ -247,46 +242,64 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="container h-5/6 grid grid-rows-8 grid-cols-3 gap-4">
-            <div className="col-span-2 row-span-1 rounded-xl bg-[#161616] border-2 border-nuclear p-4 font-black text-3xl flex items-center justify-between">
-                <h2 className="text-2xl">Welcome, {userName || "User"}!</h2>
-                <div className="flex gap-4">
+        <div className="container h-5/6 gap-4">
+            <div className="w-full rounded-xl bg-[#161616] border-2 border-nuclear p-4 font-black text-3xl flex items-center justify-between">
+                <h2 className="text-xl md:text-2xl">Welcome, {userName || "User"}!</h2>
+                <div className="flex flex-col md:flex-row gap-4 space-around">
                     <Button
                         onClick={handleCreateNew}
-                        className="bg-foreground text-background hover:bg-[#333333] flex items-center gap-2"
+                        className="bg-foreground text-background hover:bg-[#333333] flex items-center gap-2 px-4"
                         disabled={selectedTypes.size !== 1}
                     >
-                        <Plus className="w-4 h-4" /> Create New
+                        <Plus /> Create New
                     </Button>
-                    <Button
-                        onClick={() => toggleSelection('blocks')}
-                        className={`${selectedTypes.has('blocks') ? 'bg-foreground text-background' : 'bg-muted'} hover:bg-[#333333]`}
-                    >
-                        Blocks
-                    </Button>
-                    <Button
-                        onClick={() => toggleSelection('crates')}
-                        className={`${selectedTypes.has('crates') ? 'bg-foreground text-background' : 'bg-muted'} hover:bg-[#333333]`}
-                    >
-                        Crates
-                    </Button>
+                    <div className="flex flex-col md:flex-row items-center gap-2">
+                        <div className="flex h-10 items-center bg-background rounded-md">
+                            <div className="flex items-center space-x-2 px-4">
+                                <Checkbox 
+                                    id="blocks"
+                                    checked={selectedTypes.has('blocks')}
+                                    onCheckedChange={() => toggleSelection('blocks')}
+                                />
+                                <label
+                                    htmlFor="blocks"
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                    Blocks
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div className="flex h-10 items-center bg-background rounded-md">
+                            <div className="flex items-center space-x-2 px-4">
+                                <Checkbox 
+                                    id="crates"
+                                    checked={selectedTypes.has('crates')}
+                                    onCheckedChange={() => toggleSelection('crates')}
+                                />
+                                <label
+                                    htmlFor="crates"
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                    Crates
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div className="justify-center col-span-2 row-span-7 bg-[#161616] rounded-xl border-2 p-4 overflow-y-auto">
-                <div className="flex justify-center w-full">
-                    <div className="flex w-[900px] h-[600px] p-[50px] flex-col justify-between items-start">
-                        <div className="grid grid-cols-4 gap-8 w-full">
+            <div className="col-span-2 row-span-7 bg-[#161616] rounded-xl border-2 p-4">
+                <div className="flex justify-center">
+                    <div className="flex flex-col items-start">
+                        <div className="grid grid-cols-4 gap-8 ">
                             {selectedTypes.has('blocks') && blocks.map((block) => (
                                 <Link 
                                     key={block.id} 
                                     href={`/dashboard/block/${block.id}`}
-                                    className="bg-[#292929] rounded-xl border-2 p-6 hover:bg-[#333333] aspect-square flex items-center justify-center"
+                                    className="col-span-4 md:col-span-2 lg:col-span-1 bg-[#292929] rounded-xl border-2 p-6 hover:bg-[#333333] aspect-square flex items-center justify-center"
                                 >
-                                    <div className="flex flex-col items-center gap-3">
-                                        <span className="text-4xl">{block.emoji || "📝"}</span>
-                                        <h1 className="text-xl text-center">{truncateText(block.title, 15)}</h1>
-                                    </div>
+                                    <h1 className="text-lg md:text-xl text-center">{truncateText(block.title, 15)}</h1>
                                 </Link>
                             ))}
                             {selectedTypes.has('crates') && crates.map((crate) => {
@@ -295,7 +308,7 @@ export default function Dashboard() {
                                     <Link
                                         key={crate.id}
                                         href={`/dashboard/crate/${crate.id}`}
-                                        className="bg-[#292929] rounded-xl border-2 p-6 hover:bg-[#333333] aspect-square flex items-center justify-center"
+                                        className="col-span-4 md:col-span-2 lg:col-span-1 bg-[#292929] rounded-xl border-2 p-6 hover:bg-[#333333] aspect-square flex items-center justify-center"
                                     >
                                         <Icon className="w-12 h-12" />
                                     </Link>
@@ -311,34 +324,11 @@ export default function Dashboard() {
                     <DialogHeader>
                         <DialogTitle className="text-2xl font-black">Create New Block</DialogTitle>
                         <DialogDescription className="text-gray-400">
-                            Choose an emoji and enter a name for your new block.
+                            Enter a name for your new block.
                         </DialogDescription>
                     </DialogHeader>
                     <Form {...blockForm}>
                         <form onSubmit={blockForm.handleSubmit(handleCreateBlock)} className="space-y-4">
-                            <FormField
-                                control={blockForm.control}
-                                name="emoji"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Emoji</FormLabel>
-                                        <FormControl>
-                                            <div className="grid grid-cols-6 gap-2 max-h-[200px] overflow-y-auto">
-                                                {emojis.map((emoji) => (
-                                                    <div
-                                                        key={emoji}
-                                                        onClick={() => field.onChange(emoji)}
-                                                        className={`p-2 rounded-md cursor-pointer text-2xl flex items-center justify-center ${field.value === emoji ? 'bg-[#333333]' : 'hover:bg-[#292929]'}`}
-                                                    >
-                                                        {emoji}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
                             <FormField
                                 control={blockForm.control}
                                 name="title"

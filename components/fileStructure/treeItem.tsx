@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { FileSystemComponent, Folder } from '@/lib/types';
+import { FileSystemComponent, Folder } from '@/lib/FSTypes';
 import { Button } from '@/components/ui/button';
 import { FolderIcon, FileIcon, ChevronRight, ChevronDown } from 'lucide-react';
 
