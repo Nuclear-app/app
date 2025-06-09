@@ -35,7 +35,7 @@ export function BlockItem({ block, onDelete }: BlockItemProps) {
     return (
         <div className="relative w-full">
             <Link
-                href={`/block?blockId=${block.id}&newBlock=false`}
+                href={`/dashboard/block/${block.id}`}
                 className="block w-full"
             >
                 <Card className="bg-[#292929] hover:bg-[#333333] border-2 aspect-square">
