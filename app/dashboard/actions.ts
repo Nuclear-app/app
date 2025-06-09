@@ -26,6 +26,11 @@ export interface Folder {
     createdAt: Date;
 }
 
+export interface CratePath {
+    id: string;
+    name: string;
+}
+
 // Authentication helper
 const getUser = async () => {
     const supabase = await createClient();
@@ -387,6 +392,51 @@ export const fetchUserName = async () => {
         return user?.name || null;
     } catch (error) {
         console.error("Failed to fetch user name:", error);
+        throw error;
+    }
+};
+
+export const fetchCratePath = async (crateId: string): Promise<CratePath[]> => {
+    try {
+        const userId = await getUser();
+        const path: CratePath[] = [];
+        
+        let currentCrate = await prisma.folder.findUnique({
+            where: { 
+                id: crateId,
+                authorId: userId
+            },
+            select: {
+                id: true,
+                name: true,
+                parentId: true
+            }
+        });
+
+        while (currentCrate) {
+            path.unshift({
+                id: currentCrate.id,
+                name: currentCrate.name
+            });
+
+            if (!currentCrate.parentId || currentCrate.parentId === ROOT_FOLDER_ID) break;
+
+            currentCrate = await prisma.folder.findUnique({
+                where: { 
+                    id: currentCrate.parentId,
+                    authorId: userId
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    parentId: true
+                }
+            });
+        }
+
+        return path;
+    } catch (error) {
+        console.error("Failed to fetch crate path:", error);
         throw error;
     }
 };

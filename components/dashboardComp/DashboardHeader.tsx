@@ -3,16 +3,18 @@ import { Button } from "@/components/ui/button";
 import { SelectionControls } from "./SelectionControls";
 
 interface DashboardHeaderProps {
-    userName: string;
     selectedTypes: Set<'blocks' | 'crates'>;
     onCreateNew: () => void;
     onToggleSelection: (type: 'blocks' | 'crates') => void;
+    customTitle: string;
 }
 
-export function DashboardHeader({ userName, selectedTypes, onCreateNew, onToggleSelection }: DashboardHeaderProps) {
+export function DashboardHeader({ selectedTypes, onCreateNew, onToggleSelection, customTitle }: DashboardHeaderProps) {
     return (
         <div className="w-full rounded-xl bg-[#161616] border-2 border-nuclear p-4 font-black text-3xl flex items-center justify-between">
-            <h2 className="text-xl md:text-2xl">Welcome, {userName || "User"}!</h2>
+            <h2 className="text-xl md:text-2xl">
+                {customTitle}
+            </h2>
             <div className="flex flex-col md:flex-row gap-4 space-around">
                 <Button
                     onClick={onCreateNew}

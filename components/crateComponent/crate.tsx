@@ -1,20 +1,25 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from 'react';
 import { Block, Crate } from "@/lib/types";
-import { DashboardHeader } from "./DashboardHeader";
-import { GridDisplay } from "./GridDisplay";
-import { BlockDialog } from "./BlockDialog";
-import { CrateDialog } from "./CrateDialog";
-import { SelectionDialog } from "./SelectionDialog";
-import { addBlock, addCrate } from "@/app/dashboard/actions";
-import { loadData } from "../../lib/loadData";
+import { GridDisplay } from "@/components/dashboardComp/GridDisplay";
+import { DashboardHeader } from "@/components/dashboardComp/DashboardHeader";
+import { BlockDialog } from "@/components/dashboardComp/BlockDialog";
+import { CrateDialog } from "@/components/dashboardComp/CrateDialog";
+import { SelectionDialog } from "@/components/dashboardComp/SelectionDialog";
+import { addBlock, addCrate, CratePath } from "@/app/dashboard/actions";
+import { CrateBreadcrumb } from "./crateBC";
+import { loadData } from "@/lib/loadData";
 
-export default function Dashboard() {
-    const router = useRouter();
+interface CrateComponentProps {
+    crateId: string;
+}
+
+export default function CrateComponent({ crateId }: CrateComponentProps) {
     const [blocks, setBlocks] = useState<Block[]>([]);
     const [crates, setCrates] = useState<Crate[]>([]);
+    const [cratePath, setCratePath] = useState<CratePath[]>([]);
+    const [currentCrateName, setCurrentCrateName] = useState<string>("");
     const [selectedTypes, setSelectedTypes] = useState<Set<'blocks' | 'crates'>>(() => 
         new Set<'blocks' | 'crates'>(['blocks', 'crates'] as const)
     );
@@ -26,10 +31,12 @@ export default function Dashboard() {
     // Function to load data based on selection
     const fetchData = async (types: Set<'blocks' | 'crates'>) => {
         try {
-            const result = await loadData({ types, useSeparateQueries: true });
+            const result = await loadData({ types, crateId });
             setBlocks(result.blocks);
             setCrates(result.crates);
             setUserName(result.userName);
+            setCratePath(result.cratePath || []);
+            setCurrentCrateName(result.currentCrateName || "");
         } catch (error) {
             console.error("Failed to load data:", error);
         }
@@ -37,9 +44,8 @@ export default function Dashboard() {
 
     // Initial load
     useEffect(() => {
-        console.log('Component mounted, loading initial data...');
         fetchData(selectedTypes);
-    }, []);
+    }, [crateId]);
 
     const toggleSelection = (type: 'blocks' | 'crates') => {
         const newSet = new Set(selectedTypes);
@@ -67,10 +73,9 @@ export default function Dashboard() {
 
     const handleCreateBlock = async (title: string) => {
         try {
-            const block = await addBlock(title);
+            const block = await addBlock(title, crateId);
             setBlocks(prev => [...prev, { id: block.id, title: block.title, createdAt: block.createdAt }]);
             setBlockDialogOpen(false);
-            router.push(`/onboarding/name/study-type?blockId=${block.id}&newBlock=false`);
         } catch (error) {
             console.error("Failed to create block:", error);
         }
@@ -78,7 +83,7 @@ export default function Dashboard() {
 
     const handleCreateCrate = async (title: string, icon: string) => {
         try {
-            const crate = await addCrate(title, icon);
+            const crate = await addCrate(title, icon, crateId);
             setCrates(prev => [...prev, { 
                 id: crate.id, 
                 title: crate.name, 
@@ -93,11 +98,13 @@ export default function Dashboard() {
 
     return (
         <div className="container h-5/6 w-full">
+            <CrateBreadcrumb cratePath={cratePath} />
+            
             <DashboardHeader
-                customTitle={`Welcome, ${userName || "User"}!`}
+                customTitle={currentCrateName}
                 selectedTypes={selectedTypes}
                 onCreateNew={handleCreateNew}
-                onToggleSelection={toggleSelection}
+                onToggleSelection={toggleSelection}                
             />
             
             <div className="mt-8">
