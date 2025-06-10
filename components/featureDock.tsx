@@ -1,5 +1,5 @@
 import type React from "react"
-
+import Link from "next/link"
 import { Dock, DockIcon } from "./ui/dock"
 import { Separator } from "./ui/separator"
 import ex from "@/public/features/ex.svg"
@@ -7,27 +7,60 @@ import nu from "@/public/features/nu.svg"
 import qz from "@/public/features/qz.svg"
 import Image from "next/image"
 import { Upload } from "lucide-react"
+import { useEffect } from "react"
+import { useState } from "react"
+import { Button } from "./ui/button"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog"
+import FileUpload, { FileState } from "@/components/fileUpload"
 
 export type IconProps = React.HTMLAttributes<SVGElement>
 
-export function FeatureDock() {
+export function FeatureDock({ blockId }: { blockId: string }) {
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+        return () => setMounted(false);
+    }, []);
+
+    const handleFileUpload = (files: FileState[]) => {
+        console.log('Uploaded files:', files);
+        // Handle the uploaded files here
+    };
+
     return (
-            <Dock direction="middle" className="border-none"> 
+        <div>
+            <Dock direction="middle" className="border-none">
                 <DockIcon size={500} className="rounded-xl bg-gradient-to-b from-[#EEEEEE]/70 to-[#EEEEEE]/70 bg-[radial-gradient(70.71%_70.71%_at_50%_50%,#9000FF_0%,#E46300_100%)] ">
-                    <Image src={ex} alt="examples" className="p-2" />
+                    <Link href={`/dashboard/block/${blockId}/examples`}><Image src={ex} alt="examples" className="p-2" /></Link>
                 </DockIcon>
                 <DockIcon size={500} className="rounded-xl bg-gradient-to-b from-[#EEEEEE]/70 to-[#EEEEEE]/70 bg-[radial-gradient(70.71%_70.71%_at_50%_50%,#E46300_13.75%,#00D3BE_97.99%)] ">
-                    <Image src={nu} alt="FAQs" className="p-2" />
+                    <Link href={`/dashboard/block/${blockId}/faq`}><Image src={nu} alt="FAQs" className="p-2" /></Link>
                 </DockIcon>
                 <DockIcon size={500} className="rounded-xl bg-gradient-to-b from-[#EEEEEE]/70 to-[#EEEEEE]/70 bg-[radial-gradient(70.71%_70.71%_at_50%_50%,#00D3BE_0%,#9000FF_100%)] ">
-                    <Image src={qz} alt="quizzes" className="p-2" />
+                    <Link href={`/dashboard/block/${blockId}/quizzes`}><Image src={qz} alt="quizzes" className="p-2" /></Link>
                 </DockIcon>
                 <DockIcon className="bg-[#3C3535] rounded-xl">
-                    <Upload></Upload>
+                    <Button className="bg-transparent hover:bg-transparent" variant="ghost" size="icon" onClick={() => setIsDialogOpen(true)}><Upload></Upload></Button>
+                    {/* <Link href={`/modeSpecific/fileInput`}><Upload></Upload></Link> */}
                 </DockIcon>
             </Dock>
-
-    )
+            {mounted && (
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle>Upload Files</DialogTitle>
+                            <DialogDescription>
+                                Upload your learning materials here. You can drag and drop files or click to browse.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <FileUpload returnFiles={handleFileUpload} mode="upload" />
+                    </DialogContent>
+                </Dialog>
+            )}
+        </div>
+    );
 }
 
 const Icons = {

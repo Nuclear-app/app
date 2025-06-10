@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Block, Crate } from "@/lib/types";
 import { GridDisplay } from "@/components/dashboardComp/GridDisplay";
 import { DashboardHeader } from "@/components/dashboardComp/DashboardHeader";
@@ -16,6 +17,7 @@ interface CrateComponentProps {
 }
 
 export default function CrateComponent({ crateId }: CrateComponentProps) {
+    const router = useRouter();
     const [blocks, setBlocks] = useState<Block[]>([]);
     const [crates, setCrates] = useState<Crate[]>([]);
     const [cratePath, setCratePath] = useState<CratePath[]>([]);
@@ -76,6 +78,7 @@ export default function CrateComponent({ crateId }: CrateComponentProps) {
             const block = await addBlock(title, crateId);
             setBlocks(prev => [...prev, { id: block.id, title: block.title, createdAt: block.createdAt }]);
             setBlockDialogOpen(false);
+            router.push(`/onboarding/name/study-type?blockId=${block.id}&newBlock=false`);
         } catch (error) {
             console.error("Failed to create block:", error);
         }

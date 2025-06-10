@@ -117,7 +117,7 @@ export function BlockViewNav({ blockId }: blockViewNavProps) {
                 >
                     {isPointsLoading ? 'Loading...' : `${points ?? 0} Points`}
                 </Button>
-                <FeatureDock />
+                <FeatureDock blockId={blockId} />
 
             </div>
         </div>
