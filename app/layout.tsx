@@ -3,6 +3,7 @@ import { EnvVarWarning } from "@/components/env-var-warning";
 import HeaderAuth from "@/components/header-auth";
 import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 import { Geist } from "next/font/google";
+import { Bricolage_Grotesque } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 
@@ -19,7 +20,14 @@ export const metadata = {
 const geistSans = Geist({
   display: "swap",
   subsets: ["latin"],
+  variable: "--font-geist",
 });
+
+const bricolageGrotesque = Bricolage_Grotesque({
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--font-bricolage",
+})
 
 export default function RootLayout({
   children,
@@ -27,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.className} dark`} suppressHydrationWarning>
+    <html lang="en" className={`${bricolageGrotesque.variable} ${geistSans.className} dark`} suppressHydrationWarning>
       <body className="bg-background text-white">
         <div className="noise" />
         <main className="min-h-screen flex flex-col ">

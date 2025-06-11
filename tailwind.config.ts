@@ -18,6 +18,9 @@ const config = {
   		}
   	},
   	extend: {
+  		fontFamily: {
+  			sans: ['var(--font-bricolage)', 'var(--font-geist)'],
+  		},
   		typography: {
   			DEFAULT: {
   				css: {
