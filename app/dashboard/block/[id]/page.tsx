@@ -1,16 +1,87 @@
-'use client';
+'use client'
+import TailwindAdvancedEditor from "@/components/tailwind/advanced-editor";
+import { useParams, useSearchParams } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
+import { getNoteContent } from './actions';
+import { type JSONContent } from "novel";
+import { Button } from "@/components/ui/button";
+import { ArrowLeftIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
+import { BlockViewNav } from "@/components/blockViewNav";
+import { FeatureDock } from "@/components/featureDock";
 
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
-import { Block } from '@/components/block';
+function BlockPage() {
+  const params = useParams();
+  const blockId = params.id as string;
+  const [initialContent, setInitialContent] = useState<JSONContent | undefined>(undefined);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isTyping, setIsTyping] = useState(false);
 
-export default function BlockPage() {
-    const params = useParams();
-    const blockId = params.id as string;
+  useEffect(() => {
+    async function fetchContent() {
+      if (!blockId) return;
 
-    return (
-        <div>
-            <Block blockId={blockId} />
-        </div>
-    );
+      try {
+        const content = await getNoteContent(blockId);
+        // Content will always be a valid JSON string from our server action
+        if (typeof content === 'string') {
+          const parsedContent = JSON.parse(content);
+          if (typeof parsedContent === 'object' && parsedContent !== null) {
+            setInitialContent(parsedContent as JSONContent);
+          }
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load note content');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchContent();
+  }, [blockId]);
+
+  const handleEditorFocus = () => {
+    setIsTyping(true);
+  };
+
+  const handleEditorBlur = () => {
+    setIsTyping(false);
+  };
+
+  if (!blockId) {
+    return <div className="text-destructive">No block ID provided</div>;
+  }
+
+  if (isLoading) {
+    return <div className="text-muted-foreground">Loading note content...</div>;
+  }
+
+  if (error) {
+    return <div className="text-destructive">{error}</div>;
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      <BlockViewNav blockId={blockId} />
+      <div 
+        onFocus={handleEditorFocus}
+        onBlur={handleEditorBlur}
+        className="w-full"
+      >
+        <TailwindAdvancedEditor 
+          blockId={blockId} 
+          initialContent={initialContent}
+        />
+      </div>
+    </div>
+  );
+}
+
+export default function EditorPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <BlockPage />
+    </Suspense>
+  );
 }
