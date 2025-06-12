@@ -44,8 +44,13 @@ export function FillInBlank({
           value={userAnswer}
           onChange={(e) => handleAnswerChange(e.target.value)}
           placeholder=""
+          style={{
+            width: `${Math.max(answer.length + 2, 4)}ch`, // 2 extra chars, min 4ch
+            minWidth: '4ch',
+            maxWidth: '100%',
+          }}
           className={ny(
-            "w-32 h-7 text-base inline-block align-middle bg-transparent border-0 border-b-2 px-1 py-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0",
+            "h-7 text-base inline-block align-middle bg-transparent border-0 border-b-2 px-1 py-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0",
             isCorrect === true && "border-b-green-500",
             isCorrect === false && "border-b-red-500",
             isCorrect === null && "border-b-gray-300"
