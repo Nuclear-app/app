@@ -52,14 +52,25 @@ export default function Examples({ blockID }: ExamplesProps) {
           <h2 className="text-2xl font-bold mb-4">Examples</h2>
           <p className="text-sm text-muted-foreground">Here are some examples to help you understand the concepts better.</p>
         </div>
-        <div className="space grid grid-cols-1 gap-2 md:grid-cols-2">
-          {topics.map((topic) => (
-            <Topic 
-              key={topic.id}
-              topicName={topic.name}
-              examples={topic.examples}
-            />
-          ))}
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1 space-y-2">
+            {topics.filter((_, index) => index % 2 === 0).map((topic) => (
+              <Topic 
+                key={topic.id}
+                topicName={topic.name}
+                examples={topic.examples}
+              />
+            ))}
+          </div>
+          <div className="flex-1 space-y-2">
+            {topics.filter((_, index) => index % 2 === 1).map((topic) => (
+              <Topic 
+                key={topic.id}
+                topicName={topic.name}
+                examples={topic.examples}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>
