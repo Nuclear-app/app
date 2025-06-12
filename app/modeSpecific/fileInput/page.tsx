@@ -143,24 +143,26 @@ function FileInputContent() {
 
   return (
 
-    <div>
+    <div className="flex flex-col items-center justify-center h-[90vh]">
+      <div className="w-1/2 mx-auto mt-10">
 
-      <FileUpload returnFiles={handleFiles} mode={mode} />
+        <FileUpload returnFiles={handleFiles} mode={mode} />
 
-      {context && (
+        {context && (
 
-        <div className="mt-4 p-4 bg-gray-100 rounded">
+          <div className="mt-4 p-4 bg-gray-100 rounded">
 
-          <h3 className="text-lg font-semibold mb-2">Processing Files...</h3>
+            <h3 className="text-lg font-semibold mb-2">Processing Files...</h3>
 
-          <p className="whitespace-pre-wrap" > {context}</p >
+            <p className="whitespace-pre-wrap" > {context}</p >
 
-        </div >
+          </div >
 
-      )
-      }
+        )
+        }
 
-    </div >
+      </div >
+    </div>
 
   )
 
