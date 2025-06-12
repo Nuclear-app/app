@@ -7,7 +7,7 @@ interface SelectionControlsProps {
 
 export function SelectionControls({ selectedTypes, onToggleSelection }: SelectionControlsProps) {
     return (
-        <div className="flex flex-col md:flex-row items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-center gap-2">
             <div className="flex h-10 items-center bg-background rounded-md">
                 <div className="flex items-center space-x-2 px-4">
                     <Checkbox 

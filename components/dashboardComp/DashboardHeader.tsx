@@ -15,7 +15,7 @@ export function DashboardHeader({ selectedTypes, onCreateNew, onToggleSelection,
             <h2 className="text-xl md:text-2xl">
                 {customTitle}
             </h2>
-            <div className="flex flex-col md:flex-row gap-4 space-around">
+            <div className="flex flex-col sm:flex-row gap-2 space-around">
                 <Button
                     onClick={onCreateNew}
                     className="bg-foreground text-background hover:bg-[#333333] flex items-center gap-2 px-4"
