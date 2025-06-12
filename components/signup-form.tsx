@@ -83,7 +83,7 @@ export function SignUpForm({
                            variants={fadeIn}
                            className="flex flex-col items-center text-center"
                         >
-                           <h1 className="text-4xl font-bold">Create Account</h1>
+                           <h1 className="text-3xl sm:text-4xl md:text-4xl lg:text-4xl xl:text-4xl font-bold">Create Account</h1>
                         </motion.div>
                         
                         {(error || success) && (

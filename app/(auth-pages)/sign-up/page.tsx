@@ -19,8 +19,8 @@ export default async function Signup(props: {
     );
   }
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center rounded-3xl bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-green-600/40 via-purple-600/40 to-orange-600/40 bg-black/50 p-6 md:p-10">
-      <div className="w-full max-w-sm md:max-w-3xl">
+    <div className="flex h-full items-center justify-center rounded-3xl bg-custom-gradient">
+      <div className="transform scale-90 2xl:scale-150 w-full max-w-4xl px-8">
         <SignUpForm />
       </div>
     </div>

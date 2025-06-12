@@ -38,8 +38,8 @@ export default function RootLayout({
     <html lang="en" className={`${bricolage.className} dark`} suppressHydrationWarning>
       <body className="min-h-screen bg-background text-foreground antialiased">
         <div className="noise" />
-        <main className="min-h-screen flex flex-col">
-          <div className="flex-1 w-full flex flex-col">
+        <main className="flex h-screen">
+          <div className="flex w-full h-full p-4">
             {/* <nav className="w-full flex justify-center border-b border-white/10 h-16">
               <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
                 <div className="flex gap-5 items-center font-semibold">
@@ -48,7 +48,7 @@ export default function RootLayout({
                 {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
               </div>
             </nav> */}
-            <div className="flex flex-col w-full p-5">
+            <div className="flex w-full h-full">
               {children}
             </div>
           </div>
