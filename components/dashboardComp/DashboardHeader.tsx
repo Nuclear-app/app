@@ -11,7 +11,7 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ selectedTypes, onCreateNew, onToggleSelection, customTitle }: DashboardHeaderProps) {
     return (
-        <div className="w-full rounded-xl bg-[#161616] border-2 border-nuclear p-4 font-black text-3xl flex items-center justify-between">
+        <div className="w-full rounded-xl bg-[#161616] border-4 p-4 font-black text-3xl flex items-center justify-between">
             <h2 className="text-xl md:text-2xl">
                 {customTitle}
             </h2>
