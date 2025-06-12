@@ -1,6 +1,4 @@
 import Link from "next/link";
-import { Blocks } from "lucide-react";
-import { Crate, iconMap } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { MoreVertical } from "lucide-react";
 import {
@@ -10,6 +8,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Crate } from "@/lib/types";
 
 interface CrateItemProps {
     crate: Crate;
@@ -17,17 +16,6 @@ interface CrateItemProps {
 }
 
 export function CrateItem({ crate, onDelete }: CrateItemProps) {
-    const Icon = iconMap[crate.icon] || Blocks;
-    
-    // const handleDelete = async () => {
-    //     try {
-    //         await deleteCrate(crate.id);
-    //         onDelete(crate.id);
-    //     } catch (error) {
-    //         console.error("Failed to delete crate:", error);
-    //     }
-    // };
-
     return (
         <div className="relative w-full">
             <Link
@@ -38,7 +26,7 @@ export function CrateItem({ crate, onDelete }: CrateItemProps) {
                     <CardContent className="p-6 h-full flex flex-col items-start justify-between">
                         <div className="w-full flex flex-col">
                             <div className="w-3/12 h-3/12 relative flex items-center justify-center">
-                                <Icon className="w-full h-full" />
+                                <span className="text-7xl">{crate.icon}</span>
                             </div>
                         </div>
                         <p className="text-sm text-muted-foreground">
