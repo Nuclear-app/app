@@ -29,7 +29,7 @@ export function GridDisplay({ blocks, crates, selectedTypes, onDeleteBlock, onDe
         ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
         return (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {combinedItems.map((item) => (
                     item.type === 'block' ? (
                         <BlockItem

@@ -68,7 +68,7 @@ export function Block({ blockId }: BlockProps) {
 
             {mounted && (
                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <DialogContent className="sm:max-w-[425px]">
+                  <DialogContent className="sm:min-w-[425px]">
                      <DialogHeader>
                         <DialogTitle>Upload Files</DialogTitle>
                         <DialogDescription>

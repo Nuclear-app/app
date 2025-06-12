@@ -48,7 +48,7 @@ export function FeatureDock({ blockId }: { blockId: string }) {
             </Dock>
             {mounted && (
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogContent className="sm:max-w-[425px]">
+                    <DialogContent className="sm:max-w-1/2">
                         <DialogHeader>
                             <DialogTitle>Upload Files</DialogTitle>
                             <DialogDescription>

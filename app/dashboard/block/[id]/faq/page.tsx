@@ -3,6 +3,7 @@
 import FAQ from "@/components/faq";
 import { useEffect, useState, use } from "react";
 import { getBlockContext } from "../../actions";
+import { BlockViewNav } from "@/components/blockViewNav";
 
 interface Props {
     params: Promise<{ id: string }>;
@@ -50,8 +51,11 @@ export default function FAQPage({ params }: Props) {
     }
 
     return (
-        <div>
-            <FAQ blockId={id} text={context} />
+        <div className="flex flex-col gap-4 w-full">
+            <BlockViewNav blockId={id} />
+            <div className="w-full">
+                <FAQ blockId={id} text={context} />
+            </div>
         </div>
     );
 }

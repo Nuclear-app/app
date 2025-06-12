@@ -47,9 +47,9 @@ export default function Examples({ blockID }: ExamplesProps) {
           {error}
         </div>
       )}
-      <div className="space-y-6 overflow-y-auto flex-1 pr-2 bg-[#292929] border-[#161616] border-8 p-4 rounded-xl">
+      <div className="space-y-6 overflow-y-auto flex-1 bg-[#292929] border-[#161616] border-8 px-4 py-4 rounded-3xl">
         <div className="leading-none">
-          <h2 className="text-2xl font-bold mb-4">Examples</h2>
+          <h2 className="text-2xl font-bold">Examples</h2>
           <p className="text-sm text-muted-foreground">Here are some examples to help you understand the concepts better.</p>
         </div>
         <div className="flex flex-col md:flex-row gap-4">

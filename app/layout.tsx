@@ -12,8 +12,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  title: "Nuclear",
+  description: "Your AI Notetaking platform",
 };
 
 const bricolage = Bricolage_Grotesque({
@@ -22,6 +22,12 @@ const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
   weight: ["200", "300", "400", "500", "600", "700", "800"],
 });
+
+const bricolageGrotesque = Bricolage_Grotesque({
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--font-bricolage",
+})
 
 export default function RootLayout({
   children,

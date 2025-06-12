@@ -92,7 +92,7 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="container h-5/6 w-full">
+        <div className="container h-5/6 w-full px-[12%] pt-[10%] pb-[4%]">
             <DashboardHeader
                 customTitle={`Welcome, ${userName || "User"}!`}
                 selectedTypes={selectedTypes}
