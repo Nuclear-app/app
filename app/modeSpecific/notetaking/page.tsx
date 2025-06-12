@@ -2,7 +2,7 @@
 import TailwindAdvancedEditor from "@/components/tailwind/advanced-editor";
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
-import { getNoteContent } from './actions';
+import { getNoteContent } from '../../dashboard/block/[id]/actions';
 import { type JSONContent } from "novel";
 import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
@@ -16,6 +16,7 @@ function NotetakingContent() {
   const [initialContent, setInitialContent] = useState<JSONContent | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
     async function fetchContent() {
@@ -40,6 +41,14 @@ function NotetakingContent() {
     fetchContent();
   }, [blockId]);
 
+  const handleEditorFocus = () => {
+    setIsTyping(true);
+  };
+
+  const handleEditorBlur = () => {
+    setIsTyping(false);
+  };
+
   if (!blockId) {
     return <div className="text-destructive">No block ID provided</div>;
   }
@@ -55,10 +64,17 @@ function NotetakingContent() {
   return (
     <div className="flex flex-col gap-4">
       <BlockViewNav blockId={blockId} />
-      <TailwindAdvancedEditor 
-        blockId={blockId} 
-        initialContent={initialContent}
-      />
+      <FeatureDock blockId={blockId} />
+      <div 
+        onFocus={handleEditorFocus}
+        onBlur={handleEditorBlur}
+        className="w-full"
+      >
+        <TailwindAdvancedEditor 
+          blockId={blockId} 
+          initialContent={initialContent}
+        />
+      </div>
     </div>
   );
 }
