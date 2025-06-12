@@ -8,13 +8,14 @@ import { GridDisplay } from "./GridDisplay";
 import { BlockDialog } from "./BlockDialog";
 import { CrateDialog } from "./CrateDialog";
 import { SelectionDialog } from "./SelectionDialog";
-import { addBlock, addCrate } from "@/app/dashboard/actions";
+import { addBlock, addCrate, deleteBlock, deleteCrate } from "@/app/dashboard/actions";
 import { loadData } from "../../lib/loadData";
 
 export default function Dashboard() {
     const router = useRouter();
     const [blocks, setBlocks] = useState<Block[]>([]);
     const [crates, setCrates] = useState<Crate[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [selectedTypes, setSelectedTypes] = useState<Set<'blocks' | 'crates'>>(() => 
         new Set<'blocks' | 'crates'>(['blocks', 'crates'] as const)
     );
@@ -26,12 +27,15 @@ export default function Dashboard() {
     // Function to load data based on selection
     const fetchData = async (types: Set<'blocks' | 'crates'>) => {
         try {
+            setIsLoading(true);
             const result = await loadData({ types, useSeparateQueries: true });
             setBlocks(result.blocks);
             setCrates(result.crates);
             setUserName(result.userName);
         } catch (error) {
             console.error("Failed to load data:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -91,6 +95,25 @@ export default function Dashboard() {
         }
     };
 
+    const handleDeleteBlock = async (blockId: string) => {
+        try {
+            await deleteBlock(blockId);
+            // Update UI immediately by filtering out the deleted block
+            setBlocks(prev => prev.filter(block => block.id !== blockId));
+        } catch (error) {
+            console.error("Failed to delete block:", error);
+        }
+    };
+
+    const handleDeleteCrate = async (crateId: string) => {
+        try {
+            await deleteCrate(crateId);
+            setCrates(prev => prev.filter(crate => crate.id !== crateId));
+        } catch (error) {
+            console.error("Failed to delete crate:", error);
+        }
+    };
+
     return (
         <div className="container h-5/6 w-full px-[12%] pt-[10%] pb-[4%]">
             <DashboardHeader
@@ -105,8 +128,9 @@ export default function Dashboard() {
                     blocks={blocks}
                     crates={crates}
                     selectedTypes={selectedTypes}
-                    onDeleteBlock={() => {}}
-                    onDeleteCrate={() => {}}
+                    onDeleteBlock={handleDeleteBlock}
+                    onDeleteCrate={handleDeleteCrate}
+                    isLoading={isLoading}
                 />
             </div>
 

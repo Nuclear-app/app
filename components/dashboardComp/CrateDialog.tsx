@@ -59,8 +59,8 @@ export function CrateDialog({ open, onOpenChange, onCreateCrate }: CrateDialogPr
 
     const handleSubmit = async (values: z.infer<typeof crateFormSchema>) => {
         try {
-            await onCreateCrate(values.title, values.icon);
-            form.reset();
+        await onCreateCrate(values.title, values.icon);
+        form.reset();
             setSelectedEmoji("📁");
             onOpenChange(false);
         } catch (error) {
@@ -117,42 +117,42 @@ export function CrateDialog({ open, onOpenChange, onCreateCrate }: CrateDialogPr
                                                     }}
                                                 >
                                                     <EmojiPicker.Search className="z-10 mx-2 mt-2 appearance-none rounded-md bg-[#333333] px-2.5 py-2 text-sm text-white dark:bg-neutral-800" />
-                                                    <EmojiPicker.Viewport className="relative flex-1 outline-hidden">
-                                                        <EmojiPicker.Loading className="absolute inset-0 flex items-center justify-center text-neutral-400 text-sm dark:text-neutral-500">
-                                                            Loading…
-                                                        </EmojiPicker.Loading>
-                                                        <EmojiPicker.Empty className="absolute inset-0 flex items-center justify-center text-neutral-400 text-sm dark:text-neutral-500">
-                                                            No emoji found.
-                                                        </EmojiPicker.Empty>
-                                                        <EmojiPicker.List
-                                                            className="select-none pb-1.5"
-                                                            components={{
-                                                                CategoryHeader: ({ category, ...props }) => (
-                                                                    <div
+                                            <EmojiPicker.Viewport className="relative flex-1 outline-hidden">
+                                                <EmojiPicker.Loading className="absolute inset-0 flex items-center justify-center text-neutral-400 text-sm dark:text-neutral-500">
+                                                    Loading…
+                                                </EmojiPicker.Loading>
+                                                <EmojiPicker.Empty className="absolute inset-0 flex items-center justify-center text-neutral-400 text-sm dark:text-neutral-500">
+                                                    No emoji found.
+                                                </EmojiPicker.Empty>
+                                                <EmojiPicker.List
+                                                    className="select-none pb-1.5"
+                                                    components={{
+                                                        CategoryHeader: ({ category, ...props }) => (
+                                                            <div
                                                                         className="bg-[#292929] px-3 pt-3 pb-1.5 font-medium text-neutral-400 text-xs dark:bg-neutral-900"
-                                                                        {...props}
-                                                                    >
-                                                                        {category.label}
-                                                                    </div>
-                                                                ),
-                                                                Row: ({ children, ...props }) => (
-                                                                    <div className="scroll-my-1.5 px-1.5" {...props}>
-                                                                        {children}
-                                                                    </div>
-                                                                ),
-                                                                Emoji: ({ emoji, ...props }) => (
-                                                                    <button
+                                                                {...props}
+                                                            >
+                                                                {category.label}
+                                                            </div>
+                                                        ),
+                                                        Row: ({ children, ...props }) => (
+                                                            <div className="scroll-my-1.5 px-1.5" {...props}>
+                                                                {children}
+                                                            </div>
+                                                        ),
+                                                        Emoji: ({ emoji, ...props }) => (
+                                                            <button
                                                                         type="button"
                                                                         className="flex size-8 items-center justify-center rounded-md text-lg data-[active]:bg-[#333333] dark:data-[active]:bg-neutral-800"
-                                                                        {...props}
-                                                                    >
-                                                                        {emoji.emoji}
-                                                                    </button>
-                                                                ),
-                                                            }}
-                                                        />
-                                                    </EmojiPicker.Viewport>
-                                                </EmojiPicker.Root>
+                                                                {...props}
+                                                            >
+                                                                {emoji.emoji}
+                                                            </button>
+                                                        ),
+                                                    }}
+                                                />
+                                            </EmojiPicker.Viewport>
+                                        </EmojiPicker.Root>
                                             </div>
                                         </div>
                                     </FormControl>
@@ -164,7 +164,7 @@ export function CrateDialog({ open, onOpenChange, onCreateCrate }: CrateDialogPr
                             <DialogClose asChild>
                                 <Button variant="outline">Cancel</Button>
                             </DialogClose>
-                            <Button type="submit">Create Crate</Button>
+                        <Button type="submit">Create Crate</Button>
                         </div>
                     </form>
                 </Form>
