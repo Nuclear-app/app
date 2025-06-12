@@ -28,6 +28,7 @@ model Block {
   note           Json?
   context        String?
   points         Int?
+  uploadedFiles  String[]
   author         User             @relation(fields: [authorId], references: [id])
   folder         Folder?          @relation(fields: [folderId], references: [id])
   FillInTheBlank FillInTheBlank[]
