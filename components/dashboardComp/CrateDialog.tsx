@@ -9,6 +9,7 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
+    DialogClose,
 } from "@/components/ui/dialog";
 import {
     Form,
@@ -18,7 +19,9 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { iconMap } from "@/lib/types";
+import { EmojiPicker } from "frimousse";
+import { useState, useEffect } from "react";
+import { X } from "lucide-react";
 
 interface CrateDialogProps {
     open: boolean;
@@ -36,26 +39,46 @@ const crateFormSchema = z.object({
 });
 
 export function CrateDialog({ open, onOpenChange, onCreateCrate }: CrateDialogProps) {
+    const [selectedEmoji, setSelectedEmoji] = useState<string>("📁");
+    
     const form = useForm<z.infer<typeof crateFormSchema>>({
         resolver: zodResolver(crateFormSchema),
         defaultValues: {
             title: "",
-            icon: "blocks",
+            icon: "📁",
         },
     });
 
+    // Reset form when dialog is closed
+    useEffect(() => {
+        if (!open) {
+            form.reset();
+            setSelectedEmoji("📁");
+        }
+    }, [open, form]);
+
     const handleSubmit = async (values: z.infer<typeof crateFormSchema>) => {
-        await onCreateCrate(values.title, values.icon);
-        form.reset();
+        try {
+            await onCreateCrate(values.title, values.icon);
+            form.reset();
+            setSelectedEmoji("📁");
+            onOpenChange(false);
+        } catch (error) {
+            console.error("Failed to create crate:", error);
+        }
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="bg-[#161616] border-2">
+                <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+                    <X className="h-4 w-4" />
+                    <span className="sr-only">Close</span>
+                </DialogClose>
                 <DialogHeader>
                     <DialogTitle className="text-2xl font-black">Create New Crate</DialogTitle>
                     <DialogDescription className="text-gray-400">
-                        Choose an icon and name for your new crate.
+                        Choose an emoji and name for your new crate.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -80,23 +103,69 @@ export function CrateDialog({ open, onOpenChange, onCreateCrate }: CrateDialogPr
                                 <FormItem>
                                     <FormLabel>Icon</FormLabel>
                                     <FormControl>
-                                        <div className="grid grid-cols-6 gap-2">
-                                            {Object.entries(iconMap).map(([key, Icon]) => (
-                                                <div
-                                                    key={key}
-                                                    onClick={() => field.onChange(key)}
-                                                    className={`p-2 rounded-md cursor-pointer ${field.value === key ? 'bg-[#333333]' : 'hover:bg-[#292929]'}`}
+                                        <div className="flex flex-col gap-2">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-2xl">{selectedEmoji}</span>
+                                                <span className="text-sm text-gray-400">Selected emoji</span>
+                                            </div>
+                                            <div className="max-h-[300px] overflow-y-auto">
+                                                <EmojiPicker.Root 
+                                                    className="isolate flex w-fit flex-col bg-[#292929] dark:bg-neutral-900"
+                                                    onEmojiSelect={(selection) => {
+                                                        setSelectedEmoji(selection.emoji);
+                                                        field.onChange(selection.emoji);
+                                                    }}
                                                 >
-                                                    <Icon className="w-6 h-6" />
-                                                </div>
-                                            ))}
+                                                    <EmojiPicker.Search className="z-10 mx-2 mt-2 appearance-none rounded-md bg-[#333333] px-2.5 py-2 text-sm text-white dark:bg-neutral-800" />
+                                                    <EmojiPicker.Viewport className="relative flex-1 outline-hidden">
+                                                        <EmojiPicker.Loading className="absolute inset-0 flex items-center justify-center text-neutral-400 text-sm dark:text-neutral-500">
+                                                            Loading…
+                                                        </EmojiPicker.Loading>
+                                                        <EmojiPicker.Empty className="absolute inset-0 flex items-center justify-center text-neutral-400 text-sm dark:text-neutral-500">
+                                                            No emoji found.
+                                                        </EmojiPicker.Empty>
+                                                        <EmojiPicker.List
+                                                            className="select-none pb-1.5"
+                                                            components={{
+                                                                CategoryHeader: ({ category, ...props }) => (
+                                                                    <div
+                                                                        className="bg-[#292929] px-3 pt-3 pb-1.5 font-medium text-neutral-400 text-xs dark:bg-neutral-900"
+                                                                        {...props}
+                                                                    >
+                                                                        {category.label}
+                                                                    </div>
+                                                                ),
+                                                                Row: ({ children, ...props }) => (
+                                                                    <div className="scroll-my-1.5 px-1.5" {...props}>
+                                                                        {children}
+                                                                    </div>
+                                                                ),
+                                                                Emoji: ({ emoji, ...props }) => (
+                                                                    <button
+                                                                        type="button"
+                                                                        className="flex size-8 items-center justify-center rounded-md text-lg data-[active]:bg-[#333333] dark:data-[active]:bg-neutral-800"
+                                                                        {...props}
+                                                                    >
+                                                                        {emoji.emoji}
+                                                                    </button>
+                                                                ),
+                                                            }}
+                                                        />
+                                                    </EmojiPicker.Viewport>
+                                                </EmojiPicker.Root>
+                                            </div>
                                         </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit">Create Crate</Button>
+                        <div className="flex justify-end gap-2">
+                            <DialogClose asChild>
+                                <Button variant="outline">Cancel</Button>
+                            </DialogClose>
+                            <Button type="submit">Create Crate</Button>
+                        </div>
                     </form>
                 </Form>
             </DialogContent>
