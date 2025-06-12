@@ -7,26 +7,30 @@ import nu from "@/public/features/nu.svg"
 import qz from "@/public/features/qz.svg"
 import Image from "next/image"
 import { Upload } from "lucide-react"
-import { useEffect } from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "./ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog"
-import FileUpload, { FileState } from "@/components/fileUpload"
+import FileUploadComponent, { FileState } from "@/components/fileUpload"
+import { Tabs } from "@radix-ui/react-tabs"
+import { TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
+import { useBlockFiles } from "@/hooks/useBlockFiles"
 
 export type IconProps = React.HTMLAttributes<SVGElement>
 
 export function FeatureDock({ blockId }: { blockId: string }) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
+    const { uploadedFiles, fileUrls, uploadStatus, handleFileUpload } = useBlockFiles(blockId);
 
     useEffect(() => {
         setMounted(true);
         return () => setMounted(false);
     }, []);
 
-    const handleFileUpload = (files: FileState[]) => {
-        console.log('Uploaded files:', files);
-        // Handle the uploaded files here
+    const onFileUpload = async (files: FileState[]) => {
+        const filePaths = files.map(file => file.uploadedPath).filter(Boolean) as string[];
+        await handleFileUpload(filePaths);
     };
 
     return (
@@ -42,8 +46,14 @@ export function FeatureDock({ blockId }: { blockId: string }) {
                     <Link href={`/dashboard/block/${blockId}/quizzes`}><Image src={qz} alt="quizzes" className="p-2" /></Link>
                 </DockIcon>
                 <DockIcon className="bg-[#3C3535] rounded-xl">
-                    <Button className="bg-transparent hover:bg-transparent" variant="ghost" size="icon" onClick={() => setIsDialogOpen(true)}><Upload></Upload></Button>
-                    {/* <Link href={`/modeSpecific/fileInput`}><Upload></Upload></Link> */}
+                    <Button 
+                        className="bg-transparent hover:bg-transparent" 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => setIsDialogOpen(true)}
+                    >
+                        <Upload />
+                    </Button>
                 </DockIcon>
             </Dock>
             {mounted && (
@@ -55,7 +65,59 @@ export function FeatureDock({ blockId }: { blockId: string }) {
                                 Upload your learning materials here. You can drag and drop files or click to browse.
                             </DialogDescription>
                         </DialogHeader>
-                        <FileUpload returnFiles={handleFileUpload} mode="upload" />
+                        <Tabs defaultValue="upload" className="w-full">
+                            <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="upload">Upload File</TabsTrigger>
+                                <TabsTrigger value="history">File History</TabsTrigger>
+                            </TabsList>
+                            <TabsContent value="upload">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Upload File</CardTitle>
+                                        <CardDescription>
+                                            Upload your learning materials here. You can drag and drop files or click to browse.
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-2">
+                                        <FileUploadComponent returnFiles={onFileUpload} mode="upload" />
+                                    </CardContent>
+                                </Card>
+                            </TabsContent>
+                            <TabsContent value="history">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>File History</CardTitle>
+                                        <CardDescription>
+                                            View your uploaded files here.
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        {uploadStatus && (
+                                            <p className="text-sm text-gray-500">{uploadStatus}</p>
+                                        )}
+                                        {uploadedFiles.length > 0 ? (
+                                            uploadedFiles.map((filePath, index) => (
+                                                <div key={index} className="p-4 border rounded">
+                                                    <p className="text-sm font-medium mb-2">{filePath.split('/').pop()}</p>
+                                                    {fileUrls[filePath] && (
+                                                        <a 
+                                                            href={fileUrls[filePath]} 
+                                                            target="_blank" 
+                                                            rel="noopener noreferrer"
+                                                            className="text-blue-500 hover:text-blue-700 text-sm"
+                                                        >
+                                                            View File
+                                                        </a>
+                                                    )}
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p className="text-sm text-gray-500">No files uploaded yet.</p>
+                                        )}
+                                    </CardContent>
+                                </Card>
+                            </TabsContent>
+                        </Tabs>
                     </DialogContent>
                 </Dialog>
             )}

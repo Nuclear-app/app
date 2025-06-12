@@ -9,6 +9,7 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 import FilePondPluginFileEncode from 'filepond-plugin-file-encode';
 import { createPortal } from 'react-dom';
+import { uploadFile } from "@/lib/audioURL";
 
 // Import FilePond styles
 import 'filepond/dist/filepond.min.css';
@@ -46,6 +47,7 @@ interface FileUploadProps {
 export interface FileState {
   file: File;
   preview?: string;
+  uploadedPath?: string;
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode }) => {
@@ -74,31 +76,70 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode }) => {
         allowMultiple: true,
         maxFiles: 10,
         maxFileSize: '100MB',
-        acceptedFileTypes: ['image/*', 'application/pdf', 'audio/*'],
+        acceptedFileTypes: [
+          'image/*',
+          'application/pdf',
+          'audio/*',
+          '.pdf',
+          '.png',
+          '.jpg',
+          '.jpeg',
+          '.heic',
+          '.mp3',
+          '.wav',
+          '.m4a'
+        ],
         labelIdle: 'Drag & Drop your files or <span class="filepond--label-action">Browse</span>',
+        labelFileProcessing: 'Uploading',
+        labelFileProcessingComplete: 'Upload complete',
+        labelFileProcessingError: 'Error during upload',
+        labelTapToCancel: 'tap to cancel',
+        labelTapToRetry: 'tap to retry',
+        labelTapToUndo: 'tap to undo',
         server: {
-          // This is just for the visual feedback, we're not actually uploading
-          process: (fieldName, file, metadata, load, error, progress) => {
-            // Simulate progress
-            let percent = 0;
-            const interval = setInterval(() => {
-              percent += 10;
-              progress(true, percent, 100);
-              if (percent === 100) {
-                clearInterval(interval);
-                load(Date.now().toString());
+          process: async (fieldName, file, metadata, load, error, progress) => {
+            try {
+              // Get the actual file from the FilePond instance
+              const fileItem = pond.getFile();
+              if (!fileItem) {
+                throw new Error('No file found');
               }
-            }, 100);
+
+              // Convert the file to a proper File object
+              const fileObj = new File([fileItem.file], fileItem.filename, { type: fileItem.fileType });
+
+              // Upload to Supabase
+              const filePath = await uploadFile(fileObj);
+              
+              // Update the files state with the uploaded path
+              setFiles(prev => prev.map(f => 
+                f.file.name === fileItem.filename 
+                  ? { ...f, uploadedPath: filePath }
+                  : f
+              ));
+              
+              // Signal success to FilePond
+              load(filePath);
+            } catch (err) {
+              console.error('Upload error:', err);
+              error('Upload failed');
+            }
           }
         },
-        onaddfile: (error, file) => {
+        onaddfile: (error, fileItem) => {
           if (error) return;
-          const newFile = new File([file.file], file.filename, { type: file.fileType });
-          setFiles(prev => [...prev, { file: newFile }]);
+          const file = pond.getFile();
+          if (file) {
+            const fileObj = new File([file.file], file.filename, { type: file.fileType });
+            setFiles(prev => [...prev, { file: fileObj }]);
+          }
         },
-        onremovefile: (error, file) => {
+        onremovefile: (error, fileItem) => {
           if (error) return;
-          setFiles(prev => prev.filter(f => f.file.name !== file.filename));
+          const file = pond.getFile();
+          if (file) {
+            setFiles(prev => prev.filter(f => f.file.name !== file.filename));
+          }
         }
       });
 

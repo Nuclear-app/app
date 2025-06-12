@@ -63,3 +63,52 @@ export const fetchNotesAsText = async (blockId: string) => {
     return null;
   }
 };
+
+export async function getBlockFiles(blockId: string) {
+  try {
+    const block = await prisma.block.findUnique({
+      where: { id: blockId },
+      select: { uploadedFiles: true }
+    })
+
+    if (!block) {
+      throw new Error('Block not found')
+    }
+
+    return block.uploadedFiles || []
+  } catch (error) {
+    console.error('Error fetching block files:', error)
+    throw error
+  }
+}
+
+export async function updateBlockFiles(blockId: string, filePaths: string[]) {
+  try {
+    // Get the current block to check existing files
+    const currentBlock = await prisma.block.findUnique({
+      where: { id: blockId },
+      select: { uploadedFiles: true }
+    })
+
+    if (!currentBlock) {
+      throw new Error('Block not found')
+    }
+
+    // Combine existing files with new files, removing duplicates
+    const existingFiles = currentBlock.uploadedFiles || []
+    const updatedFiles = Array.from(new Set([...existingFiles, ...filePaths]))
+
+    // Update the block with the combined file paths
+    const updatedBlock = await prisma.block.update({
+      where: { id: blockId },
+      data: {
+        uploadedFiles: updatedFiles
+      }
+    })
+
+    return updatedBlock
+  } catch (error) {
+    console.error('Error updating block files:', error)
+    throw error
+  }
+} 

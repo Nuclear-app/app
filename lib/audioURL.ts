@@ -196,3 +196,65 @@ export async function deleteAudio(fileName: string) {
     }
 
 }
+
+export async function uploadFile(file: File, bucketName: string = 'transcription') {
+    try {
+        // check if user is logged in
+        const { data: { session }, error: sessionErr } = await supabase.auth.getSession()
+
+        if (sessionErr) {
+            console.error('Error getting session:', sessionErr)
+            throw new Error('Failed to get user session. Please sign in again.')
+        }
+
+        if (!session?.access_token) {
+            console.log('No session found, checking current user...')
+            const { data: { user }, error: userErr } = await supabase.auth.getUser()
+
+            if (userErr || !user) {
+                console.error('Error getting user:', userErr)
+                throw new Error('No active session found. Please sign in to upload files.')
+            }
+
+            const { data: { session: newSession }, error: refreshErr } = await supabase.auth.refreshSession()
+
+            if (refreshErr || !newSession?.access_token) {
+                throw new Error('Failed to refresh session. Please sign in again.')
+            }
+        }
+
+        if (!session?.access_token) {
+            throw new Error('No access token available. Please sign in again.')
+        }
+
+        const timestamp = Date.now()
+        const filePath = `${session.user.id}/${timestamp}-${file.name}`
+
+        const { data: uploadData, error: uploadError } = await supabase
+            .storage
+            .from(bucketName)
+            .upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: true,
+                contentType: file.type
+            })
+
+        if (uploadError) {
+            console.error('Upload error details:', {
+                message: uploadError.message,
+                name: uploadError.name,
+                details: uploadError
+            })
+            throw new Error(`Failed to upload file: ${uploadError.message || 'Unknown error'}`)
+        }
+
+        if (!uploadData?.path) {
+            throw new Error('Upload succeeded but no path returned')
+        }
+
+        return filePath
+    } catch (error) {
+        console.error('Error in uploadFile:', error)
+        throw error
+    }
+}

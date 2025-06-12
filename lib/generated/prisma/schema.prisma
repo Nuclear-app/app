@@ -67,9 +67,9 @@ model Folder {
   icon      String?
   authorId  String?
   blocks    Block[]
+  author    User?    @relation(fields: [authorId], references: [id])
   parent    Folder?  @relation("FolderToFolder", fields: [parentId], references: [id])
   children  Folder[] @relation("FolderToFolder")
-  author    User?    @relation(fields: [authorId], references: [id])
 }
 
 model FillInTheBlank {
