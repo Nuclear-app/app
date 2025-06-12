@@ -134,7 +134,7 @@ const config = {
   			'accordion-up': 'accordion-up 0.2s ease-out',
   		},
   		backgroundImage: {
-			'custom-gradient': 'radial-gradient(50% 75% at 50% 50%, #F3EBE6 20%, rgba(243, 235, 230, 0.00) 100%), conic-gradient(from 90deg at 50% 50%, #9000FF 24deg, #00D3BE 154deg, #E46300 193deg, #E16009 338deg, #9000FF 360deg)',
+			'custom-gradient': 'radial-gradient(50% 75% at 50% 50%, #F3EBE6 10%, rgba(243, 235, 230, 0.00) 100%), conic-gradient(from 90deg at 50% 50%, #9000FF 80deg, #00D3BE 160deg, #E46300 220deg, #E16009 330deg, #9000FF 360deg)',
   		},
   	}
   },
