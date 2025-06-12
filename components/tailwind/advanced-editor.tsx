@@ -16,7 +16,7 @@ import {
   handleImageDrop,
   handleImagePaste,
 } from "novel";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { defaultExtensions } from "./extensions";
 import { ColorSelector } from "./selectors/color-selector";
@@ -29,7 +29,8 @@ import GenerativeMenuSwitch from "./generative/generative-menu-switch";
 import { uploadFn } from "./image-upload";
 import { TextButtons } from "./selectors/text-buttons";
 import { slashCommand, suggestionItems } from "./slash-command";
-import { updateBlock } from "@/app/actions/update-block";
+import { saveContent as saveContentToServer } from "./advancedEditor";
+
 
 const hljs = require("highlight.js");
 
@@ -43,7 +44,7 @@ interface AdvancedEditorProps {
 const AdvancedEditor = ({ blockId: initialBlockId, initialContent }: AdvancedEditorProps) => {
   const [content, setContent] = useState<JSONContent | null>(initialContent || null);
   const [saveStatus, setSaveStatus] = useState("Saved");
-  const [charsCount, setCharsCount] = useState();
+  const [charsCount, setCharsCount] = useState<number>();
   const [currentBlockId, setCurrentBlockId] = useState<string | undefined>(initialBlockId);
 
   const [openNode, setOpenNode] = useState(false);
@@ -63,35 +64,26 @@ const AdvancedEditor = ({ blockId: initialBlockId, initialContent }: AdvancedEdi
     return new XMLSerializer().serializeToString(doc);
   };
 
-  const debouncedUpdates = useDebouncedCallback(async (editor: EditorInstance) => {
+  const handleSave = useCallback(async (editor: EditorInstance) => {
+    if (!editor) return;
+
     const json = editor.getJSON();
     setCharsCount(editor.storage.characterCount.words());
     
-    // Save to database using server action
-    try {
-      const result = await updateBlock(json, currentBlockId);
-      
-      if (!result.success) {
-        console.log(result.error);  
-        throw new Error(result.error);
-      }
-
-      // Update the block ID if this is a new block
-      if (result.isNewBlock) {
-        setCurrentBlockId(result.data.id);
-      }
-
-      setSaveStatus("Saved");
-    } catch (error) {
-      console.error('Error saving content:', error);
-      setSaveStatus("Error saving");
-    }
+    await saveContentToServer({
+      blockId: currentBlockId,
+      content: json,
+      setSaveStatus,
+      setCurrentBlockId
+    });
 
     // Local storage backup
     window.localStorage.setItem("html-content", highlightCodeblocks(editor.getHTML()));
     window.localStorage.setItem("novel-content", JSON.stringify(json));
     window.localStorage.setItem("markdown", editor.storage.markdown.getMarkdown());
-  }, 2000); // 2 second debounce
+  }, [currentBlockId, setSaveStatus, setCurrentBlockId]);
+
+  const debouncedUpdates = useDebouncedCallback(handleSave, 2000);
 
   useEffect(() => {
     const content = window.localStorage.getItem("novel-content");
@@ -126,6 +118,7 @@ const AdvancedEditor = ({ blockId: initialBlockId, initialContent }: AdvancedEdi
             },
           }}
           onUpdate={({ editor }) => {
+            editorRef.current = editor;
             debouncedUpdates(editor);
             setSaveStatus("Unsaved");
           }}
