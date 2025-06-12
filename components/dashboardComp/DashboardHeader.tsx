@@ -18,7 +18,7 @@ export function DashboardHeader({ selectedTypes, onCreateNew, onToggleSelection,
             <div className="flex flex-col sm:flex-row gap-2 space-around">
                 <Button
                     onClick={onCreateNew}
-                    className="bg-foreground text-background hover:bg-[#333333] flex items-center gap-2 px-3.5"
+                    className="bg-white text-black hover:bg-gray-200 flex items-center h-10 gap-2 px-3.5"
                 >
                     Create New
                 </Button>
