@@ -3,6 +3,7 @@
 import Examples from "@/components/examples";
 import { useEffect, useState, use } from "react";
 import { getBlockContext } from "../../actions";
+import { BlockViewNav } from "@/components/blockViewNav";
 
 interface Props {
     params: Promise<{ id: string }>;
@@ -50,8 +51,9 @@ export default function ExamplesPage({ params }: Props) {
     }
 
     return (
-        <div>
+        <div className="flex flex-col gap-4">
+            <BlockViewNav blockId={id} />
             <Examples blockID={id} />
         </div>
-    );
+      );
 }
