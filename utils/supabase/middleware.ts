@@ -46,7 +46,10 @@ export const updateSession = async (request: NextRequest) => {
     // If the user was created within the last minute, they are considered new
     const isNewUser = user && (
       new Date().getTime() - new Date(user.created_at).getTime() < 60000 || // within last minute
-      user.user_metadata?.is_new_signup // or has new signup flag
+      user.user_metadata?.is_new_signup || // has new signup flag
+      user.app_metadata?.provider === 'google' || // is a Google sign-in
+      user.app_metadata?.provider === 'github' || // is a GitHub sign-in
+      user.app_metadata?.provider === 'discord' // is a Discord sign-in
     );
 
     // Redirect unauthenticated users to sign-in for protected routes
