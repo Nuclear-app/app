@@ -30,6 +30,7 @@ import { uploadFn } from "./image-upload";
 import { TextButtons } from "./selectors/text-buttons";
 import { slashCommand, suggestionItems } from "./slash-command";
 import { saveContent as saveContentToServer } from "./advancedEditor";
+import { updateBlock } from "@/app/actions/update-block";
 
 
 const hljs = require("highlight.js");
@@ -75,17 +76,21 @@ const AdvancedEditor = ({ blockId: initialBlockId, initialContent }: AdvancedEdi
     
     // Save to database using server action
     try {
-      const result = await updateBlock(serializedContent, currentBlockId);
+      const result = await updateBlock(serializedContent, currentBlockId || '');
       
       if (!result.success) {
         console.log(result.error);  
         throw new Error(result.error);
       }
 
-    // Local storage backup
-    window.localStorage.setItem("html-content", highlightCodeblocks(editor.getHTML()));
-    window.localStorage.setItem("novel-content", JSON.stringify(json));
-    window.localStorage.setItem("markdown", editor.storage.markdown.getMarkdown());
+      // Local storage backup
+      window.localStorage.setItem("html-content", highlightCodeblocks(editor.getHTML()));
+      window.localStorage.setItem("novel-content", JSON.stringify(json));
+      window.localStorage.setItem("markdown", editor.storage.markdown.getMarkdown());
+    } catch (error) {
+      console.error('Error saving content:', error);
+      setSaveStatus("Error saving");
+    }
   }, [currentBlockId, setSaveStatus, setCurrentBlockId]);
 
   const debouncedUpdates = useDebouncedCallback(handleSave, 2000);
