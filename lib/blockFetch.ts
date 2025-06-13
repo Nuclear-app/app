@@ -14,6 +14,48 @@ export const fetchPoints = async (blockId: string) => {
   return block?.points ?? 0;
 };
 
+export const updatePoints = async (
+  blockId: string, 
+  points: number
+): Promise<{ success: boolean; newPoints: number | null; error?: string }> => {
+  try {
+    // Get current points
+    const currentBlock = await prisma.block.findUnique({
+      where: { id: blockId },
+      select: { points: true }
+    });
+
+    if (!currentBlock) {
+      return { success: false, newPoints: null, error: 'Block not found' };
+    }
+
+    // Update points in database
+    const updatedBlock = await prisma.block.update({
+      where: { id: blockId },
+      data: { 
+        points: {
+          increment: points
+        }
+      },
+      select: { points: true }
+    });
+
+    return { 
+      success: true, 
+      newPoints: updatedBlock.points 
+    };
+  } catch (error: unknown) {
+    console.error('Error updating points:', error);
+    return { 
+      success: false, 
+      newPoints: null, 
+      error: error instanceof Error ? error.message : 'Failed to update points' 
+    };
+  }
+};
+
+
+
 export const fetchNotes = async (blockId: string) => {
   const block = await prisma.block.findUnique({
     where: { id: blockId },

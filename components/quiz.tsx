@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { fetchQuiz, updateMistake, updatePoints } from "@/lib/quizFetch"
+import { fetchQuiz, updateMistake} from "@/lib/quizFetch"
+import { updatePoints } from "@/lib/blockFetch"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import sad from "@/public/quizJonas/sad.svg"
@@ -52,11 +53,11 @@ export function Quiz({ blockId }: QuizProps) {
         if (correct) {
             setScore(prev => prev + 1)
             setLastQuestionPoints(20)
-            await updatePoints(blockId, 20)
+            await updatePoints(blockId, 5)
         } else {
             setLastQuestionPoints(-10)
             await updateMistake(currentQuiz.id, answer)
-            await updatePoints(blockId, -10)
+            await updatePoints(blockId, -5)
         }
     }
 

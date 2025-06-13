@@ -27,7 +27,7 @@ model Block {
   folderId       String?
   note           Json?
   context        String?
-  points         Int?
+  points         Int?             @default(0)
   author         User             @relation(fields: [authorId], references: [id])
   folder         Folder?          @relation(fields: [folderId], references: [id])
   FillInTheBlank FillInTheBlank[]

@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "./ui/skeleton";
+import { updatePoints } from "@/lib/blockFetch";
 
 // Define the form schema
 const formSchema = z.object({
@@ -72,6 +73,7 @@ export default function FAQ({ blockId, text }: { blockId: string; text: string }
             };
             setFaqItems(prev => [...prev, newFAQ]);
             form.reset();
+            await updatePoints(blockId, 5);
         } catch (err) {
             setError("Failed to generate answer. Please try again.");
             console.error(err);
