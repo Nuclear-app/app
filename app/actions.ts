@@ -185,6 +185,9 @@ export async function signInWithDiscord() {
     provider: 'discord',
     options: {
       redirectTo: `${origin}/auth/callback`,
+      queryParams: {
+        is_new_signup: 'true'
+      }
     },
   });
 
@@ -202,6 +205,9 @@ export async function signInWithGitHub() {
     provider: 'github',
     options: {
       redirectTo: `${origin}/auth/callback`,
+      queryParams: {
+        is_new_signup: 'true'
+      }
     },
   });
 
@@ -219,6 +225,9 @@ export async function signInWithGoogle() {
     provider: 'google',
     options: {
       redirectTo: `${origin}/auth/callback`,
+      queryParams: {
+        is_new_signup: 'true'
+      }
     },
   });
 

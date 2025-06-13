@@ -18,7 +18,13 @@ export async function updateBlock(content: JSONContent, blockId?: string) {
       };
     }
 
-    console.log(content);
+    // Ensure content is properly serialized
+    const serializedContent = JSON.parse(JSON.stringify(content));
+
+    // Try to find existing block
+    const existingBlock = blockId ? await prisma.block.findUnique({
+      where: { id: blockId },
+    }) : null;
 
     if (!blockId) {
       // Create new block
@@ -26,7 +32,7 @@ export async function updateBlock(content: JSONContent, blockId?: string) {
         data: {
           title: "Untitled Note",
           authorId: user.id,
-          note: content as any,
+          note: serializedContent,
         },
       });
       revalidatePath("/");
@@ -34,9 +40,7 @@ export async function updateBlock(content: JSONContent, blockId?: string) {
         success: true,
         isNewBlock: true,
         data: {
-          id: newBlock.id,
-          title: newBlock.title,
-          note: newBlock.note,
+          note: serializedContent,
         },
       };
     }

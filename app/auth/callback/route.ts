@@ -8,6 +8,7 @@ export async function GET(request: Request) {
   // https://supabase.com/docs/guides/auth/server-side/nextjs
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
+  const isNewSignup = searchParams.get('is_new_signup') === 'true'
   // if "next" is in param, use it as the redirect URL
   const next = searchParams.get('next') ?? '/'
 
@@ -35,6 +36,11 @@ export async function GET(request: Request) {
                 name: null, // Can be updated later
               }
             })
+
+            // Set user metadata to indicate this is a new signup
+            await supabase.auth.updateUser({
+              data: { is_new_signup: true }
+            })
           }
         } catch (error) {
           console.error('Error handling Prisma user:', error)
@@ -45,14 +51,12 @@ export async function GET(request: Request) {
 
       const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
       const isLocalEnv = process.env.NODE_ENV === 'development'
-      if (isLocalEnv) {
-        // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
-        return NextResponse.redirect(`${origin}${next}`)
-      } else if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${next}`)
-      } else {
-        return NextResponse.redirect(`${origin}${next}`)
-      }
+      const redirectUrl = new URL(
+        isNewSignup ? '/onboarding/name' : next,
+        isLocalEnv ? origin : `https://${forwardedHost}`
+      )
+
+      return NextResponse.redirect(redirectUrl)
     }
   }
 
