@@ -29,71 +29,71 @@ export const getBlockPoints = async (blockId: string): Promise<number> => {
 
 export default async function getBreadcrumb(blockId: string): Promise<BreadcrumbItem[]> {
   try {
-    const result: BreadcrumbItem[] = []
-    
-    // First, get the block
-    const block = await prisma.block.findUnique({
-      where: { id: blockId },
+  const result: BreadcrumbItem[] = []
+  
+  // First, get the block
+  const block = await prisma.block.findUnique({
+    where: { id: blockId },
+    select: {
+      id: true,
+      title: true,
+      folderId: true
+    }
+  })
+
+  if (!block) {
+    throw new Error('Block not found')
+  }
+
+    // If the block has a folder, traverse up the folder hierarchy first
+  let currentFolderId = block.folderId
+    const folders: BreadcrumbItem[] = []
+
+  while (currentFolderId) {
+    const folder = await prisma.folder.findUnique({
+      where: { id: currentFolderId },
       select: {
         id: true,
-        title: true,
-        folderId: true
+        name: true,
+        parentId: true
       }
     })
 
-    if (!block) {
-      throw new Error('Block not found')
+    if (!folder) {
+      break
     }
-
-    // If the block has a folder, traverse up the folder hierarchy first
-    let currentFolderId = block.folderId
-    const folders: BreadcrumbItem[] = []
-
-    while (currentFolderId) {
-      const folder = await prisma.folder.findUnique({
-        where: { id: currentFolderId },
-        select: {
-          id: true,
-          name: true,
-          parentId: true
-        }
-      })
-
-      if (!folder) {
-        break
-      }
 
       // Add the folder to the folders array
       folders.unshift({
-        id: folder.id,
-        name: folder.name,
-        type: 'folder'
+      id: folder.id,
+      name: folder.name,
+      type: 'folder'
+    })
+
+    // Move up to the parent folder
+    currentFolderId = folder.parentId
+
+    // Check if we've reached the root folder
+    if (currentFolderId === process.env.ROOT_FOLDER_ID) {
+      // Add the root folder
+      const rootFolder = await prisma.folder.findUnique({
+        where: { id: currentFolderId },
+        select: {
+          id: true,
+          name: true
+        }
       })
 
-      // Move up to the parent folder
-      currentFolderId = folder.parentId
-
-      // Check if we've reached the root folder
-      if (currentFolderId === process.env.ROOT_FOLDER_ID) {
-        // Add the root folder
-        const rootFolder = await prisma.folder.findUnique({
-          where: { id: currentFolderId },
-          select: {
-            id: true,
-            name: true
-          }
-        })
-
-        if (rootFolder) {
+      if (rootFolder) {
           folders.unshift({
-            id: rootFolder.id,
-            name: rootFolder.name,
-            type: 'folder'
-          })
-        }
-        break
+          id: rootFolder.id,
+          name: rootFolder.name,
+          type: 'folder'
+        })
       }
+      break
     }
+  }
 
     // Combine folders and block in the correct order
     return [...folders, {

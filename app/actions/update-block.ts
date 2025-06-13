@@ -13,6 +13,9 @@ export async function updateBlock(content: JSONContent, blockId?: string) {
       return { success: false, error: 'Not authenticated' };
     }
 
+    // Ensure content is properly serialized
+    const serializedContent = JSON.parse(JSON.stringify(content));
+
     // Try to find existing block
     const existingBlock = blockId ? await prisma.block.findUnique({
       where: { id: blockId },
@@ -26,7 +29,7 @@ export async function updateBlock(content: JSONContent, blockId?: string) {
         data: {
           title: "Untitled Note", // Default title
           authorId: user.id,
-          note: content as any,
+          note: serializedContent,
         },
       });
       return { success: true, data: updatedBlock, isNewBlock: true };
@@ -37,7 +40,7 @@ export async function updateBlock(content: JSONContent, blockId?: string) {
           id: blockId,
         },
         data: {
-          note: content as any,
+          note: serializedContent,
         },
       });
       return { success: true, data: updatedBlock, isNewBlock: false, id: updatedBlock.id };

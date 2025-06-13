@@ -67,9 +67,12 @@ const AdvancedEditor = ({ blockId: initialBlockId, initialContent }: AdvancedEdi
     const json = editor.getJSON();
     setCharsCount(editor.storage.characterCount.words());
     
+    // Ensure proper serialization before sending to server
+    const serializedContent = JSON.parse(JSON.stringify(json));
+    
     // Save to database using server action
     try {
-      const result = await updateBlock(json, currentBlockId);
+      const result = await updateBlock(serializedContent, currentBlockId);
       
       if (!result.success) {
         console.log(result.error);  
