@@ -15,12 +15,15 @@ if (!process.env.UPLOAD_BUCKET) {
   throw new Error("UPLOAD_BUCKET environment variable is not set");
 }
 
+const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/tiff'];
+const SUPPORTED_PDF_TYPE = 'application/pdf';
+
 const texClient = new TextractClient({ region: process.env.AWS_REGION });
 const s3 = new S3Client({ region: process.env.AWS_REGION });
 
 export async function POST(request: Request) {
   try {
-    const { imageBase64, fileName } = await request.json();
+    const { imageBase64, fileName, fileType } = await request.json();
     
     if (!imageBase64) {
       return NextResponse.json(
@@ -36,16 +39,48 @@ export async function POST(request: Request) {
       );
     }
 
-    const ext = fileName.split(".").pop()?.toLowerCase();
+    if (!fileType) {
+      return NextResponse.json(
+        { error: "Missing fileType in request body" },
+        { status: 400 }
+      );
+    }
 
-    if (ext === "pdf") {
+    // Validate file type
+    if (!SUPPORTED_IMAGE_TYPES.includes(fileType) && fileType !== SUPPORTED_PDF_TYPE) {
+      return NextResponse.json(
+        { error: `Unsupported file type: ${fileType}. Supported types are: ${[...SUPPORTED_IMAGE_TYPES, SUPPORTED_PDF_TYPE].join(', ')}` },
+        { status: 400 }
+      );
+    }
+
+    // Check file size (base64 string length)
+    const base64Size = imageBase64.length * 0.75; // approximate size in bytes
+    const maxSize = 5 * 1024 * 1024; // 5MB limit
+    if (base64Size > maxSize) {
+      return NextResponse.json(
+        { error: `File too large. Maximum size is ${maxSize / (1024 * 1024)}MB` },
+        { status: 400 }
+      );
+    }
+
+    // Validate AWS configuration
+    if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
+      console.error("AWS credentials not configured");
+      return NextResponse.json(
+        { error: "AWS configuration error" },
+        { status: 500 }
+      );
+    }
+
+    if (fileType === SUPPORTED_PDF_TYPE) {
       try {
         const key = `uploads/${Date.now()}-${fileName}`;
         await s3.send(new PutObjectCommand({
           Bucket: process.env.UPLOAD_BUCKET!,
           Key: key,
           Body: Buffer.from(imageBase64, "base64"),
-          ContentType: "application/pdf",
+          ContentType: SUPPORTED_PDF_TYPE,
         }));
 
         const { JobId } = await texClient.send(new StartDocumentTextDetectionCommand({

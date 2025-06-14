@@ -52,6 +52,7 @@ interface FileUploadProps {
   returnFiles: (files: FileState[]) => void
   mode: string
   blockId: string
+  newBlock: boolean
 }
 
 export interface FileState {
@@ -59,10 +60,11 @@ export interface FileState {
   preview?: string;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId }) => {
+const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, newBlock }) => {
   const [files, setFiles] = useState<FileState[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<FileState[]>([]);
   const pondRef = useRef<HTMLInputElement>(null);
   const pondInstanceRef = useRef<FilePond.FilePond | null>(null);
 
@@ -122,9 +124,16 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId }) =
                 });
 
               if (uploadError) {
-                console.error('Upload error:', uploadError);
+                console.error('Upload error details:', {
+                  error: uploadError,
+                  bucket: 'files',
+                  filePath,
+                  fileName: file.name
+                });
                 if (uploadError.message.includes('violates row-level security policy')) {
                   error('Permission denied. Please check your storage policies.');
+                } else if (uploadError.message.includes('Bucket not found')) {
+                  error('Storage bucket not found. Please check your Supabase configuration.');
                 } else {
                   error(uploadError.message);
                 }
@@ -136,6 +145,12 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId }) =
                 .from('files')
                 .getPublicUrl(filePath);
 
+              console.log('File uploaded successfully:', {
+                filePath,
+                publicUrl,
+                bucket: 'files'
+              });
+              
               // Store the file path in the file object
               const fileData = {
                 url: publicUrl,
@@ -211,7 +226,11 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId }) =
         },
         onaddfile: async (error, file) => {
           if (error) return;
-          const newFile = new File([file.file], file.filename, { type: file.fileType });
+          // Create a new file with the server response data
+          const newFile = new File([file.file], JSON.stringify({
+            url: file.serverId ? JSON.parse(file.serverId).url : null,
+            path: file.serverId ? JSON.parse(file.serverId).path : null
+          }), { type: file.fileType });
           setFiles(prev => [...prev, { file: newFile }]);
 
           // Add file name to Block's files array
@@ -222,9 +241,19 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId }) =
             console.error('Error updating Block files:', err);
           }
         },
+        onprocessfile: (error, file) => {
+          if (error) return;
+          // When file is fully processed (uploaded), add it to uploadedFiles
+          const processedFile = new File([file.file], JSON.stringify({
+            url: file.serverId ? JSON.parse(file.serverId).url : null,
+            path: file.serverId ? JSON.parse(file.serverId).path : null
+          }), { type: file.fileType });
+          setUploadedFiles(prev => [...prev, { file: processedFile }]);
+        },
         onremovefile: (error, file) => {
           if (error) return;
           setFiles(prev => prev.filter(f => f.file.name !== file.filename));
+          setUploadedFiles(prev => prev.filter(f => f.file.name !== file.filename));
         }
       });
 
@@ -241,7 +270,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId }) =
 
   const handleUploadClick = () => {
     setIsUploading(true);
-    returnFiles(files);
+    // Only return files that have been fully uploaded
+    returnFiles(uploadedFiles);
   };
 
   const content = (
@@ -260,13 +290,13 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId }) =
       </div>
 
       <div className="flex justify-center w-full">
-        {files.length > 0 && 
+        {files.length > 0 && newBlock && 
           <SubmitButton 
             className="w-full" 
             onClick={handleUploadClick}
-            disabled={isUploading}
+            disabled={isUploading || uploadedFiles.length === 0}
           >
-            {isUploading ? "Processing..." : "Start learning"}
+            {isUploading ? "Processing..." : uploadedFiles.length === 0 ? "Uploading..." : "Start learning"}
           </SubmitButton>
         }
       </div>
