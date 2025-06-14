@@ -39,7 +39,7 @@ function StudyTypeContent() {
                 if (!blockId) {
                     throw new Error('Block ID is required for existing blocks');
                 }
-                router.push(`${path}?blockId=${encodeURIComponent(blockId)}`);
+                router.push(`${path}/${encodeURIComponent(blockId)}`);
                 return;
             }
 
@@ -72,7 +72,7 @@ function StudyTypeContent() {
                         image={sandbox}
                         title="Deathmarch"
                         description="I have some things in my mind, and I want to start notetaking right away."
-                        onClick={() => handleModeSelect('sandbox', '/modeSpecific/notetaking')}
+                        onClick={() => handleModeSelect('sandbox', '/dashboard/block')}
                         disabled={isLoading !== null}
                         loading={isLoading === 'sandbox'} />
                     <SelectStudyType 

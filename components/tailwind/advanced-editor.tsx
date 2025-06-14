@@ -76,6 +76,7 @@ const AdvancedEditor = ({ blockId: initialBlockId, initialContent }: AdvancedEdi
     
     // Save to database using server action
     try {
+      setSaveStatus("Saving...");
       const result = await updateBlock(serializedContent, currentBlockId || '');
       
       if (!result.success) {
@@ -87,6 +88,8 @@ const AdvancedEditor = ({ blockId: initialBlockId, initialContent }: AdvancedEdi
       window.localStorage.setItem("html-content", highlightCodeblocks(editor.getHTML()));
       window.localStorage.setItem("novel-content", JSON.stringify(json));
       window.localStorage.setItem("markdown", editor.storage.markdown.getMarkdown());
+      
+      setSaveStatus("Saved");
     } catch (error) {
       console.error('Error saving content:', error);
       setSaveStatus("Error saving");
