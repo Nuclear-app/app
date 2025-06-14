@@ -133,7 +133,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode }) => {
         />
       </div>
 
-      <div className="flex justify-center mt-6 w-full p-4">
+      <div className="flex justify-center w-full">
         {files.length > 0 && 
           <SubmitButton 
             className="w-full" 

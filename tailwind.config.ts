@@ -18,6 +18,9 @@ const config = {
   		}
   	},
   	extend: {
+  		fontFamily: {
+  			sans: ['var(--font-bricolage)', 'var(--font-geist)'],
+  		},
   		typography: {
   			DEFAULT: {
   				css: {
@@ -128,10 +131,10 @@ const config = {
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
   		},
   		backgroundImage: {
-  			'custom-gradient': 'radial-gradient(60.55% 92.4% at 50% 50%, #F3EBE6 16.24%, rgba(243, 235, 230, 0.00) 100%), conic-gradient(from 90deg at 50% 50%, #9000FF 24.82162892818451deg, #00D3BE 154.70458030700684deg, #E46300 193.7494969367981deg, #E16009 338.3097267150879deg)',
+			'custom-gradient': 'radial-gradient(50% 75% at 50% 50%, #F3EBE6 10%, rgba(243, 235, 230, 0.00) 100%), conic-gradient(from 90deg at 50% 50%, #9000FF 80deg, #00D3BE 160deg, #E46300 220deg, #E16009 330deg, #9000FF 360deg)',
   		},
   	}
   },

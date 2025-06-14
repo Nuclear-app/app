@@ -441,67 +441,145 @@ export const fetchCratePath = async (crateId: string): Promise<CratePath[]> => {
     }
 };
 
-// export const deleteBlock = async (blockId: string) => {
-//     try {
-//         const userId = await getUser();
+export const deleteBlock = async (blockId: string) => {
+    try {
+        const userId = await getUser();
         
-//         const block = await prisma.block.findUnique({
-//             where: { id: blockId },
-//             select: { authorId: true }
-//         });
+        const block = await prisma.block.findUnique({
+            where: { id: blockId },
+            select: { authorId: true }
+        });
 
-//         if (!block || block.authorId !== userId) {
-//             throw new Error("Unauthorized to delete this block");
-//         }
+        if (!block || block.authorId !== userId) {
+            throw new Error("Unauthorized to delete this block");
+        }
 
-//         await prisma.block.delete({
-//             where: { id: blockId }
-//         });
+        // Delete all related data in a transaction
+        await prisma.$transaction([
+            // Delete all FillInTheBlank entries
+            prisma.fillInTheBlank.deleteMany({
+                where: { blockId }
+            }),
+            // Delete all Questions
+            prisma.question.deleteMany({
+                where: { blockId }
+            }),
+            // Delete all Quizzes
+            prisma.quiz.deleteMany({
+                where: { blockId }
+            }),
+            // Delete all Topics
+            prisma.topic.deleteMany({
+                where: { blockId }
+            }),
+            // Finally, delete the block itself
+            prisma.block.delete({
+                where: { id: blockId }
+            })
+        ]);
 
-//         return { success: true };
-//     } catch (error) {
-//         console.error("Failed to delete block:", error);
-//         throw error;
-//     }
-// };
+        // Clean up any uploaded files in Supabase storage
+        const supabase = await createClient();
+        const { data: files } = await supabase
+            .storage
+            .from('blocks')
+            .list(`${blockId}`);
 
-// export const deleteCrate = async (crateId: string) => {
-//     try {
-//         const userId = await getUser();
+        if (files && files.length > 0) {
+            const filePaths = files.map((file: { name: string }) => `${blockId}/${file.name}`);
+            await supabase
+                .storage
+                .from('blocks')
+                .remove(filePaths);
+        }
+
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete block:", error);
+        throw error;
+    }
+};
+
+export const deleteCrate = async (crateId: string) => {
+    try {
+        const userId = await getUser();
         
-//         const crate = await prisma.folder.findUnique({
-//             where: { id: crateId },
-//             select: { 
-//                 authorId: true,
-//                 blocks: {
-//                     select: {
-//                         id: true
-//                     }
-//                 }
-//             }
-//         });
+        const crate = await prisma.folder.findUnique({
+            where: { id: crateId },
+            select: { 
+                authorId: true,
+                blocks: {
+                    select: {
+                        id: true
+                    }
+                },
+                children: {
+                    select: {
+                        id: true
+                    }
+                }
+            }
+        });
 
-//         if (!crate || crate.authorId !== userId) {
-//             throw new Error("Unauthorized to delete this crate");
-//         }
+        if (!crate || crate.authorId !== userId) {
+            throw new Error("Unauthorized to delete this crate");
+        }
 
-//         // Delete all blocks in the crate first
-//         if (crate.blocks.length > 0) {
-//             await prisma.block.deleteMany({
-//                 where: {
-//                     folderId: crateId
-//                 }
-//             });
-//         }
+        // Delete all related data in a transaction
+        await prisma.$transaction(async (tx) => {
+            // First, recursively delete all child crates and their contents
+            for (const child of crate.children) {
+                await deleteCrate(child.id);
+            }
 
-//         // Then delete the crate itself
-//         await prisma.folder.delete({
-//             where: { id: crateId }
-//         });
+            // Delete all blocks in this crate
+            for (const block of crate.blocks) {
+                // Delete all FillInTheBlank entries
+                await tx.fillInTheBlank.deleteMany({
+                    where: { blockId: block.id }
+                });
+                // Delete all Questions
+                await tx.question.deleteMany({
+                    where: { blockId: block.id }
+                });
+                // Delete all Quizzes
+                await tx.quiz.deleteMany({
+                    where: { blockId: block.id }
+                });
+                // Delete all Topics
+                await tx.topic.deleteMany({
+                    where: { blockId: block.id }
+                });
+                // Delete the block itself
+                await tx.block.delete({
+                    where: { id: block.id }
+                });
 
-//         return { success: true };
-//     } catch (error) {
-//         console.error("Failed to delete crate:", error);
-//         throw error;
-//     }
-// }; 
+                // Clean up any uploaded files in Supabase storage for this block
+                const supabase = await createClient();
+                const { data: files } = await supabase
+                    .storage
+                    .from('blocks')
+                    .list(`${block.id}`);
+
+                if (files && files.length > 0) {
+                    const filePaths = files.map((file: { name: string }) => `${block.id}/${file.name}`);
+                    await supabase
+                        .storage
+                        .from('blocks')
+                        .remove(filePaths);
+                }
+            }
+
+            // Finally, delete the crate itself
+            await tx.folder.delete({
+                where: { id: crateId }
+            });
+        });
+
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete crate:", error);
+        throw error;
+    }
+}; 

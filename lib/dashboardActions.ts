@@ -2,7 +2,6 @@ import { FileSystemComponent, Folder, Block } from '@/lib/FSTypes';
 import React from 'react';
 import TreeItem from '@/components/fileStructure/treeItem';
 
-
 interface CreateItemParams {
     itemName: string;
     itemType: 'folder' | 'block';

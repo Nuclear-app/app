@@ -81,10 +81,10 @@ export default function FAQ({ blockId, text }: { blockId: string; text: string }
     };
 
     return (
-        <div className="w-full max-w-full mx-auto p-4 flex flex-col gap-4 h-[calc(100vh-2rem)]">
-            <div className="space-y-6 overflow-y-auto flex-1 pr-2 bg-[#292929] border-[#161616] border-8 p-4 rounded-xl">
+        <div className="w-full max-w-full mx-auto flex flex-col gap-4 h-[calc(100vh-2rem)]">
+            <div className="space-y-6 overflow-y-auto flex-1 bg-[#292929] border-[#161616] border-8 px-4 py-4 rounded-3xl">
                 <div className="leading-none">
-                    <h2 className="text-2xl font-bold mb-4">FAQ</h2>
+                    <h2 className="text-2xl font-bold">FAQ</h2>
                     <p className="text-sm text-muted-foreground"> These are some things to remember personalized for you. </p>
                 </div>
                 {isInitialLoading ? (
@@ -132,7 +132,7 @@ export default function FAQ({ blockId, text }: { blockId: string; text: string }
                                         <Button 
                                             type="submit" 
                                             disabled={isLoading}
-                                            className="shrink-0 text-xl"
+                                            className="shrink-0 text-xl w-12 h-12"
                                         >
                                             {isLoading ? "○" : "->"}
                                         </Button>
