@@ -9,6 +9,9 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 import FilePondPluginFileEncode from 'filepond-plugin-file-encode';
 import { createPortal } from 'react-dom';
+import { createBrowserClient } from '@supabase/ssr';
+import prisma from '@/lib/prisma';
+import { addFile, removeFile } from '@/lib/fileUpload';
 
 // Import FilePond styles
 import 'filepond/dist/filepond.min.css';
@@ -38,9 +41,17 @@ FilePond.registerPlugin(
   FilePondPluginFileEncode
 );
 
+// Initialize Supabase client
+const supabase = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+
 interface FileUploadProps {
   returnFiles: (files: FileState[]) => void
   mode: string
+  blockId: string
 }
 
 export interface FileState {
@@ -48,7 +59,7 @@ export interface FileState {
   preview?: string;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode }) => {
+const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId }) => {
   const [files, setFiles] = useState<FileState[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -70,31 +81,146 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode }) => {
 
     // Only initialize if the ref exists
     if (pondRef.current) {
+      console.log('Creating FilePond instance');
       const pond = FilePond.create(pondRef.current, {
         allowMultiple: true,
         maxFiles: 10,
         maxFileSize: '100MB',
         acceptedFileTypes: ['image/*', 'application/pdf', 'audio/*'],
         labelIdle: 'Drag & Drop your files or <span class="filepond--label-action">Browse</span>',
+        instantUpload: true,
         server: {
-          // This is just for the visual feedback, we're not actually uploading
-          process: (fieldName, file, metadata, load, error, progress) => {
-            // Simulate progress
-            let percent = 0;
-            const interval = setInterval(() => {
-              percent += 10;
-              progress(true, percent, 100);
-              if (percent === 100) {
-                clearInterval(interval);
-                load(Date.now().toString());
+          process: async (fieldName, file, metadata, load, error, progress) => {
+            console.log('Processing file:', file);
+            try {
+              // Check if user is authenticated
+              const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+              
+              if (sessionError) {
+                console.error('Session error:', sessionError);
+                error('Authentication error. Please try signing in again.');
+                return;
               }
-            }, 100);
+
+              if (!session) {
+                console.log('User not authenticated');
+                error('You must be logged in to upload files');
+                return;
+              }
+
+              // Generate a unique file path with user ID
+              const fileExt = file.name.split('.').pop();
+              const fileName = `${session.user.id}/${Math.random().toString(36).substring(2)}.${fileExt}`;
+              const filePath = fileName;
+
+              // Upload to Supabase Storage
+              const { data, error: uploadError } = await supabase.storage
+                .from('files')
+                .upload(filePath, file, {
+                  cacheControl: '3600',
+                  upsert: false
+                });
+
+              if (uploadError) {
+                console.error('Upload error:', uploadError);
+                if (uploadError.message.includes('violates row-level security policy')) {
+                  error('Permission denied. Please check your storage policies.');
+                } else {
+                  error(uploadError.message);
+                }
+                return;
+              }
+
+              // Get the public URL
+              const { data: { publicUrl } } = supabase.storage
+                .from('files')
+                .getPublicUrl(filePath);
+
+              // Store the file path in the file object
+              const fileData = {
+                url: publicUrl,
+                path: filePath
+              };
+              console.log('Upload response:', fileData);
+              
+              // Pass the file data as a string
+              load(JSON.stringify(fileData));
+            } catch (err) {
+              console.error('Upload error:', err);
+              error('Upload failed. Please try again.');
+            }
+          },
+          revert: async (uniqueFileId, load, error) => {
+            console.log('Revert called with:', uniqueFileId);
+            try {
+              // Parse the file data from uniqueFileId
+              const fileData = JSON.parse(uniqueFileId);
+              console.log('Parsed file data:', fileData);
+
+              if (!fileData || !fileData.path) {
+                console.error('No file path found in uniqueFileId');
+                error('Could not find file path');
+                return;
+              }
+
+              // Check if user is authenticated
+              const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+              
+              if (sessionError) {
+                console.error('Session error:', sessionError);
+                error('Authentication error. Please try signing in again.');
+                return;
+              }
+
+              if (!session) {
+                console.log('User not authenticated');
+                error('You must be logged in to delete files');
+                return;
+              }
+
+              // Delete from Supabase Storage
+              const { error: deleteError } = await supabase.storage
+                .from('files')
+                .remove([fileData.path]);
+
+              if (deleteError) {
+                console.error('Delete error:', deleteError);
+                if (deleteError.message.includes('violates row-level security policy')) {
+                  error('Permission denied. Please check your storage policies.');
+                } else {
+                  error(deleteError.message);
+                }
+                return;
+              }
+
+              // Remove file name from Block's files array
+              try {
+                await removeFile(blockId, fileData.path.split('/').pop()!);
+                console.log('Removed file from Block:', fileData.path);
+              } catch (err) {
+                console.error('Error updating Block files:', err);
+              }
+
+              console.log('File deleted successfully from storage');
+              load();
+            } catch (err) {
+              console.error('Delete error:', err);
+              error('Delete failed. Please try again.');
+            }
           }
         },
-        onaddfile: (error, file) => {
+        onaddfile: async (error, file) => {
           if (error) return;
           const newFile = new File([file.file], file.filename, { type: file.fileType });
           setFiles(prev => [...prev, { file: newFile }]);
+
+          // Add file name to Block's files array
+          try {
+            await addFile(blockId, file.filename);
+            console.log('Added file to Block:', file.filename);
+          } catch (err) {
+            console.error('Error updating Block files:', err);
+          }
         },
         onremovefile: (error, file) => {
           if (error) return;
