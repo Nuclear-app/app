@@ -56,5 +56,28 @@ export const removeFile = async (blockId: string, fileName: string) => {
   }
 };
 
+export const fetchFiles = async (blockId: string) => {
+  if (!blockId) {
+    throw new Error('BlockId is required');
+  }
+
+  try {
+    const block = await prisma.block.findUnique({
+      where: { id: blockId },
+      select: { files: true },
+    });
+
+    if (!block) {
+      throw new Error('Block not found');
+    }
+
+    return block.files;
+  } catch (error) {
+    console.error('Error fetching files:', error);
+    throw error;
+  }
+};
+
+
 
 

@@ -474,7 +474,7 @@ export const deleteBlock = async (blockId: string) => {
             }),
             // Finally, delete the block itself
             prisma.block.delete({
-                where: { id: blockId }
+            where: { id: blockId }
             })
         ]);
 
