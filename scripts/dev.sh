@@ -33,11 +33,15 @@ echo -e "${BLUE}🚀 Starting development environment...${NC}"
 # Check if .env file exists
 if [ ! -f .env ]; then
     echo -e "${BLUE}📝 GO MAKE A .env. NOWWWWW!!!${NC}"
+    touch .env
+    echo -e "${BLUE}📝 .env created. Please add your environment variables.${NC}"
     exit 1
 fi
 
 if [ ! -f .env.local ]; then
     echo -e "${BLUE}📝 GO MAKE A .env.local. NOWWWWW!!!${NC}"
+    touch .env.local
+    echo -e "${BLUE}📝 .env.local created. Please add your environment variables.${NC}"
     exit 1
 fi
 

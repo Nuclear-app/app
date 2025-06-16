@@ -19,11 +19,15 @@ Write-Host "Starting development environment..." -ForegroundColor Blue
 # Check if .env file exists
 if (-not (Test-Path .env)) {
     Write-Host "GO MAKE A .env. NOWWWWW!!!" -ForegroundColor Blue
+    touch .env
+    Write-Host "📝 .env created. Please add your environment variables." -ForegroundColor Blue
     exit 1
 }
 
 if (-not (Test-Path .env.local)) {
     Write-Host "GO MAKE A .env.local. NOWWWWW!!!" -ForegroundColor Blue
+    touch .env.local
+    Write-Host "📝 .env.local created. Please add your environment variables." -ForegroundColor Blue
     exit 1
 }
 
