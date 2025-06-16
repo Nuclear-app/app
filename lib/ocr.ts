@@ -4,6 +4,9 @@ export type OCRResult = {
     error?: string;
 };
 
+const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/tiff'];
+const SUPPORTED_PDF_TYPE = 'application/pdf';
+
 export const ocr = async (selectedFile: File): Promise<OCRResult | null> => {
     let ocrResult: OCRResult | null = {text: '', status: 'processing'};
 
@@ -11,37 +14,70 @@ export const ocr = async (selectedFile: File): Promise<OCRResult | null> => {
     ocrResult = ({ text: '', status: 'processing' });
 
     try {
+        // Validate file type
+        if (!SUPPORTED_IMAGE_TYPES.includes(selectedFile.type) && selectedFile.type !== SUPPORTED_PDF_TYPE) {
+            throw new Error(`Unsupported file type: ${selectedFile.type}. Supported types are: ${[...SUPPORTED_IMAGE_TYPES, SUPPORTED_PDF_TYPE].join(', ')}`);
+        }
+
+        // Check file size
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        if (selectedFile.size > maxSize) {
+            throw new Error(`File too large. Maximum size is ${maxSize / (1024 * 1024)}MB`);
+        }
+
         const reader = new FileReader();
         const base64Promise = new Promise<string>((resolve, reject) => {
             reader.onload = () => {
                 const dataUrl = reader.result as string;
                 resolve(dataUrl.split(",")[1]);
             };
-            reader.onerror = reject;
+            reader.onerror = (error) => {
+                console.error('FileReader error:', error);
+                reject(new Error('Failed to read file'));
+            };
         });
-        if (selectedFile.type === "application/pdf") {
+
+        // Set proper MIME type for the file
+        if (selectedFile.type === SUPPORTED_PDF_TYPE) {
             reader.readAsDataURL(selectedFile);
         } else {
-            reader.readAsDataURL(selectedFile);
+            // For images, ensure we're sending the correct format
+            const imageBlob = new Blob([selectedFile], { type: selectedFile.type });
+            reader.readAsDataURL(imageBlob);
         }
+
         const base64 = await base64Promise;
+
+        console.log('Sending OCR request for file:', {
+            name: selectedFile.name,
+            type: selectedFile.type,
+            size: selectedFile.size
+        });
 
         const response = await fetch("/api/ocr", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 
                 imageBase64: base64,
-                fileName: selectedFile.name 
+                fileName: selectedFile.name,
+                fileType: selectedFile.type
             }),
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json().catch(() => ({}));
+            console.error('OCR API error:', {
+                status: response.status,
+                statusText: response.statusText,
+                error: errorData
+            });
+            throw new Error(`OCR failed: ${errorData.error || response.statusText}`);
         }
 
         const { text, error } = await response.json();
 
         if (error) {
+            console.error('OCR processing error:', error);
             ocrResult = ({
                 text: '',
                 status: 'error',

@@ -1,6 +1,9 @@
 'use server'
 
+import { fetchContext } from "@/app/modeSpecific/fileInput/actions";
+import { generateExamples } from "@/lib/examplesPerplexity";
 import prisma from "@/lib/prisma";
+import { generateQuizzes } from "@/lib/quizGen";
 
 export async function getNoteContent(blockId: string) {
   if (!blockId) {
@@ -31,4 +34,10 @@ export async function getNoteContent(blockId: string) {
   }
 
   return block.note;
-} 
+}
+
+export async function bgFunction(blockId: string) {
+  const content = await fetchContext(blockId);
+  generateExamples(content, blockId)
+  generateQuizzes(content, blockId)
+}
