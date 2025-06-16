@@ -12,10 +12,13 @@ import { createPortal } from 'react-dom';
 import { createBrowserClient } from '@supabase/ssr';
 import prisma from '@/lib/prisma';
 import { addFile, removeFile } from '@/lib/fileUpload';
+import SparklesText from "./ui/sparkles-text";
+import { FunFacts } from "./ui/fun-facts";
 
 // Import FilePond styles
 import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+import { TextAnimate } from "./ui/text-animate";
 
 // Custom FilePond styles
 const filePondStyles = `
@@ -289,16 +292,23 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
         />
       </div>
 
-      <div className="flex justify-center w-full">
-        {files.length > 0 && newBlock && 
-          <SubmitButton 
-            className="w-full" 
-            onClick={handleUploadClick}
-            disabled={isUploading || uploadedFiles.length === 0}
-          >
-            {isUploading ? "Processing..." : uploadedFiles.length === 0 ? "Uploading..." : "Start learning"}
-          </SubmitButton>
-        }
+      <div className="flex justify-center w-full p-4 text-center">
+        {files.length > 0 && newBlock && (
+          isUploading ? (
+            <div className="space-y-4">
+              <SparklesText text="We're getting your notes ready..." />
+              <FunFacts />
+            </div>
+          ) : (
+            <SubmitButton 
+              className="w-full" 
+              onClick={handleUploadClick}
+              disabled={uploadedFiles.length === 0}
+            >
+              {uploadedFiles.length === 0 ? "Uploading..." : "Start learning"}
+            </SubmitButton>
+          )
+        )}
       </div>
     </div>
   );

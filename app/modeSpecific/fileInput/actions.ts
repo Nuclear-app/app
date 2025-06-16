@@ -7,19 +7,22 @@ import { generateHTML } from '@tiptap/html'
 import { generateExamples } from "@/lib/examplesPerplexity"
 import { generateQuizzes } from "@/lib/quizGen"
 import { StarterKit } from "@tiptap/starter-kit"
+import { generateNotes } from "@/lib/generateNotes"
 
 export async function updateContext(data: { blockId: string, context: string }) {  
   await prisma.block.update({
     where: { id: data.blockId },
     data: { context: data.context }
   })
-
-  await generateExamples(data.context, data.blockId)
-  
-  await generateQuizzes(data.context, data.blockId)
 } 
 
-
+export async function fetchContext(blockId: string): Promise<string> {
+  const block = await prisma.block.findUnique({
+    where: { id: blockId },
+    select: { context: true }
+  });
+  return block?.context || '';
+}
 
 export async function fetchNotes(blockId: string): Promise<string> {
   try {
@@ -56,9 +59,28 @@ export async function fetchNotes(blockId: string): Promise<string> {
   }
 }
 
+export async function saveGeneratedNotes(blockId: string) {
+  try {
+    // Generate notes using the context
+    const notes = await generateNotes(blockId);
+
+    // Update the block with the generated notes
+    const updatedBlock = await prisma.block.update({
+      where: { id: blockId },
+      data: { note: notes },
+    });
+
+    return { success: true, data: updatedBlock };
+  } catch (error) {
+    console.error('Error saving generated notes:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to save generated notes' 
+    };
+  }
+}
+
 // const blockId = "3dcebc5d-4087-4b14-8cd2-6e074b0baf2b"
 // const context = "This is a test context"
 
 // updateContext({ blockId, context })
-
-console.log(fetchNotes("bf41b6db-315e-470c-a142-41bbce71dfac"))

@@ -87,7 +87,7 @@ function FileInputContent() {
           if (!file || !file.file) return '';
 
           try {
-            // Get the file data from FilePond's response
+            // Get the file data from FilePond's responseF
             const fileData = file.file;
             if (!fileData || !fileData.name) {
               throw new Error('Invalid file data');
@@ -183,7 +183,7 @@ function FileInputContent() {
       // After context is generated and saved, navigate to the appropriate page
       const redirectPath = mode === 'campaign' 
         ? `/modeSpecific/fillInTheBlanks?blockId=${blockId}` 
-        : `/dashboard/block/${blockId}`;
+        : `/dashboard/block/${blockId}?fromFileInput=true`;
       
       if (!redirectPath) {
         throw new Error('Failed to generate redirect path');
