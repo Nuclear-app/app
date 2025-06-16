@@ -2,13 +2,17 @@
 import TailwindAdvancedEditor from "@/components/tailwind/advanced-editor";
 import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
-import { getNoteContent } from './actions';
+import { bgFunction, getNoteContent } from './actions';
 import { type JSONContent } from "novel";
 import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { BlockViewNav } from "@/components/blockViewNav";
 import { FeatureDock } from "@/components/featureDock";
+import { generateExamples } from "@/lib/examplesPerplexity";
+import { generateQuizzes } from "@/lib/quizGen";
+import { fetchContext } from "@/app/modeSpecific/fileInput/actions";
+
 
 function BlockPage() {
   const params = useParams();
@@ -17,6 +21,14 @@ function BlockPage() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
+  const searchParams = useSearchParams();
+  const fromFileInput = searchParams.get('fromFileInput');
+
+  useEffect(() => {
+    if (fromFileInput === "true") {
+      bgFunction(blockId);
+    }
+  }, [fromFileInput, blockId])
 
   useEffect(() => {
     async function fetchContent() {
