@@ -11,8 +11,9 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, ChevronsLeft, Upload } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import getBreadcrumb, { getBlockPoints } from "@/lib/blockViewNav"
+import getBreadcrumb from "@/lib/blockViewNav"
 import { FeatureDock } from "./featureDock"
+import { useRealtimePoints } from "@/hooks/useRealtimePoints"
 
 interface blockViewNavProps {
     blockId: string
@@ -28,24 +29,9 @@ export function BlockViewNav({ blockId }: blockViewNavProps) {
     const router = useRouter()
     const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([])
     const [isLoading, setIsLoading] = useState(true)
-    const [points, setPoints] = useState<number | null>(null)
-    const [isPointsLoading, setIsPointsLoading] = useState(true)
-
-    useEffect(() => {
-        const fetchPoints = async () => {
-            try {
-                setIsPointsLoading(true)
-                const data = await getBlockPoints(blockId)
-                setPoints(data)
-            } catch (error) {
-                console.error('Error fetching points:', error)
-                setPoints(0)
-            } finally {
-                setIsPointsLoading(false)
-            }
-        }
-        fetchPoints()
-    }, [blockId])
+    
+    // Use real-time points hook
+    const { points, isLoading: isPointsLoading } = useRealtimePoints(blockId)
 
     useEffect(() => {
         const fetchBreadcrumbs = async () => {
@@ -115,7 +101,7 @@ export function BlockViewNav({ blockId }: blockViewNavProps) {
                     className="bg-custom-gradient rounded-xl text-lg font-semibold hover:opacity-90 px-4 py-4 h-10"
                     disabled={isPointsLoading}
                 >
-                    {isPointsLoading ? 'Loading...' : `${points ?? 0} Points`}
+                    {isPointsLoading ? 'Loading...' : `${points} Points`}
                 </Button>
                 <FeatureDock blockId={blockId} />
 

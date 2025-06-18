@@ -48,6 +48,11 @@ export type FillInTheBlank = $Result.DefaultSelection<Prisma.$FillInTheBlankPayl
  * 
  */
 export type Topic = $Result.DefaultSelection<Prisma.$TopicPayload>
+/**
+ * Model PointsUpdate
+ * 
+ */
+export type PointsUpdate = $Result.DefaultSelection<Prisma.$PointsUpdatePayload>
 
 /**
  * Enums
@@ -261,6 +266,16 @@ export class PrismaClient<
     * ```
     */
   get topic(): Prisma.TopicDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.pointsUpdate`: Exposes CRUD operations for the **PointsUpdate** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PointsUpdates
+    * const pointsUpdates = await prisma.pointsUpdate.findMany()
+    * ```
+    */
+  get pointsUpdate(): Prisma.PointsUpdateDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -707,7 +722,8 @@ export namespace Prisma {
     Question: 'Question',
     Folder: 'Folder',
     FillInTheBlank: 'FillInTheBlank',
-    Topic: 'Topic'
+    Topic: 'Topic',
+    PointsUpdate: 'PointsUpdate'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -726,7 +742,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "block" | "quiz" | "question" | "folder" | "fillInTheBlank" | "topic"
+      modelProps: "user" | "block" | "quiz" | "question" | "folder" | "fillInTheBlank" | "topic" | "pointsUpdate"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1248,6 +1264,80 @@ export namespace Prisma {
           }
         }
       }
+      PointsUpdate: {
+        payload: Prisma.$PointsUpdatePayload<ExtArgs>
+        fields: Prisma.PointsUpdateFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PointsUpdateFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PointsUpdatePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PointsUpdateFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PointsUpdatePayload>
+          }
+          findFirst: {
+            args: Prisma.PointsUpdateFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PointsUpdatePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PointsUpdateFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PointsUpdatePayload>
+          }
+          findMany: {
+            args: Prisma.PointsUpdateFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PointsUpdatePayload>[]
+          }
+          create: {
+            args: Prisma.PointsUpdateCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PointsUpdatePayload>
+          }
+          createMany: {
+            args: Prisma.PointsUpdateCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PointsUpdateCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PointsUpdatePayload>[]
+          }
+          delete: {
+            args: Prisma.PointsUpdateDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PointsUpdatePayload>
+          }
+          update: {
+            args: Prisma.PointsUpdateUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PointsUpdatePayload>
+          }
+          deleteMany: {
+            args: Prisma.PointsUpdateDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PointsUpdateUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PointsUpdateUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PointsUpdatePayload>[]
+          }
+          upsert: {
+            args: Prisma.PointsUpdateUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PointsUpdatePayload>
+          }
+          aggregate: {
+            args: Prisma.PointsUpdateAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePointsUpdate>
+          }
+          groupBy: {
+            args: Prisma.PointsUpdateGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PointsUpdateGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PointsUpdateCountArgs<ExtArgs>
+            result: $Utils.Optional<PointsUpdateCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1339,6 +1429,7 @@ export namespace Prisma {
     folder?: FolderOmit
     fillInTheBlank?: FillInTheBlankOmit
     topic?: TopicOmit
+    pointsUpdate?: PointsUpdateOmit
   }
 
   /* Types for Logging */
@@ -1477,6 +1568,7 @@ export namespace Prisma {
     questions: number
     quizzes: number
     topic: number
+    pointsUpdates: number
   }
 
   export type BlockCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1484,6 +1576,7 @@ export namespace Prisma {
     questions?: boolean | BlockCountOutputTypeCountQuestionsArgs
     quizzes?: boolean | BlockCountOutputTypeCountQuizzesArgs
     topic?: boolean | BlockCountOutputTypeCountTopicArgs
+    pointsUpdates?: boolean | BlockCountOutputTypeCountPointsUpdatesArgs
   }
 
   // Custom InputTypes
@@ -1523,6 +1616,13 @@ export namespace Prisma {
    */
   export type BlockCountOutputTypeCountTopicArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TopicWhereInput
+  }
+
+  /**
+   * BlockCountOutputType without action
+   */
+  export type BlockCountOutputTypeCountPointsUpdatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PointsUpdateWhereInput
   }
 
 
@@ -2914,6 +3014,7 @@ export namespace Prisma {
     questions?: boolean | Block$questionsArgs<ExtArgs>
     quizzes?: boolean | Block$quizzesArgs<ExtArgs>
     topic?: boolean | Block$topicArgs<ExtArgs>
+    pointsUpdates?: boolean | Block$pointsUpdatesArgs<ExtArgs>
     _count?: boolean | BlockCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["block"]>
 
@@ -2965,6 +3066,7 @@ export namespace Prisma {
     questions?: boolean | Block$questionsArgs<ExtArgs>
     quizzes?: boolean | Block$quizzesArgs<ExtArgs>
     topic?: boolean | Block$topicArgs<ExtArgs>
+    pointsUpdates?: boolean | Block$pointsUpdatesArgs<ExtArgs>
     _count?: boolean | BlockCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type BlockIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2985,6 +3087,7 @@ export namespace Prisma {
       questions: Prisma.$QuestionPayload<ExtArgs>[]
       quizzes: Prisma.$QuizPayload<ExtArgs>[]
       topic: Prisma.$TopicPayload<ExtArgs>[]
+      pointsUpdates: Prisma.$PointsUpdatePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3396,6 +3499,7 @@ export namespace Prisma {
     questions<T extends Block$questionsArgs<ExtArgs> = {}>(args?: Subset<T, Block$questionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuestionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     quizzes<T extends Block$quizzesArgs<ExtArgs> = {}>(args?: Subset<T, Block$quizzesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuizPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     topic<T extends Block$topicArgs<ExtArgs> = {}>(args?: Subset<T, Block$topicArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TopicPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    pointsUpdates<T extends Block$pointsUpdatesArgs<ExtArgs> = {}>(args?: Subset<T, Block$pointsUpdatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PointsUpdatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3942,6 +4046,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TopicScalarFieldEnum | TopicScalarFieldEnum[]
+  }
+
+  /**
+   * Block.pointsUpdates
+   */
+  export type Block$pointsUpdatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PointsUpdate
+     */
+    select?: PointsUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PointsUpdate
+     */
+    omit?: PointsUpdateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PointsUpdateInclude<ExtArgs> | null
+    where?: PointsUpdateWhereInput
+    orderBy?: PointsUpdateOrderByWithRelationInput | PointsUpdateOrderByWithRelationInput[]
+    cursor?: PointsUpdateWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PointsUpdateScalarFieldEnum | PointsUpdateScalarFieldEnum[]
   }
 
   /**
@@ -9427,6 +9555,1085 @@ export namespace Prisma {
 
 
   /**
+   * Model PointsUpdate
+   */
+
+  export type AggregatePointsUpdate = {
+    _count: PointsUpdateCountAggregateOutputType | null
+    _avg: PointsUpdateAvgAggregateOutputType | null
+    _sum: PointsUpdateSumAggregateOutputType | null
+    _min: PointsUpdateMinAggregateOutputType | null
+    _max: PointsUpdateMaxAggregateOutputType | null
+  }
+
+  export type PointsUpdateAvgAggregateOutputType = {
+    points: number | null
+  }
+
+  export type PointsUpdateSumAggregateOutputType = {
+    points: number | null
+  }
+
+  export type PointsUpdateMinAggregateOutputType = {
+    id: string | null
+    blockId: string | null
+    points: number | null
+    createdAt: Date | null
+  }
+
+  export type PointsUpdateMaxAggregateOutputType = {
+    id: string | null
+    blockId: string | null
+    points: number | null
+    createdAt: Date | null
+  }
+
+  export type PointsUpdateCountAggregateOutputType = {
+    id: number
+    blockId: number
+    points: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type PointsUpdateAvgAggregateInputType = {
+    points?: true
+  }
+
+  export type PointsUpdateSumAggregateInputType = {
+    points?: true
+  }
+
+  export type PointsUpdateMinAggregateInputType = {
+    id?: true
+    blockId?: true
+    points?: true
+    createdAt?: true
+  }
+
+  export type PointsUpdateMaxAggregateInputType = {
+    id?: true
+    blockId?: true
+    points?: true
+    createdAt?: true
+  }
+
+  export type PointsUpdateCountAggregateInputType = {
+    id?: true
+    blockId?: true
+    points?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type PointsUpdateAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PointsUpdate to aggregate.
+     */
+    where?: PointsUpdateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PointsUpdates to fetch.
+     */
+    orderBy?: PointsUpdateOrderByWithRelationInput | PointsUpdateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PointsUpdateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PointsUpdates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PointsUpdates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PointsUpdates
+    **/
+    _count?: true | PointsUpdateCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PointsUpdateAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PointsUpdateSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PointsUpdateMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PointsUpdateMaxAggregateInputType
+  }
+
+  export type GetPointsUpdateAggregateType<T extends PointsUpdateAggregateArgs> = {
+        [P in keyof T & keyof AggregatePointsUpdate]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePointsUpdate[P]>
+      : GetScalarType<T[P], AggregatePointsUpdate[P]>
+  }
+
+
+
+
+  export type PointsUpdateGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PointsUpdateWhereInput
+    orderBy?: PointsUpdateOrderByWithAggregationInput | PointsUpdateOrderByWithAggregationInput[]
+    by: PointsUpdateScalarFieldEnum[] | PointsUpdateScalarFieldEnum
+    having?: PointsUpdateScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PointsUpdateCountAggregateInputType | true
+    _avg?: PointsUpdateAvgAggregateInputType
+    _sum?: PointsUpdateSumAggregateInputType
+    _min?: PointsUpdateMinAggregateInputType
+    _max?: PointsUpdateMaxAggregateInputType
+  }
+
+  export type PointsUpdateGroupByOutputType = {
+    id: string
+    blockId: string
+    points: number
+    createdAt: Date
+    _count: PointsUpdateCountAggregateOutputType | null
+    _avg: PointsUpdateAvgAggregateOutputType | null
+    _sum: PointsUpdateSumAggregateOutputType | null
+    _min: PointsUpdateMinAggregateOutputType | null
+    _max: PointsUpdateMaxAggregateOutputType | null
+  }
+
+  type GetPointsUpdateGroupByPayload<T extends PointsUpdateGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PointsUpdateGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PointsUpdateGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PointsUpdateGroupByOutputType[P]>
+            : GetScalarType<T[P], PointsUpdateGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PointsUpdateSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    blockId?: boolean
+    points?: boolean
+    createdAt?: boolean
+    block?: boolean | BlockDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pointsUpdate"]>
+
+  export type PointsUpdateSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    blockId?: boolean
+    points?: boolean
+    createdAt?: boolean
+    block?: boolean | BlockDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pointsUpdate"]>
+
+  export type PointsUpdateSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    blockId?: boolean
+    points?: boolean
+    createdAt?: boolean
+    block?: boolean | BlockDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pointsUpdate"]>
+
+  export type PointsUpdateSelectScalar = {
+    id?: boolean
+    blockId?: boolean
+    points?: boolean
+    createdAt?: boolean
+  }
+
+  export type PointsUpdateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "blockId" | "points" | "createdAt", ExtArgs["result"]["pointsUpdate"]>
+  export type PointsUpdateInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    block?: boolean | BlockDefaultArgs<ExtArgs>
+  }
+  export type PointsUpdateIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    block?: boolean | BlockDefaultArgs<ExtArgs>
+  }
+  export type PointsUpdateIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    block?: boolean | BlockDefaultArgs<ExtArgs>
+  }
+
+  export type $PointsUpdatePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PointsUpdate"
+    objects: {
+      block: Prisma.$BlockPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      blockId: string
+      points: number
+      createdAt: Date
+    }, ExtArgs["result"]["pointsUpdate"]>
+    composites: {}
+  }
+
+  type PointsUpdateGetPayload<S extends boolean | null | undefined | PointsUpdateDefaultArgs> = $Result.GetResult<Prisma.$PointsUpdatePayload, S>
+
+  type PointsUpdateCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PointsUpdateFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PointsUpdateCountAggregateInputType | true
+    }
+
+  export interface PointsUpdateDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PointsUpdate'], meta: { name: 'PointsUpdate' } }
+    /**
+     * Find zero or one PointsUpdate that matches the filter.
+     * @param {PointsUpdateFindUniqueArgs} args - Arguments to find a PointsUpdate
+     * @example
+     * // Get one PointsUpdate
+     * const pointsUpdate = await prisma.pointsUpdate.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PointsUpdateFindUniqueArgs>(args: SelectSubset<T, PointsUpdateFindUniqueArgs<ExtArgs>>): Prisma__PointsUpdateClient<$Result.GetResult<Prisma.$PointsUpdatePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PointsUpdate that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PointsUpdateFindUniqueOrThrowArgs} args - Arguments to find a PointsUpdate
+     * @example
+     * // Get one PointsUpdate
+     * const pointsUpdate = await prisma.pointsUpdate.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PointsUpdateFindUniqueOrThrowArgs>(args: SelectSubset<T, PointsUpdateFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PointsUpdateClient<$Result.GetResult<Prisma.$PointsUpdatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PointsUpdate that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PointsUpdateFindFirstArgs} args - Arguments to find a PointsUpdate
+     * @example
+     * // Get one PointsUpdate
+     * const pointsUpdate = await prisma.pointsUpdate.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PointsUpdateFindFirstArgs>(args?: SelectSubset<T, PointsUpdateFindFirstArgs<ExtArgs>>): Prisma__PointsUpdateClient<$Result.GetResult<Prisma.$PointsUpdatePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PointsUpdate that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PointsUpdateFindFirstOrThrowArgs} args - Arguments to find a PointsUpdate
+     * @example
+     * // Get one PointsUpdate
+     * const pointsUpdate = await prisma.pointsUpdate.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PointsUpdateFindFirstOrThrowArgs>(args?: SelectSubset<T, PointsUpdateFindFirstOrThrowArgs<ExtArgs>>): Prisma__PointsUpdateClient<$Result.GetResult<Prisma.$PointsUpdatePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PointsUpdates that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PointsUpdateFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PointsUpdates
+     * const pointsUpdates = await prisma.pointsUpdate.findMany()
+     * 
+     * // Get first 10 PointsUpdates
+     * const pointsUpdates = await prisma.pointsUpdate.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const pointsUpdateWithIdOnly = await prisma.pointsUpdate.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PointsUpdateFindManyArgs>(args?: SelectSubset<T, PointsUpdateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PointsUpdatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PointsUpdate.
+     * @param {PointsUpdateCreateArgs} args - Arguments to create a PointsUpdate.
+     * @example
+     * // Create one PointsUpdate
+     * const PointsUpdate = await prisma.pointsUpdate.create({
+     *   data: {
+     *     // ... data to create a PointsUpdate
+     *   }
+     * })
+     * 
+     */
+    create<T extends PointsUpdateCreateArgs>(args: SelectSubset<T, PointsUpdateCreateArgs<ExtArgs>>): Prisma__PointsUpdateClient<$Result.GetResult<Prisma.$PointsUpdatePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PointsUpdates.
+     * @param {PointsUpdateCreateManyArgs} args - Arguments to create many PointsUpdates.
+     * @example
+     * // Create many PointsUpdates
+     * const pointsUpdate = await prisma.pointsUpdate.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PointsUpdateCreateManyArgs>(args?: SelectSubset<T, PointsUpdateCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PointsUpdates and returns the data saved in the database.
+     * @param {PointsUpdateCreateManyAndReturnArgs} args - Arguments to create many PointsUpdates.
+     * @example
+     * // Create many PointsUpdates
+     * const pointsUpdate = await prisma.pointsUpdate.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PointsUpdates and only return the `id`
+     * const pointsUpdateWithIdOnly = await prisma.pointsUpdate.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PointsUpdateCreateManyAndReturnArgs>(args?: SelectSubset<T, PointsUpdateCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PointsUpdatePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PointsUpdate.
+     * @param {PointsUpdateDeleteArgs} args - Arguments to delete one PointsUpdate.
+     * @example
+     * // Delete one PointsUpdate
+     * const PointsUpdate = await prisma.pointsUpdate.delete({
+     *   where: {
+     *     // ... filter to delete one PointsUpdate
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PointsUpdateDeleteArgs>(args: SelectSubset<T, PointsUpdateDeleteArgs<ExtArgs>>): Prisma__PointsUpdateClient<$Result.GetResult<Prisma.$PointsUpdatePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PointsUpdate.
+     * @param {PointsUpdateUpdateArgs} args - Arguments to update one PointsUpdate.
+     * @example
+     * // Update one PointsUpdate
+     * const pointsUpdate = await prisma.pointsUpdate.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PointsUpdateUpdateArgs>(args: SelectSubset<T, PointsUpdateUpdateArgs<ExtArgs>>): Prisma__PointsUpdateClient<$Result.GetResult<Prisma.$PointsUpdatePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PointsUpdates.
+     * @param {PointsUpdateDeleteManyArgs} args - Arguments to filter PointsUpdates to delete.
+     * @example
+     * // Delete a few PointsUpdates
+     * const { count } = await prisma.pointsUpdate.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PointsUpdateDeleteManyArgs>(args?: SelectSubset<T, PointsUpdateDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PointsUpdates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PointsUpdateUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PointsUpdates
+     * const pointsUpdate = await prisma.pointsUpdate.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PointsUpdateUpdateManyArgs>(args: SelectSubset<T, PointsUpdateUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PointsUpdates and returns the data updated in the database.
+     * @param {PointsUpdateUpdateManyAndReturnArgs} args - Arguments to update many PointsUpdates.
+     * @example
+     * // Update many PointsUpdates
+     * const pointsUpdate = await prisma.pointsUpdate.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PointsUpdates and only return the `id`
+     * const pointsUpdateWithIdOnly = await prisma.pointsUpdate.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PointsUpdateUpdateManyAndReturnArgs>(args: SelectSubset<T, PointsUpdateUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PointsUpdatePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PointsUpdate.
+     * @param {PointsUpdateUpsertArgs} args - Arguments to update or create a PointsUpdate.
+     * @example
+     * // Update or create a PointsUpdate
+     * const pointsUpdate = await prisma.pointsUpdate.upsert({
+     *   create: {
+     *     // ... data to create a PointsUpdate
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PointsUpdate we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PointsUpdateUpsertArgs>(args: SelectSubset<T, PointsUpdateUpsertArgs<ExtArgs>>): Prisma__PointsUpdateClient<$Result.GetResult<Prisma.$PointsUpdatePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PointsUpdates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PointsUpdateCountArgs} args - Arguments to filter PointsUpdates to count.
+     * @example
+     * // Count the number of PointsUpdates
+     * const count = await prisma.pointsUpdate.count({
+     *   where: {
+     *     // ... the filter for the PointsUpdates we want to count
+     *   }
+     * })
+    **/
+    count<T extends PointsUpdateCountArgs>(
+      args?: Subset<T, PointsUpdateCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PointsUpdateCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PointsUpdate.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PointsUpdateAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PointsUpdateAggregateArgs>(args: Subset<T, PointsUpdateAggregateArgs>): Prisma.PrismaPromise<GetPointsUpdateAggregateType<T>>
+
+    /**
+     * Group by PointsUpdate.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PointsUpdateGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PointsUpdateGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PointsUpdateGroupByArgs['orderBy'] }
+        : { orderBy?: PointsUpdateGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PointsUpdateGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPointsUpdateGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PointsUpdate model
+   */
+  readonly fields: PointsUpdateFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PointsUpdate.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PointsUpdateClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    block<T extends BlockDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BlockDefaultArgs<ExtArgs>>): Prisma__BlockClient<$Result.GetResult<Prisma.$BlockPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PointsUpdate model
+   */
+  interface PointsUpdateFieldRefs {
+    readonly id: FieldRef<"PointsUpdate", 'String'>
+    readonly blockId: FieldRef<"PointsUpdate", 'String'>
+    readonly points: FieldRef<"PointsUpdate", 'Int'>
+    readonly createdAt: FieldRef<"PointsUpdate", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PointsUpdate findUnique
+   */
+  export type PointsUpdateFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PointsUpdate
+     */
+    select?: PointsUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PointsUpdate
+     */
+    omit?: PointsUpdateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PointsUpdateInclude<ExtArgs> | null
+    /**
+     * Filter, which PointsUpdate to fetch.
+     */
+    where: PointsUpdateWhereUniqueInput
+  }
+
+  /**
+   * PointsUpdate findUniqueOrThrow
+   */
+  export type PointsUpdateFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PointsUpdate
+     */
+    select?: PointsUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PointsUpdate
+     */
+    omit?: PointsUpdateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PointsUpdateInclude<ExtArgs> | null
+    /**
+     * Filter, which PointsUpdate to fetch.
+     */
+    where: PointsUpdateWhereUniqueInput
+  }
+
+  /**
+   * PointsUpdate findFirst
+   */
+  export type PointsUpdateFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PointsUpdate
+     */
+    select?: PointsUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PointsUpdate
+     */
+    omit?: PointsUpdateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PointsUpdateInclude<ExtArgs> | null
+    /**
+     * Filter, which PointsUpdate to fetch.
+     */
+    where?: PointsUpdateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PointsUpdates to fetch.
+     */
+    orderBy?: PointsUpdateOrderByWithRelationInput | PointsUpdateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PointsUpdates.
+     */
+    cursor?: PointsUpdateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PointsUpdates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PointsUpdates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PointsUpdates.
+     */
+    distinct?: PointsUpdateScalarFieldEnum | PointsUpdateScalarFieldEnum[]
+  }
+
+  /**
+   * PointsUpdate findFirstOrThrow
+   */
+  export type PointsUpdateFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PointsUpdate
+     */
+    select?: PointsUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PointsUpdate
+     */
+    omit?: PointsUpdateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PointsUpdateInclude<ExtArgs> | null
+    /**
+     * Filter, which PointsUpdate to fetch.
+     */
+    where?: PointsUpdateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PointsUpdates to fetch.
+     */
+    orderBy?: PointsUpdateOrderByWithRelationInput | PointsUpdateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PointsUpdates.
+     */
+    cursor?: PointsUpdateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PointsUpdates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PointsUpdates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PointsUpdates.
+     */
+    distinct?: PointsUpdateScalarFieldEnum | PointsUpdateScalarFieldEnum[]
+  }
+
+  /**
+   * PointsUpdate findMany
+   */
+  export type PointsUpdateFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PointsUpdate
+     */
+    select?: PointsUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PointsUpdate
+     */
+    omit?: PointsUpdateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PointsUpdateInclude<ExtArgs> | null
+    /**
+     * Filter, which PointsUpdates to fetch.
+     */
+    where?: PointsUpdateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PointsUpdates to fetch.
+     */
+    orderBy?: PointsUpdateOrderByWithRelationInput | PointsUpdateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PointsUpdates.
+     */
+    cursor?: PointsUpdateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PointsUpdates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PointsUpdates.
+     */
+    skip?: number
+    distinct?: PointsUpdateScalarFieldEnum | PointsUpdateScalarFieldEnum[]
+  }
+
+  /**
+   * PointsUpdate create
+   */
+  export type PointsUpdateCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PointsUpdate
+     */
+    select?: PointsUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PointsUpdate
+     */
+    omit?: PointsUpdateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PointsUpdateInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PointsUpdate.
+     */
+    data: XOR<PointsUpdateCreateInput, PointsUpdateUncheckedCreateInput>
+  }
+
+  /**
+   * PointsUpdate createMany
+   */
+  export type PointsUpdateCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PointsUpdates.
+     */
+    data: PointsUpdateCreateManyInput | PointsUpdateCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PointsUpdate createManyAndReturn
+   */
+  export type PointsUpdateCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PointsUpdate
+     */
+    select?: PointsUpdateSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PointsUpdate
+     */
+    omit?: PointsUpdateOmit<ExtArgs> | null
+    /**
+     * The data used to create many PointsUpdates.
+     */
+    data: PointsUpdateCreateManyInput | PointsUpdateCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PointsUpdateIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PointsUpdate update
+   */
+  export type PointsUpdateUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PointsUpdate
+     */
+    select?: PointsUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PointsUpdate
+     */
+    omit?: PointsUpdateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PointsUpdateInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PointsUpdate.
+     */
+    data: XOR<PointsUpdateUpdateInput, PointsUpdateUncheckedUpdateInput>
+    /**
+     * Choose, which PointsUpdate to update.
+     */
+    where: PointsUpdateWhereUniqueInput
+  }
+
+  /**
+   * PointsUpdate updateMany
+   */
+  export type PointsUpdateUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PointsUpdates.
+     */
+    data: XOR<PointsUpdateUpdateManyMutationInput, PointsUpdateUncheckedUpdateManyInput>
+    /**
+     * Filter which PointsUpdates to update
+     */
+    where?: PointsUpdateWhereInput
+    /**
+     * Limit how many PointsUpdates to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PointsUpdate updateManyAndReturn
+   */
+  export type PointsUpdateUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PointsUpdate
+     */
+    select?: PointsUpdateSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PointsUpdate
+     */
+    omit?: PointsUpdateOmit<ExtArgs> | null
+    /**
+     * The data used to update PointsUpdates.
+     */
+    data: XOR<PointsUpdateUpdateManyMutationInput, PointsUpdateUncheckedUpdateManyInput>
+    /**
+     * Filter which PointsUpdates to update
+     */
+    where?: PointsUpdateWhereInput
+    /**
+     * Limit how many PointsUpdates to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PointsUpdateIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PointsUpdate upsert
+   */
+  export type PointsUpdateUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PointsUpdate
+     */
+    select?: PointsUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PointsUpdate
+     */
+    omit?: PointsUpdateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PointsUpdateInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PointsUpdate to update in case it exists.
+     */
+    where: PointsUpdateWhereUniqueInput
+    /**
+     * In case the PointsUpdate found by the `where` argument doesn't exist, create a new PointsUpdate with this data.
+     */
+    create: XOR<PointsUpdateCreateInput, PointsUpdateUncheckedCreateInput>
+    /**
+     * In case the PointsUpdate was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PointsUpdateUpdateInput, PointsUpdateUncheckedUpdateInput>
+  }
+
+  /**
+   * PointsUpdate delete
+   */
+  export type PointsUpdateDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PointsUpdate
+     */
+    select?: PointsUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PointsUpdate
+     */
+    omit?: PointsUpdateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PointsUpdateInclude<ExtArgs> | null
+    /**
+     * Filter which PointsUpdate to delete.
+     */
+    where: PointsUpdateWhereUniqueInput
+  }
+
+  /**
+   * PointsUpdate deleteMany
+   */
+  export type PointsUpdateDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PointsUpdates to delete
+     */
+    where?: PointsUpdateWhereInput
+    /**
+     * Limit how many PointsUpdates to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PointsUpdate without action
+   */
+  export type PointsUpdateDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PointsUpdate
+     */
+    select?: PointsUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PointsUpdate
+     */
+    omit?: PointsUpdateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PointsUpdateInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -9521,6 +10728,16 @@ export namespace Prisma {
   };
 
   export type TopicScalarFieldEnum = (typeof TopicScalarFieldEnum)[keyof typeof TopicScalarFieldEnum]
+
+
+  export const PointsUpdateScalarFieldEnum: {
+    id: 'id',
+    blockId: 'blockId',
+    points: 'points',
+    createdAt: 'createdAt'
+  };
+
+  export type PointsUpdateScalarFieldEnum = (typeof PointsUpdateScalarFieldEnum)[keyof typeof PointsUpdateScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -9735,6 +10952,7 @@ export namespace Prisma {
     questions?: QuestionListRelationFilter
     quizzes?: QuizListRelationFilter
     topic?: TopicListRelationFilter
+    pointsUpdates?: PointsUpdateListRelationFilter
   }
 
   export type BlockOrderByWithRelationInput = {
@@ -9753,6 +10971,7 @@ export namespace Prisma {
     questions?: QuestionOrderByRelationAggregateInput
     quizzes?: QuizOrderByRelationAggregateInput
     topic?: TopicOrderByRelationAggregateInput
+    pointsUpdates?: PointsUpdateOrderByRelationAggregateInput
   }
 
   export type BlockWhereUniqueInput = Prisma.AtLeast<{
@@ -9774,6 +10993,7 @@ export namespace Prisma {
     questions?: QuestionListRelationFilter
     quizzes?: QuizListRelationFilter
     topic?: TopicListRelationFilter
+    pointsUpdates?: PointsUpdateListRelationFilter
   }, "id">
 
   export type BlockOrderByWithAggregationInput = {
@@ -10113,6 +11333,58 @@ export namespace Prisma {
     examples?: StringNullableListFilter<"Topic">
   }
 
+  export type PointsUpdateWhereInput = {
+    AND?: PointsUpdateWhereInput | PointsUpdateWhereInput[]
+    OR?: PointsUpdateWhereInput[]
+    NOT?: PointsUpdateWhereInput | PointsUpdateWhereInput[]
+    id?: StringFilter<"PointsUpdate"> | string
+    blockId?: StringFilter<"PointsUpdate"> | string
+    points?: IntFilter<"PointsUpdate"> | number
+    createdAt?: DateTimeFilter<"PointsUpdate"> | Date | string
+    block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
+  }
+
+  export type PointsUpdateOrderByWithRelationInput = {
+    id?: SortOrder
+    blockId?: SortOrder
+    points?: SortOrder
+    createdAt?: SortOrder
+    block?: BlockOrderByWithRelationInput
+  }
+
+  export type PointsUpdateWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: PointsUpdateWhereInput | PointsUpdateWhereInput[]
+    OR?: PointsUpdateWhereInput[]
+    NOT?: PointsUpdateWhereInput | PointsUpdateWhereInput[]
+    blockId?: StringFilter<"PointsUpdate"> | string
+    points?: IntFilter<"PointsUpdate"> | number
+    createdAt?: DateTimeFilter<"PointsUpdate"> | Date | string
+    block?: XOR<BlockScalarRelationFilter, BlockWhereInput>
+  }, "id">
+
+  export type PointsUpdateOrderByWithAggregationInput = {
+    id?: SortOrder
+    blockId?: SortOrder
+    points?: SortOrder
+    createdAt?: SortOrder
+    _count?: PointsUpdateCountOrderByAggregateInput
+    _avg?: PointsUpdateAvgOrderByAggregateInput
+    _max?: PointsUpdateMaxOrderByAggregateInput
+    _min?: PointsUpdateMinOrderByAggregateInput
+    _sum?: PointsUpdateSumOrderByAggregateInput
+  }
+
+  export type PointsUpdateScalarWhereWithAggregatesInput = {
+    AND?: PointsUpdateScalarWhereWithAggregatesInput | PointsUpdateScalarWhereWithAggregatesInput[]
+    OR?: PointsUpdateScalarWhereWithAggregatesInput[]
+    NOT?: PointsUpdateScalarWhereWithAggregatesInput | PointsUpdateScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PointsUpdate"> | string
+    blockId?: StringWithAggregatesFilter<"PointsUpdate"> | string
+    points?: IntWithAggregatesFilter<"PointsUpdate"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"PointsUpdate"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -10184,6 +11456,7 @@ export namespace Prisma {
     questions?: QuestionCreateNestedManyWithoutBlockInput
     quizzes?: QuizCreateNestedManyWithoutBlockInput
     topic?: TopicCreateNestedManyWithoutBlockInput
+    pointsUpdates?: PointsUpdateCreateNestedManyWithoutBlockInput
   }
 
   export type BlockUncheckedCreateInput = {
@@ -10200,6 +11473,7 @@ export namespace Prisma {
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
     topic?: TopicUncheckedCreateNestedManyWithoutBlockInput
+    pointsUpdates?: PointsUpdateUncheckedCreateNestedManyWithoutBlockInput
   }
 
   export type BlockUpdateInput = {
@@ -10216,6 +11490,7 @@ export namespace Prisma {
     questions?: QuestionUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUpdateManyWithoutBlockNestedInput
     topic?: TopicUpdateManyWithoutBlockNestedInput
+    pointsUpdates?: PointsUpdateUpdateManyWithoutBlockNestedInput
   }
 
   export type BlockUncheckedUpdateInput = {
@@ -10232,6 +11507,7 @@ export namespace Prisma {
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
     topic?: TopicUncheckedUpdateManyWithoutBlockNestedInput
+    pointsUpdates?: PointsUpdateUncheckedUpdateManyWithoutBlockNestedInput
   }
 
   export type BlockCreateManyInput = {
@@ -10574,6 +11850,54 @@ export namespace Prisma {
     examples?: TopicUpdateexamplesInput | string[]
   }
 
+  export type PointsUpdateCreateInput = {
+    id?: string
+    points?: number
+    createdAt?: Date | string
+    block: BlockCreateNestedOneWithoutPointsUpdatesInput
+  }
+
+  export type PointsUpdateUncheckedCreateInput = {
+    id?: string
+    blockId: string
+    points?: number
+    createdAt?: Date | string
+  }
+
+  export type PointsUpdateUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    points?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    block?: BlockUpdateOneRequiredWithoutPointsUpdatesNestedInput
+  }
+
+  export type PointsUpdateUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    blockId?: StringFieldUpdateOperationsInput | string
+    points?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PointsUpdateCreateManyInput = {
+    id?: string
+    blockId: string
+    points?: number
+    createdAt?: Date | string
+  }
+
+  export type PointsUpdateUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    points?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PointsUpdateUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    blockId?: StringFieldUpdateOperationsInput | string
+    points?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -10790,6 +12114,12 @@ export namespace Prisma {
     none?: TopicWhereInput
   }
 
+  export type PointsUpdateListRelationFilter = {
+    every?: PointsUpdateWhereInput
+    some?: PointsUpdateWhereInput
+    none?: PointsUpdateWhereInput
+  }
+
   export type FillInTheBlankOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -10803,6 +12133,10 @@ export namespace Prisma {
   }
 
   export type TopicOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PointsUpdateOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -11055,6 +12389,62 @@ export namespace Prisma {
     blockId?: SortOrder
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type PointsUpdateCountOrderByAggregateInput = {
+    id?: SortOrder
+    blockId?: SortOrder
+    points?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PointsUpdateAvgOrderByAggregateInput = {
+    points?: SortOrder
+  }
+
+  export type PointsUpdateMaxOrderByAggregateInput = {
+    id?: SortOrder
+    blockId?: SortOrder
+    points?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PointsUpdateMinOrderByAggregateInput = {
+    id?: SortOrder
+    blockId?: SortOrder
+    points?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PointsUpdateSumOrderByAggregateInput = {
+    points?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
   export type BlockCreateNestedManyWithoutAuthorInput = {
     create?: XOR<BlockCreateWithoutAuthorInput, BlockUncheckedCreateWithoutAuthorInput> | BlockCreateWithoutAuthorInput[] | BlockUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: BlockCreateOrConnectWithoutAuthorInput | BlockCreateOrConnectWithoutAuthorInput[]
@@ -11195,6 +12585,13 @@ export namespace Prisma {
     connect?: TopicWhereUniqueInput | TopicWhereUniqueInput[]
   }
 
+  export type PointsUpdateCreateNestedManyWithoutBlockInput = {
+    create?: XOR<PointsUpdateCreateWithoutBlockInput, PointsUpdateUncheckedCreateWithoutBlockInput> | PointsUpdateCreateWithoutBlockInput[] | PointsUpdateUncheckedCreateWithoutBlockInput[]
+    connectOrCreate?: PointsUpdateCreateOrConnectWithoutBlockInput | PointsUpdateCreateOrConnectWithoutBlockInput[]
+    createMany?: PointsUpdateCreateManyBlockInputEnvelope
+    connect?: PointsUpdateWhereUniqueInput | PointsUpdateWhereUniqueInput[]
+  }
+
   export type FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput = {
     create?: XOR<FillInTheBlankCreateWithoutBlockInput, FillInTheBlankUncheckedCreateWithoutBlockInput> | FillInTheBlankCreateWithoutBlockInput[] | FillInTheBlankUncheckedCreateWithoutBlockInput[]
     connectOrCreate?: FillInTheBlankCreateOrConnectWithoutBlockInput | FillInTheBlankCreateOrConnectWithoutBlockInput[]
@@ -11221,6 +12618,13 @@ export namespace Prisma {
     connectOrCreate?: TopicCreateOrConnectWithoutBlockInput | TopicCreateOrConnectWithoutBlockInput[]
     createMany?: TopicCreateManyBlockInputEnvelope
     connect?: TopicWhereUniqueInput | TopicWhereUniqueInput[]
+  }
+
+  export type PointsUpdateUncheckedCreateNestedManyWithoutBlockInput = {
+    create?: XOR<PointsUpdateCreateWithoutBlockInput, PointsUpdateUncheckedCreateWithoutBlockInput> | PointsUpdateCreateWithoutBlockInput[] | PointsUpdateUncheckedCreateWithoutBlockInput[]
+    connectOrCreate?: PointsUpdateCreateOrConnectWithoutBlockInput | PointsUpdateCreateOrConnectWithoutBlockInput[]
+    createMany?: PointsUpdateCreateManyBlockInputEnvelope
+    connect?: PointsUpdateWhereUniqueInput | PointsUpdateWhereUniqueInput[]
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
@@ -11314,6 +12718,20 @@ export namespace Prisma {
     deleteMany?: TopicScalarWhereInput | TopicScalarWhereInput[]
   }
 
+  export type PointsUpdateUpdateManyWithoutBlockNestedInput = {
+    create?: XOR<PointsUpdateCreateWithoutBlockInput, PointsUpdateUncheckedCreateWithoutBlockInput> | PointsUpdateCreateWithoutBlockInput[] | PointsUpdateUncheckedCreateWithoutBlockInput[]
+    connectOrCreate?: PointsUpdateCreateOrConnectWithoutBlockInput | PointsUpdateCreateOrConnectWithoutBlockInput[]
+    upsert?: PointsUpdateUpsertWithWhereUniqueWithoutBlockInput | PointsUpdateUpsertWithWhereUniqueWithoutBlockInput[]
+    createMany?: PointsUpdateCreateManyBlockInputEnvelope
+    set?: PointsUpdateWhereUniqueInput | PointsUpdateWhereUniqueInput[]
+    disconnect?: PointsUpdateWhereUniqueInput | PointsUpdateWhereUniqueInput[]
+    delete?: PointsUpdateWhereUniqueInput | PointsUpdateWhereUniqueInput[]
+    connect?: PointsUpdateWhereUniqueInput | PointsUpdateWhereUniqueInput[]
+    update?: PointsUpdateUpdateWithWhereUniqueWithoutBlockInput | PointsUpdateUpdateWithWhereUniqueWithoutBlockInput[]
+    updateMany?: PointsUpdateUpdateManyWithWhereWithoutBlockInput | PointsUpdateUpdateManyWithWhereWithoutBlockInput[]
+    deleteMany?: PointsUpdateScalarWhereInput | PointsUpdateScalarWhereInput[]
+  }
+
   export type FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput = {
     create?: XOR<FillInTheBlankCreateWithoutBlockInput, FillInTheBlankUncheckedCreateWithoutBlockInput> | FillInTheBlankCreateWithoutBlockInput[] | FillInTheBlankUncheckedCreateWithoutBlockInput[]
     connectOrCreate?: FillInTheBlankCreateOrConnectWithoutBlockInput | FillInTheBlankCreateOrConnectWithoutBlockInput[]
@@ -11368,6 +12786,20 @@ export namespace Prisma {
     update?: TopicUpdateWithWhereUniqueWithoutBlockInput | TopicUpdateWithWhereUniqueWithoutBlockInput[]
     updateMany?: TopicUpdateManyWithWhereWithoutBlockInput | TopicUpdateManyWithWhereWithoutBlockInput[]
     deleteMany?: TopicScalarWhereInput | TopicScalarWhereInput[]
+  }
+
+  export type PointsUpdateUncheckedUpdateManyWithoutBlockNestedInput = {
+    create?: XOR<PointsUpdateCreateWithoutBlockInput, PointsUpdateUncheckedCreateWithoutBlockInput> | PointsUpdateCreateWithoutBlockInput[] | PointsUpdateUncheckedCreateWithoutBlockInput[]
+    connectOrCreate?: PointsUpdateCreateOrConnectWithoutBlockInput | PointsUpdateCreateOrConnectWithoutBlockInput[]
+    upsert?: PointsUpdateUpsertWithWhereUniqueWithoutBlockInput | PointsUpdateUpsertWithWhereUniqueWithoutBlockInput[]
+    createMany?: PointsUpdateCreateManyBlockInputEnvelope
+    set?: PointsUpdateWhereUniqueInput | PointsUpdateWhereUniqueInput[]
+    disconnect?: PointsUpdateWhereUniqueInput | PointsUpdateWhereUniqueInput[]
+    delete?: PointsUpdateWhereUniqueInput | PointsUpdateWhereUniqueInput[]
+    connect?: PointsUpdateWhereUniqueInput | PointsUpdateWhereUniqueInput[]
+    update?: PointsUpdateUpdateWithWhereUniqueWithoutBlockInput | PointsUpdateUpdateWithWhereUniqueWithoutBlockInput[]
+    updateMany?: PointsUpdateUpdateManyWithWhereWithoutBlockInput | PointsUpdateUpdateManyWithWhereWithoutBlockInput[]
+    deleteMany?: PointsUpdateScalarWhereInput | PointsUpdateScalarWhereInput[]
   }
 
   export type QuizCreateoptionsInput = {
@@ -11620,6 +13052,28 @@ export namespace Prisma {
     deleteMany?: QuizScalarWhereInput | QuizScalarWhereInput[]
   }
 
+  export type BlockCreateNestedOneWithoutPointsUpdatesInput = {
+    create?: XOR<BlockCreateWithoutPointsUpdatesInput, BlockUncheckedCreateWithoutPointsUpdatesInput>
+    connectOrCreate?: BlockCreateOrConnectWithoutPointsUpdatesInput
+    connect?: BlockWhereUniqueInput
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type BlockUpdateOneRequiredWithoutPointsUpdatesNestedInput = {
+    create?: XOR<BlockCreateWithoutPointsUpdatesInput, BlockUncheckedCreateWithoutPointsUpdatesInput>
+    connectOrCreate?: BlockCreateOrConnectWithoutPointsUpdatesInput
+    upsert?: BlockUpsertWithoutPointsUpdatesInput
+    connect?: BlockWhereUniqueInput
+    update?: XOR<XOR<BlockUpdateToOneWithWhereWithoutPointsUpdatesInput, BlockUpdateWithoutPointsUpdatesInput>, BlockUncheckedUpdateWithoutPointsUpdatesInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -11809,6 +13263,33 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type BlockCreateWithoutAuthorInput = {
     id?: string
     createdAt?: Date | string
@@ -11822,6 +13303,7 @@ export namespace Prisma {
     questions?: QuestionCreateNestedManyWithoutBlockInput
     quizzes?: QuizCreateNestedManyWithoutBlockInput
     topic?: TopicCreateNestedManyWithoutBlockInput
+    pointsUpdates?: PointsUpdateCreateNestedManyWithoutBlockInput
   }
 
   export type BlockUncheckedCreateWithoutAuthorInput = {
@@ -11837,6 +13319,7 @@ export namespace Prisma {
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
     topic?: TopicUncheckedCreateNestedManyWithoutBlockInput
+    pointsUpdates?: PointsUpdateUncheckedCreateNestedManyWithoutBlockInput
   }
 
   export type BlockCreateOrConnectWithoutAuthorInput = {
@@ -12089,6 +13572,28 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type PointsUpdateCreateWithoutBlockInput = {
+    id?: string
+    points?: number
+    createdAt?: Date | string
+  }
+
+  export type PointsUpdateUncheckedCreateWithoutBlockInput = {
+    id?: string
+    points?: number
+    createdAt?: Date | string
+  }
+
+  export type PointsUpdateCreateOrConnectWithoutBlockInput = {
+    where: PointsUpdateWhereUniqueInput
+    create: XOR<PointsUpdateCreateWithoutBlockInput, PointsUpdateUncheckedCreateWithoutBlockInput>
+  }
+
+  export type PointsUpdateCreateManyBlockInputEnvelope = {
+    data: PointsUpdateCreateManyBlockInput | PointsUpdateCreateManyBlockInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutPostsInput = {
     update: XOR<UserUpdateWithoutPostsInput, UserUncheckedUpdateWithoutPostsInput>
     create: XOR<UserCreateWithoutPostsInput, UserUncheckedCreateWithoutPostsInput>
@@ -12258,6 +13763,32 @@ export namespace Prisma {
     examples?: StringNullableListFilter<"Topic">
   }
 
+  export type PointsUpdateUpsertWithWhereUniqueWithoutBlockInput = {
+    where: PointsUpdateWhereUniqueInput
+    update: XOR<PointsUpdateUpdateWithoutBlockInput, PointsUpdateUncheckedUpdateWithoutBlockInput>
+    create: XOR<PointsUpdateCreateWithoutBlockInput, PointsUpdateUncheckedCreateWithoutBlockInput>
+  }
+
+  export type PointsUpdateUpdateWithWhereUniqueWithoutBlockInput = {
+    where: PointsUpdateWhereUniqueInput
+    data: XOR<PointsUpdateUpdateWithoutBlockInput, PointsUpdateUncheckedUpdateWithoutBlockInput>
+  }
+
+  export type PointsUpdateUpdateManyWithWhereWithoutBlockInput = {
+    where: PointsUpdateScalarWhereInput
+    data: XOR<PointsUpdateUpdateManyMutationInput, PointsUpdateUncheckedUpdateManyWithoutBlockInput>
+  }
+
+  export type PointsUpdateScalarWhereInput = {
+    AND?: PointsUpdateScalarWhereInput | PointsUpdateScalarWhereInput[]
+    OR?: PointsUpdateScalarWhereInput[]
+    NOT?: PointsUpdateScalarWhereInput | PointsUpdateScalarWhereInput[]
+    id?: StringFilter<"PointsUpdate"> | string
+    blockId?: StringFilter<"PointsUpdate"> | string
+    points?: IntFilter<"PointsUpdate"> | number
+    createdAt?: DateTimeFilter<"PointsUpdate"> | Date | string
+  }
+
   export type BlockCreateWithoutQuizzesInput = {
     id?: string
     createdAt?: Date | string
@@ -12271,6 +13802,7 @@ export namespace Prisma {
     FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
     questions?: QuestionCreateNestedManyWithoutBlockInput
     topic?: TopicCreateNestedManyWithoutBlockInput
+    pointsUpdates?: PointsUpdateCreateNestedManyWithoutBlockInput
   }
 
   export type BlockUncheckedCreateWithoutQuizzesInput = {
@@ -12286,6 +13818,7 @@ export namespace Prisma {
     FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
     topic?: TopicUncheckedCreateNestedManyWithoutBlockInput
+    pointsUpdates?: PointsUpdateUncheckedCreateNestedManyWithoutBlockInput
   }
 
   export type BlockCreateOrConnectWithoutQuizzesInput = {
@@ -12336,6 +13869,7 @@ export namespace Prisma {
     FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
     questions?: QuestionUpdateManyWithoutBlockNestedInput
     topic?: TopicUpdateManyWithoutBlockNestedInput
+    pointsUpdates?: PointsUpdateUpdateManyWithoutBlockNestedInput
   }
 
   export type BlockUncheckedUpdateWithoutQuizzesInput = {
@@ -12351,6 +13885,7 @@ export namespace Prisma {
     FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
     topic?: TopicUncheckedUpdateManyWithoutBlockNestedInput
+    pointsUpdates?: PointsUpdateUncheckedUpdateManyWithoutBlockNestedInput
   }
 
   export type TopicUpsertWithoutQuizInput = {
@@ -12391,6 +13926,7 @@ export namespace Prisma {
     FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
     quizzes?: QuizCreateNestedManyWithoutBlockInput
     topic?: TopicCreateNestedManyWithoutBlockInput
+    pointsUpdates?: PointsUpdateCreateNestedManyWithoutBlockInput
   }
 
   export type BlockUncheckedCreateWithoutQuestionsInput = {
@@ -12406,6 +13942,7 @@ export namespace Prisma {
     FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
     topic?: TopicUncheckedCreateNestedManyWithoutBlockInput
+    pointsUpdates?: PointsUpdateUncheckedCreateNestedManyWithoutBlockInput
   }
 
   export type BlockCreateOrConnectWithoutQuestionsInput = {
@@ -12437,6 +13974,7 @@ export namespace Prisma {
     FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUpdateManyWithoutBlockNestedInput
     topic?: TopicUpdateManyWithoutBlockNestedInput
+    pointsUpdates?: PointsUpdateUpdateManyWithoutBlockNestedInput
   }
 
   export type BlockUncheckedUpdateWithoutQuestionsInput = {
@@ -12452,6 +13990,7 @@ export namespace Prisma {
     FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
     topic?: TopicUncheckedUpdateManyWithoutBlockNestedInput
+    pointsUpdates?: PointsUpdateUncheckedUpdateManyWithoutBlockNestedInput
   }
 
   export type BlockCreateWithoutFolderInput = {
@@ -12467,6 +14006,7 @@ export namespace Prisma {
     questions?: QuestionCreateNestedManyWithoutBlockInput
     quizzes?: QuizCreateNestedManyWithoutBlockInput
     topic?: TopicCreateNestedManyWithoutBlockInput
+    pointsUpdates?: PointsUpdateCreateNestedManyWithoutBlockInput
   }
 
   export type BlockUncheckedCreateWithoutFolderInput = {
@@ -12482,6 +14022,7 @@ export namespace Prisma {
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
     topic?: TopicUncheckedCreateNestedManyWithoutBlockInput
+    pointsUpdates?: PointsUpdateUncheckedCreateNestedManyWithoutBlockInput
   }
 
   export type BlockCreateOrConnectWithoutFolderInput = {
@@ -12679,6 +14220,7 @@ export namespace Prisma {
     questions?: QuestionCreateNestedManyWithoutBlockInput
     quizzes?: QuizCreateNestedManyWithoutBlockInput
     topic?: TopicCreateNestedManyWithoutBlockInput
+    pointsUpdates?: PointsUpdateCreateNestedManyWithoutBlockInput
   }
 
   export type BlockUncheckedCreateWithoutFillInTheBlankInput = {
@@ -12694,6 +14236,7 @@ export namespace Prisma {
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
     topic?: TopicUncheckedCreateNestedManyWithoutBlockInput
+    pointsUpdates?: PointsUpdateUncheckedCreateNestedManyWithoutBlockInput
   }
 
   export type BlockCreateOrConnectWithoutFillInTheBlankInput = {
@@ -12725,6 +14268,7 @@ export namespace Prisma {
     questions?: QuestionUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUpdateManyWithoutBlockNestedInput
     topic?: TopicUpdateManyWithoutBlockNestedInput
+    pointsUpdates?: PointsUpdateUpdateManyWithoutBlockNestedInput
   }
 
   export type BlockUncheckedUpdateWithoutFillInTheBlankInput = {
@@ -12740,6 +14284,7 @@ export namespace Prisma {
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
     topic?: TopicUncheckedUpdateManyWithoutBlockNestedInput
+    pointsUpdates?: PointsUpdateUncheckedUpdateManyWithoutBlockNestedInput
   }
 
   export type QuizCreateWithoutTopicInput = {
@@ -12785,6 +14330,7 @@ export namespace Prisma {
     FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
     questions?: QuestionCreateNestedManyWithoutBlockInput
     quizzes?: QuizCreateNestedManyWithoutBlockInput
+    pointsUpdates?: PointsUpdateCreateNestedManyWithoutBlockInput
   }
 
   export type BlockUncheckedCreateWithoutTopicInput = {
@@ -12800,6 +14346,7 @@ export namespace Prisma {
     FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
     questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
     quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
+    pointsUpdates?: PointsUpdateUncheckedCreateNestedManyWithoutBlockInput
   }
 
   export type BlockCreateOrConnectWithoutTopicInput = {
@@ -12847,6 +14394,7 @@ export namespace Prisma {
     FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
     questions?: QuestionUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUpdateManyWithoutBlockNestedInput
+    pointsUpdates?: PointsUpdateUpdateManyWithoutBlockNestedInput
   }
 
   export type BlockUncheckedUpdateWithoutTopicInput = {
@@ -12862,6 +14410,87 @@ export namespace Prisma {
     FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
+    pointsUpdates?: PointsUpdateUncheckedUpdateManyWithoutBlockNestedInput
+  }
+
+  export type BlockCreateWithoutPointsUpdatesInput = {
+    id?: string
+    createdAt?: Date | string
+    title: string
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
+    points?: number | null
+    files?: BlockCreatefilesInput | string[]
+    author: UserCreateNestedOneWithoutPostsInput
+    folder?: FolderCreateNestedOneWithoutBlocksInput
+    FillInTheBlank?: FillInTheBlankCreateNestedManyWithoutBlockInput
+    questions?: QuestionCreateNestedManyWithoutBlockInput
+    quizzes?: QuizCreateNestedManyWithoutBlockInput
+    topic?: TopicCreateNestedManyWithoutBlockInput
+  }
+
+  export type BlockUncheckedCreateWithoutPointsUpdatesInput = {
+    id?: string
+    createdAt?: Date | string
+    title: string
+    authorId: string
+    folderId?: string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: string | null
+    points?: number | null
+    files?: BlockCreatefilesInput | string[]
+    FillInTheBlank?: FillInTheBlankUncheckedCreateNestedManyWithoutBlockInput
+    questions?: QuestionUncheckedCreateNestedManyWithoutBlockInput
+    quizzes?: QuizUncheckedCreateNestedManyWithoutBlockInput
+    topic?: TopicUncheckedCreateNestedManyWithoutBlockInput
+  }
+
+  export type BlockCreateOrConnectWithoutPointsUpdatesInput = {
+    where: BlockWhereUniqueInput
+    create: XOR<BlockCreateWithoutPointsUpdatesInput, BlockUncheckedCreateWithoutPointsUpdatesInput>
+  }
+
+  export type BlockUpsertWithoutPointsUpdatesInput = {
+    update: XOR<BlockUpdateWithoutPointsUpdatesInput, BlockUncheckedUpdateWithoutPointsUpdatesInput>
+    create: XOR<BlockCreateWithoutPointsUpdatesInput, BlockUncheckedCreateWithoutPointsUpdatesInput>
+    where?: BlockWhereInput
+  }
+
+  export type BlockUpdateToOneWithWhereWithoutPointsUpdatesInput = {
+    where?: BlockWhereInput
+    data: XOR<BlockUpdateWithoutPointsUpdatesInput, BlockUncheckedUpdateWithoutPointsUpdatesInput>
+  }
+
+  export type BlockUpdateWithoutPointsUpdatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    title?: StringFieldUpdateOperationsInput | string
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
+    files?: BlockUpdatefilesInput | string[]
+    author?: UserUpdateOneRequiredWithoutPostsNestedInput
+    folder?: FolderUpdateOneWithoutBlocksNestedInput
+    FillInTheBlank?: FillInTheBlankUpdateManyWithoutBlockNestedInput
+    questions?: QuestionUpdateManyWithoutBlockNestedInput
+    quizzes?: QuizUpdateManyWithoutBlockNestedInput
+    topic?: TopicUpdateManyWithoutBlockNestedInput
+  }
+
+  export type BlockUncheckedUpdateWithoutPointsUpdatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    title?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableJsonNullValueInput | InputJsonValue
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: NullableIntFieldUpdateOperationsInput | number | null
+    files?: BlockUpdatefilesInput | string[]
+    FillInTheBlank?: FillInTheBlankUncheckedUpdateManyWithoutBlockNestedInput
+    questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
+    quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
+    topic?: TopicUncheckedUpdateManyWithoutBlockNestedInput
   }
 
   export type BlockCreateManyAuthorInput = {
@@ -12897,6 +14526,7 @@ export namespace Prisma {
     questions?: QuestionUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUpdateManyWithoutBlockNestedInput
     topic?: TopicUpdateManyWithoutBlockNestedInput
+    pointsUpdates?: PointsUpdateUpdateManyWithoutBlockNestedInput
   }
 
   export type BlockUncheckedUpdateWithoutAuthorInput = {
@@ -12912,6 +14542,7 @@ export namespace Prisma {
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
     topic?: TopicUncheckedUpdateManyWithoutBlockNestedInput
+    pointsUpdates?: PointsUpdateUncheckedUpdateManyWithoutBlockNestedInput
   }
 
   export type BlockUncheckedUpdateManyWithoutAuthorInput = {
@@ -12983,6 +14614,12 @@ export namespace Prisma {
     id?: string
     name: string
     examples?: TopicCreateexamplesInput | string[]
+  }
+
+  export type PointsUpdateCreateManyBlockInput = {
+    id?: string
+    points?: number
+    createdAt?: Date | string
   }
 
   export type FillInTheBlankUpdateWithoutBlockInput = {
@@ -13074,6 +14711,24 @@ export namespace Prisma {
     examples?: TopicUpdateexamplesInput | string[]
   }
 
+  export type PointsUpdateUpdateWithoutBlockInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    points?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PointsUpdateUncheckedUpdateWithoutBlockInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    points?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PointsUpdateUncheckedUpdateManyWithoutBlockInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    points?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type BlockCreateManyFolderInput = {
     id?: string
     createdAt?: Date | string
@@ -13107,6 +14762,7 @@ export namespace Prisma {
     questions?: QuestionUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUpdateManyWithoutBlockNestedInput
     topic?: TopicUpdateManyWithoutBlockNestedInput
+    pointsUpdates?: PointsUpdateUpdateManyWithoutBlockNestedInput
   }
 
   export type BlockUncheckedUpdateWithoutFolderInput = {
@@ -13122,6 +14778,7 @@ export namespace Prisma {
     questions?: QuestionUncheckedUpdateManyWithoutBlockNestedInput
     quizzes?: QuizUncheckedUpdateManyWithoutBlockNestedInput
     topic?: TopicUncheckedUpdateManyWithoutBlockNestedInput
+    pointsUpdates?: PointsUpdateUncheckedUpdateManyWithoutBlockNestedInput
   }
 
   export type BlockUncheckedUpdateManyWithoutFolderInput = {

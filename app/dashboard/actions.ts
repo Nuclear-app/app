@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
+import { Mode } from "@/lib/generated/prisma";
 
 const ROOT_FOLDER_ID = "f2120a35-5e3f-488e-be86-f0753af42e77";
 
@@ -323,10 +324,10 @@ export const fetchCrates = async () => {
     }
 };
 
-export const addBlock = async (title: string, folderId: string | null = ROOT_FOLDER_ID) => {
+export const addBlock = async (title: string, folderId: string | null = ROOT_FOLDER_ID, mode?: Mode) => {
     try {
         const userId = await getUser();
-
+        console.log("This is how the block is actually created")
         const block = await prisma.block.create({
             data: {
                 title: title.trim(),
@@ -336,7 +337,8 @@ export const addBlock = async (title: string, folderId: string | null = ROOT_FOL
                 note: JSON.stringify({
                     type: "doc",
                     content: [{ type: "paragraph" }]
-                })
+                }),
+                points: 0
             },
             select: {
                 id: true,

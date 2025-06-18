@@ -40,6 +40,14 @@ export const updatePoints = async (
       select: { points: true }
     });
 
+    // Create a PointsUpdate record for real-time tracking
+    await prisma.pointsUpdate.create({
+      data: {
+        blockId,
+        points,
+      }
+    });
+
     return { 
       success: true, 
       newPoints: updatedBlock.points 
@@ -53,8 +61,6 @@ export const updatePoints = async (
     };
   }
 };
-
-
 
 export const fetchNotes = async (blockId: string) => {
   const block = await prisma.block.findUnique({

@@ -10,6 +10,7 @@ import story from "@/public/story-study-type.svg"
 import { createInitialBlock } from "@/app/actions/create-initial-block"
 import { useState, Suspense } from "react"
 import { toast } from "sonner"
+import { updatePoints } from "@/lib/blockFetch"
 
 type StudyMode = 'sandbox' | 'campaign' | 'story';
 
@@ -23,8 +24,9 @@ function StudyTypeContent() {
 
     const handleModeSelect = async (mode: StudyMode, path: string) => {
         try {
-            setIsLoading(mode);
 
+            setIsLoading(mode);
+            console.log("Mode selected:", mode);
             // Store mode in localStorage for campaign and story modes
             if (mode !== 'sandbox') {
                 try {
@@ -39,16 +41,18 @@ function StudyTypeContent() {
                 if (!blockId) {
                     throw new Error('Block ID is required for existing blocks');
                 }
-                router.push(`${path}/${encodeURIComponent(blockId)}`);
+                router.push(`${path}/${encodeURIComponent(blockId)}?mode=${mode}`);
                 return;
             }
 
-            const result = await createInitialBlock(mode);
+            const result = await createInitialBlock();
             
             if (!result?.success || !result?.data?.id) {
                 throw new Error(result?.error || 'Failed to create initial block');
             }
 
+            // Update points based on mode
+           
             // Navigate to the appropriate path with the block ID
             router.push(`${path}?blockId=${encodeURIComponent(result.data.id)}`);
         } catch (error) {
