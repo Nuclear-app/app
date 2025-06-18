@@ -4,6 +4,7 @@ import { fetchContext } from "@/app/modeSpecific/fileInput/actions";
 import { generateExamples } from "@/lib/examplesPerplexity";
 import prisma from "@/lib/prisma";
 import { generateQuizzes } from "@/lib/quizGen";
+import { JSONContent } from "novel";
 
 export async function getNoteContent(blockId: string) {
   if (!blockId) {
@@ -23,17 +24,43 @@ export async function getNoteContent(blockId: string) {
 
   // Return empty editor state if no note exists
   if (!block.note) {
-    return JSON.stringify({
+    const emptyContent: JSONContent = {
       type: "doc",
       content: [
         {
           type: "paragraph",
         },
       ],
-    });
+    };
+    return JSON.stringify(emptyContent);
   }
 
-  return block.note;
+  // Ensure the note is properly formatted as JSONContent
+  try {
+    // If note is already a string, parse it to ensure it's valid JSON
+    const noteContent = typeof block.note === 'string' 
+      ? JSON.parse(block.note) 
+      : block.note;
+
+    // Validate the structure
+    if (!noteContent || typeof noteContent !== 'object' || !noteContent.type || !noteContent.content) {
+      throw new Error("Invalid note format");
+    }
+
+    return JSON.stringify(noteContent);
+  } catch (error) {
+    console.error("Error parsing note content:", error);
+    // Return empty editor state if parsing fails
+    const emptyContent: JSONContent = {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+        },
+      ],
+    };
+    return JSON.stringify(emptyContent);
+  }
 }
 
 export async function bgFunction(blockId: string) {

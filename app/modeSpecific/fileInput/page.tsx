@@ -17,6 +17,7 @@ import { createBrowserClient } from '@supabase/ssr'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { updateContext, fetchNotes } from './actions';
+import { generateNotes } from '@/lib/generateNotes';
 
 const acceptedFileTypes = {
 
@@ -169,6 +170,7 @@ function FileInputContent() {
           
           // Update the block with combined context
           await updateContext({ blockId, context: combinedContext });
+          await generateNotes(blockId);
         } catch (error) {
           console.error('Error updating block context:', error);
           throw error; // Re-throw to be caught by outer try-catch

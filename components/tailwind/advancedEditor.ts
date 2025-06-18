@@ -1,8 +1,9 @@
 "use client"
 
-import { EditorInstance, JSONContent } from "novel";
+import { EditorInstance, JSONContent, StarterKit } from "novel";
 import { useCallback } from "react";
 import { updateBlock } from "@/app/actions/update-block";
+import { generateHTML } from "@tiptap/html";
 
 interface SaveContentParams {
   blockId: string | undefined;
@@ -34,3 +35,4 @@ export async function saveContent({ blockId, content, setSaveStatus, setCurrentB
     console.error('Error saving content:', errorMessage);
   }
 }
+
