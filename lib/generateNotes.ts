@@ -61,7 +61,7 @@ export async function saveNotesToBlock(blockId: string, markdownContent: string)
       data: { 
         note: JSON.stringify(noteJson),
         // Extract title from first heading if it exists
-        title: markdownContent.match(/^#\s+(.+)$/m)?.[1] || "Untitled Note"
+        // title: markdownContent.match(/^#\s+(.+)$/m)?.[1] || "Untitled Note"
       },
       select: {
         id: true,
