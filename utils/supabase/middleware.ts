@@ -1,6 +1,74 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
+// Function to check if user owns a block via API call
+async function checkBlockOwnership(blockId: string, userId: string): Promise<boolean> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/auth/check-block-ownership`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ blockId, userId }),
+    });
+    
+    if (!response.ok) return false;
+    const result = await response.json();
+    return result.hasAccess;
+  } catch (error) {
+    console.error("Error checking block ownership:", error);
+    return false;
+  }
+}
+
+// Function to check if user owns a crate via API call
+async function checkCrateOwnership(crateId: string, userId: string): Promise<boolean> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/auth/check-crate-ownership`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ crateId, userId }),
+    });
+    
+    if (!response.ok) return false;
+    const result = await response.json();
+    return result.hasAccess;
+  } catch (error) {
+    console.error("Error checking crate ownership:", error);
+    return false;
+  }
+}
+
+// Function to extract resource ID from URL
+function extractResourceId(pathname: string): { type: 'block' | 'crate' | null, id: string | null } {
+  // Match /dashboard/block/[id] and its sub-routes
+  const blockMatch = pathname.match(/^\/dashboard\/block\/([^\/]+)/);
+  if (blockMatch) {
+    return { type: 'block', id: blockMatch[1] };
+  }
+
+  // Match /dashboard/crate/[id]
+  const crateMatch = pathname.match(/^\/dashboard\/crate\/([^\/]+)/);
+  if (crateMatch) {
+    return { type: 'crate', id: crateMatch[1] };
+  }
+
+  // Match API routes
+  const apiBlockMatch = pathname.match(/^\/api\/blocks\/([^\/]+)/);
+  if (apiBlockMatch) {
+    return { type: 'block', id: apiBlockMatch[1] };
+  }
+
+  const apiCrateMatch = pathname.match(/^\/api\/crates\/([^\/]+)/);
+  if (apiCrateMatch) {
+    return { type: 'crate', id: apiCrateMatch[1] };
+  }
+
+  return { type: null, id: null };
+}
+
 export const updateSession = async (request: NextRequest) => {
   // This `try/catch` block is only here for the interactive tutorial.
   // Feel free to remove once you have Supabase connected.
@@ -52,16 +120,54 @@ export const updateSession = async (request: NextRequest) => {
       user.app_metadata?.provider === 'discord' // is a Discord sign-in
     );
 
+    // Define protected routes that require authentication
+    const protectedRoutes = [
+      "/dashboard",
+      "/modeSpecific", 
+      "/onboarding",
+      "/protected",
+      "/api/blocks",
+      "/api/crates",
+      "/api/examples",
+      "/api/quizzes",
+      "/api/ocr",
+      "/api/facts",
+      "/api/generate",
+      "/api/upload",
+      "/api/fill-in-blank"
+    ];
+
+    // Check if current path is a protected route
+    const isProtectedRoute = protectedRoutes.some(route => 
+      request.nextUrl.pathname.startsWith(route)
+    );
+
     // Redirect unauthenticated users to sign-in for protected routes
-    if ((request.nextUrl.pathname.startsWith("/dashboard") ||
-         request.nextUrl.pathname.startsWith("/mode-specific")) && 
-        error)
-    {
+    if (isProtectedRoute && !user) {
       return NextResponse.redirect(new URL("/sign-in", request.url));
     }
 
+    // Check resource ownership for authenticated users
+    if (user && isProtectedRoute) {
+      const { type, id } = extractResourceId(request.nextUrl.pathname);
+      
+      if (type && id) {
+        let hasAccess = false;
+        
+        if (type === 'block') {
+          hasAccess = await checkBlockOwnership(id, user.id);
+        } else if (type === 'crate') {
+          hasAccess = await checkCrateOwnership(id, user.id);
+        }
+
+        if (!hasAccess) {
+          return NextResponse.redirect(new URL("/dashboard", request.url));
+        }
+      }
+    }
+
     // Handle root path and post-authentication redirects
-    if (!error) {
+    if (user) {
       // For root path or /protected path
       if (request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/protected") {
         if (isNewUser) {

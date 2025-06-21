@@ -36,10 +36,10 @@ const getUser = async () => {
     const supabase = await createClient();
     const { data: { user }, error } = await supabase.auth.getUser();
 
-    if (error) throw new Error("Authentication failed");
-    if (!user) throw new Error("No authenticated user found");
+    // if (error) throw new Error("Authentication failed");
+    // if (!user) throw new Error("No authenticated user found");
 
-    return user.id;
+    return user?.id;
 };
 
 // Single-purpose query methods
@@ -330,7 +330,7 @@ export const addBlock = async (title: string, folderId: string | null = ROOT_FOL
         const block = await prisma.block.create({
             data: {
                 title: title.trim(),
-                authorId: userId,
+                authorId: userId || "",
                 folderId,
                 context: "",
                 note: JSON.stringify({

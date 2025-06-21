@@ -10,23 +10,24 @@ import story from "@/public/story-study-type.svg"
 import { createInitialBlock } from "@/app/actions/create-initial-block"
 import { useState, Suspense } from "react"
 import { toast } from "sonner"
+import { Block, Mode } from "@/lib/generated/prisma";
 
-type StudyMode = 'sandbox' | 'campaign' | 'story';
+
 
 function StudyTypeContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [isLoading, setIsLoading] = useState<StudyMode | null>(null);
-
-    const newBlock = searchParams.get('newBlock') === 'true';
+    const [isLoading, setIsLoading] = useState<Mode | null>(null);
+    
     const blockId = searchParams.get('blockId');
+    const newBlock = !blockId;
 
-    const handleModeSelect = async (mode: StudyMode, path: string) => {
+    const handleModeSelect = async (mode: Mode, path: string) => {
         try {
             setIsLoading(mode);
 
             // Store mode in localStorage for campaign and story modes
-            if (mode !== 'sandbox') {
+            if (mode !== Mode.HARD) {
                 try {
                     localStorage.setItem('selectedMode', mode);
                 } catch (e) {
@@ -34,7 +35,7 @@ function StudyTypeContent() {
                 }
             }
 
-            // Create initial block if needed
+            // Handle existing blocks
             if (!newBlock) {
                 if (!blockId) {
                     throw new Error('Block ID is required for existing blocks');
@@ -43,14 +44,21 @@ function StudyTypeContent() {
                 return;
             }
 
+            // Create new block for new users
             const result = await createInitialBlock(mode);
             
             if (!result?.success || !result?.data?.id) {
                 throw new Error(result?.error || 'Failed to create initial block');
             }
 
-            // Navigate to the appropriate path with the block ID
-            router.push(`${path}/${encodeURIComponent(result.data.id)}`);
+            // Navigate to the appropriate path based on mode
+            if (mode === Mode.HARD) {
+                // Deathmarch mode - go directly to block editor
+                router.push(`/dashboard/block/${encodeURIComponent(result.data.id)}`);
+            } else {
+                // Story & Sword and Just the Story modes - go to file input
+                router.push(`/modeSpecific/fileInput?blockId=${encodeURIComponent(result.data.id)}`);
+            }
         } catch (error) {
             console.error('Error in handleModeSelect:', error);
             toast.error(error instanceof Error ? error.message : 'Failed to process your request');
@@ -72,23 +80,23 @@ function StudyTypeContent() {
                         image={sandbox}
                         title="Deathmarch"
                         description="I have some things in my mind, and I want to start notetaking right away."
-                        onClick={() => handleModeSelect('sandbox', '/dashboard/block')}
+                        onClick={() => handleModeSelect(Mode.HARD, '/dashboard/block')}
                         disabled={isLoading !== null}
-                        loading={isLoading === 'sandbox'} />
+                        loading={isLoading === Mode.HARD} />
                     <SelectStudyType 
                         image={campaign}
                         title="Story & Sword"
                         description="I have some resources, but I need help to actually learn them."
-                        onClick={() => handleModeSelect('campaign', '/modeSpecific/fileInput')}
+                        onClick={() => handleModeSelect(Mode.MEDIUM, '/modeSpecific/fileInput')}
                         disabled={isLoading !== null}
-                        loading={isLoading === 'campaign'} />
+                        loading={isLoading === Mode.MEDIUM} />
                     <SelectStudyType 
                         image={story}
                         title="Just the Story"
                         description="I just want to dump everything I have and have summaries made for me."
-                        onClick={() => handleModeSelect('story', '/modeSpecific/fileInput')}
+                        onClick={() => handleModeSelect(Mode.EASY, '/modeSpecific/fileInput')}
                         disabled={isLoading !== null}
-                        loading={isLoading === 'story'} />
+                        loading={isLoading === Mode.EASY} />
                 </CardContent>
                 <CardFooter className="flex justify-center">
                     <div>
