@@ -13,6 +13,13 @@ interface Quiz {
   options: string[];
 }
 
+export const removeMistake = async (quizId: string) => {
+  await prisma.quiz.update({
+    where: { id: quizId },
+    data: { mistake: null }
+  });
+};
+
 export const fetchQuiz = async (blockId: string): Promise<Quiz[]> => {
   try {
     if (!blockId) {

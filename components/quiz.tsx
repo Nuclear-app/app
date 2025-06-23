@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { fetchQuiz, updateMistake} from "@/lib/quizFetch"
+import { fetchQuiz, updateMistake, removeMistake } from "@/lib/quizFetch"
 import { updatePoints } from "@/lib/blockFetch"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
@@ -34,6 +34,7 @@ export function Quiz({ blockId }: QuizProps) {
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
     const [score, setScore] = useState(0)
     const [lastQuestionPoints, setLastQuestionPoints] = useState<number>(0)
+    const [randomizedOptions, setRandomizedOptions] = useState<string[]>([])
     const router = useRouter()
 
     // Arrays of motivational messages
@@ -72,6 +73,11 @@ export function Quiz({ blockId }: QuizProps) {
         return Math.floor(Math.random() * (max - min + 1)) + min
     }
 
+    // Function to randomize options
+    const randomizeOptions = (options: string[]) => {
+        return [...options].sort(() => Math.random() - 0.5)
+    }
+
     useEffect(() => {
         const loadQuizzes = async () => {
             const quizData = await fetchQuiz(blockId)
@@ -82,6 +88,13 @@ export function Quiz({ blockId }: QuizProps) {
 
     const currentQuiz = quizzes[currentQuizIndex]
 
+    // Randomize options when current quiz changes
+    useEffect(() => {
+        if (currentQuiz) {
+            setRandomizedOptions(randomizeOptions(currentQuiz.options))
+        }
+    }, [currentQuiz])
+
     const handleAnswer = async (answer: string) => {
         setSelectedAnswer(answer)
         const correct = answer === currentQuiz.correctAns
@@ -91,6 +104,11 @@ export function Quiz({ blockId }: QuizProps) {
             setScore(prev => prev + 1)
             setLastQuestionPoints(20)
             await updatePoints(blockId, randomNumber(5, 10))
+            
+            // If this was a previous mistake question, remove the mistake
+            if (currentQuiz.mistake) {
+                await removeMistake(currentQuiz.id)
+            }
         } else {
             setLastQuestionPoints(-10)
             await updateMistake(currentQuiz.id, answer)
@@ -138,7 +156,7 @@ export function Quiz({ blockId }: QuizProps) {
                         <span className="inline-block mb-6 px-4 py-2 text-lg font-semibold bg-[#3C3535] text-white rounded-full">Previous Mistake</span>
                     )}
                     <div className="space-y-4">
-                        {currentQuiz.options.map((option, index) => {
+                        {randomizedOptions.map((option, index) => {
                             let buttonVariant: "link" | "outline" | "default" | "destructive" | "secondary" | "ghost" = "outline";
                             let buttonClassName = "w-full p-12 justify-start rounded-xl bg-[#3C3535] text-wrap hover:bg-[#3C3535]/80";
                             
