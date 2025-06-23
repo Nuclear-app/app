@@ -1,4 +1,4 @@
-import StudyType from "@/components/StudyType";
+import StudyType from "@/components/studyType";
 
 export default function StudyTypePage() {
     return <StudyType />;

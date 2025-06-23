@@ -183,7 +183,7 @@ function FileInputContent() {
       }
       
       // After context is generated and saved, navigate to the appropriate page
-      const redirectPath = mode === 'campaign' 
+      const redirectPath = mode === 'MEDIUM' 
         ? `/modeSpecific/fillInTheBlanks?blockId=${blockId}` 
         : `/dashboard/block/${blockId}?fromFileInput=true`;
       
