@@ -10,6 +10,7 @@ import Image from "next/image"
 import sad from "@/public/quizJonas/sad.svg"
 import happy from "@/public/quizJonas/happy.svg"
 import neutral from "@/public/quizJonas/neutral.svg"
+import { Loading } from "@/components/ui/loading"
 
 interface QuizProps {
     blockId: string
@@ -109,7 +110,11 @@ export function Quiz({ blockId }: QuizProps) {
     }
 
     if (!currentQuiz) {
-        return <div>Loading...</div>
+        return (
+            <div className="h-5/6 flex flex-col items-center justify-center">
+                <Loading />
+            </div>
+        )
     }
 
     return (
@@ -127,7 +132,11 @@ export function Quiz({ blockId }: QuizProps) {
                 </div>
 
                 <Card className="p-6 rounded-3xl bg-[#221D1D]">
-                    <h3 className="text-2xl rounded-3xl font-black mb-4 p-2">{currentQuiz.question}</h3>
+
+                    <h3 className="text-2xl rounded-3xl font-black p-2">{currentQuiz.question}</h3>
+                    {currentQuiz.mistake && (
+                        <span className="inline-block mb-6 px-4 py-2 text-lg font-semibold bg-[#3C3535] text-white rounded-full">Previous Mistake</span>
+                    )}
                     <div className="space-y-4">
                         {currentQuiz.options.map((option, index) => {
                             let buttonVariant: "link" | "outline" | "default" | "destructive" | "secondary" | "ghost" = "outline";
