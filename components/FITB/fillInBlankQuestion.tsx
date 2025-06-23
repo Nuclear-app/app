@@ -10,6 +10,9 @@ interface FillInBlankQuestionProps {
     hint?: string;
     onAnswerChange?: (answer: string, isCorrect: boolean) => void;
     className?: string;
+    showAnswer?: boolean;
+    disabled?: boolean;
+    autoFocus?: boolean;
 }
 
 export function FillInBlankQuestion({
@@ -18,6 +21,9 @@ export function FillInBlankQuestion({
     hint,
     onAnswerChange,
     className,
+    showAnswer = false,
+    disabled = false,
+    autoFocus = false,
 }: FillInBlankQuestionProps) {
     const [userAnswer, setUserAnswer] = useState("");
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -41,7 +47,7 @@ export function FillInBlankQuestion({
             <div className="relative inline-block mx-1">
                 <Input
                     type="text"
-                    value={userAnswer}
+                    value={showAnswer ? answer : userAnswer}
                     onChange={(e) => handleAnswerChange(e.target.value)}
                     placeholder=""
                     style={{
@@ -55,6 +61,8 @@ export function FillInBlankQuestion({
                         isCorrect === false && "border-b-red-500",
                         isCorrect === null && "border-b-gray-300"
                     )}
+                    disabled={disabled}
+                    autoFocus={autoFocus}
                 />
                 {/* {hint && (
                     <div className="absolute -bottom-6 left-0 text-xs text-muted-foreground whitespace-nowrap">
@@ -65,4 +73,4 @@ export function FillInBlankQuestion({
             {afterBlank}
         </span>
     );
-} 
+}
