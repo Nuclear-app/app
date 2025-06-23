@@ -20,7 +20,7 @@ export const fetchQuiz = async (blockId: string): Promise<Quiz[]> => {
     }
 
     // Get all topics and quizzes in a single transaction
-    const result = await prisma.$transaction(async (tx) => {
+    let { unusedQuizzes, mistakeQuizzes } = await prisma.$transaction(async (tx) => {
       // Get topics
       const topics = await tx.topic.findMany({
         where: { blockId },
@@ -31,47 +31,86 @@ export const fetchQuiz = async (blockId: string): Promise<Quiz[]> => {
         throw new Error("No topics found for this block");
       }
 
-      // Get topics with mistakes
-      const topicsWithMistakes = await tx.quiz.findMany({
+      const topicIds = topics.map(t => t.id);
+
+      // Get all quizzes with mistakes (even if used)
+      const mistakeQuizzes = await tx.quiz.findMany({
         where: {
-          topicId: { in: topics.map(t => t.id) },
+          topicId: { in: topicIds },
           mistake: { not: null }
-        },
-        select: { topicId: true },
-        distinct: ['topicId'],
-        take: 10
+        }
       });
 
-      // Get all needed quizzes in one query
-      const quizzes = await tx.quiz.findMany({
+      // Get up to 10 unused quizzes
+      const unusedQuizzes = await tx.quiz.findMany({
         where: {
-          topicId: { in: topics.map(t => t.id) },
+          topicId: { in: topicIds },
           used: false
         },
         take: 10
       });
 
-      // Mark quizzes as used
-      if (quizzes.length > 0) {
+      // Mark unused quizzes as used
+      if (unusedQuizzes.length > 0) {
         await tx.quiz.updateMany({
           where: {
-            id: { in: quizzes.map(q => q.id) }
+            id: { in: unusedQuizzes.map(q => q.id) }
           },
           data: { used: true }
         });
       }
 
-      return quizzes;
+      return { unusedQuizzes, mistakeQuizzes };
     });
 
-    // Shuffle and return
-    return result.sort(() => Math.random() - 0.5);
+    // If no quizzes, generate more
+    if (unusedQuizzes.length === 0 && mistakeQuizzes.length === 0) {
+      // Get block context
+      const block = await prisma.block.findUnique({
+        where: { id: blockId },
+        select: { context: true }
+      });
+      if (!block || !block.context) {
+        throw new Error("Block context not found for quiz generation");
+      }
+      await generateQuizzes(block.context, blockId);
+      // Fetch quizzes again
+      const topics = await prisma.topic.findMany({
+        where: { blockId },
+        select: { id: true }
+      });
+      const topicIds = topics.map(t => t.id);
+      mistakeQuizzes = await prisma.quiz.findMany({
+        where: {
+          topicId: { in: topicIds },
+          mistake: { not: null }
+        }
+      });
+      unusedQuizzes = await prisma.quiz.findMany({
+        where: {
+          topicId: { in: topicIds },
+          used: false
+        },
+        take: 10
+      });
+      if (unusedQuizzes.length > 0) {
+        await prisma.quiz.updateMany({
+          where: {
+            id: { in: unusedQuizzes.map(q => q.id) }
+          },
+          data: { used: true }
+        });
+      }
+    }
+
+    // Combine and shuffle
+    const combined = [...mistakeQuizzes, ...unusedQuizzes];
+    return combined.sort(() => Math.random() - 0.5);
   } catch (error) {
     console.error("Error fetching quizzes:", error);
-    throw new Error("Failed to fetch quizzes");
+    throw new Error("Failed to fetch quizzes");                  
   }
 };
-
 export const updateMistake = async (quizId: string, mistake: string) => {
   try {
     await prisma.quiz.update({
