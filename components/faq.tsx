@@ -83,8 +83,8 @@ export default function FAQ({ blockId, text }: { blockId: string; text: string }
     };
 
     return (
-        <div className="w-full max-w-full mx-auto flex flex-col gap-4 h-[calc(100vh-2rem)]">
-            <div className="space-y-6 overflow-y-auto flex-1 bg-[#292929] border-[#161616] border-8 px-4 py-4 rounded-3xl">
+        <div className="w-3/5 max-w-full mx-auto flex flex-col gap-4 h-[calc(100vh-2rem)]">
+            <div className="space-y-6 overflow-y-auto flex-1 bg-[#221D1D] border-[#3C3535] border-8 px-4 py-4 rounded-3xl">
                 <div className="leading-none">
                     <h2 className="text-2xl font-bold">FAQ</h2>
                     <p className="text-sm text-muted-foreground"> These are some things to remember personalized for you. </p>
@@ -97,7 +97,7 @@ export default function FAQ({ blockId, text }: { blockId: string; text: string }
                     </div>
                 ) : (
                     faqItems.map((item) => (
-                        <div key={item.id} className="border rounded-xl p-4 bg-[#161616]">
+                        <div key={item.id} className="border rounded-xl p-4 bg-[#3C3535]">
                             <h3 className="font-semibold text-lg mb-2">{item.question}</h3>
                             <p className="text-foreground">{item.answer}</p>
                         </div>
