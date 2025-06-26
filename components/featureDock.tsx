@@ -64,7 +64,7 @@ export function FeatureDock({ blockId }: { blockId: string }) {
                                 <TabsTrigger value="history">File History</TabsTrigger>
                             </TabsList>
                             <TabsContent value="upload" className="mt-4">
-                                <FileUpload returnFiles={handleFileUpload} mode="upload" blockId={blockId} />
+                                <FileUpload returnFiles={handleFileUpload} mode="upload" blockId={blockId} newBlock={false} />
                             </TabsContent>
                             <TabsContent value="history" className="mt-4">
                                 <FileHistory blockId={blockId} />
