@@ -15,7 +15,7 @@ export default function Topic({ topicName, examples }: TopicProps) {
     <Collapsible
       open={isOpen}
       onOpenChange={setIsOpen}
-      className="rounded-md p-4 bg-[#161616] space-y-2 col-span-1"
+      className="rounded-md p-4 bg-[#3C3535] space-y-2 col-span-1"
     >
       <div className="">
         <CollapsibleTrigger asChild>

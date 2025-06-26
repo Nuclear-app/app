@@ -41,19 +41,19 @@ export default function Examples({ blockID }: ExamplesProps) {
   }
 
   return (
-    <div className="w-full mx-auto">
+    <div className="w-3/5 mx-auto">
       {error && (
         <div className="p-4 text-sm text-destructive bg-destructive/10 rounded-lg">
           {error}
         </div>
       )}
-      <div className="space-y-6 overflow-y-auto flex-1 bg-[#292929] border-[#161616] border-8 px-4 py-4 rounded-3xl">
+      <div className="space-y-6 overflow-y-auto flex-1 bg-[#221D1D] border-[#3C3535] border-8 px-4 py-4 rounded-3xl">
         <div className="leading-none">
           <h2 className="text-2xl font-bold">Examples</h2>
           <p className="text-sm text-muted-foreground">Here are some examples to help you understand the concepts better.</p>
         </div>
         <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 space-y-2">
+          <div className="flex-1 space-y-4">
             {topics.filter((_, index) => index % 2 === 0).map((topic) => (
               <Topic 
                 key={topic.id}
@@ -62,7 +62,7 @@ export default function Examples({ blockID }: ExamplesProps) {
               />
             ))}
           </div>
-          <div className="flex-1 space-y-2">
+          <div className="flex-1 space-y-4">
             {topics.filter((_, index) => index % 2 === 1).map((topic) => (
               <Topic 
                 key={topic.id}
