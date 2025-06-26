@@ -54,7 +54,7 @@ function StudyTypeContent() {
             // Update points based on mode
            
             // Navigate to the appropriate path with the block ID
-            router.push(`${path}?blockId=${encodeURIComponent(result.data.id)}`);
+            router.push(`${path}/${encodeURIComponent(result.data.id)}`);
         } catch (error) {
             console.error('Error in handleModeSelect:', error);
             toast.error(error instanceof Error ? error.message : 'Failed to process your request');
