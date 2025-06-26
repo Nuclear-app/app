@@ -32,7 +32,6 @@ model Block {
   author         User             @relation(fields: [authorId], references: [id])
   folder         Folder?          @relation(fields: [folderId], references: [id])
   FillInTheBlank FillInTheBlank[]
-  PointsUpdate   PointsUpdate[]
   questions      Question[]
   quizzes        Quiz[]
   topic          Topic[]
