@@ -64,6 +64,8 @@ export default function FAQ({ blockId, text }: { blockId: string; text: string }
         setError("");
 
         try {
+            console.log("User asked question")
+            await updatePoints(blockId, 5);
             const answer = await generateFAQAnswer(text, values.question, blockId);
             const newFAQ: FAQItem = {
                 id: answer.id,
@@ -73,7 +75,7 @@ export default function FAQ({ blockId, text }: { blockId: string; text: string }
             };
             setFaqItems(prev => [...prev, newFAQ]);
             form.reset();
-            await updatePoints(blockId, 5);
+            
         } catch (err) {
             setError("Failed to generate answer. Please try again.");
             console.error(err);
