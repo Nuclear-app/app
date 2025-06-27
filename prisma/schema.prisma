@@ -20,23 +20,22 @@ model User {
 }
 
 model Block {
-  id             String           @id @default(uuid())
-  createdAt      DateTime         @default(now())
-  title          String
-  authorId       String
-  folderId       String?
-  context        String?
-  points         Int?             @default(0)
-  files          String[]
-  note           Json?
-  author         User             @relation(fields: [authorId], references: [id])
-  folder         Folder?          @relation(fields: [folderId], references: [id])
-  FillInTheBlank FillInTheBlank[]
-  PointsUpdate   PointsUpdate[]
-  questions      Question[]
-  quizzes        Quiz[]
-  topic          Topic[]
-  pointsUpdates  PointsUpdate[]
+  id              String           @id @default(uuid())
+  createdAt       DateTime         @default(now())
+  title           String
+  authorId        String
+  folderId        String?
+  context         String?
+  points          Int?             @default(0)
+  files           String[]
+  note            Json?
+  author          User             @relation(fields: [authorId], references: [id])
+  folder          Folder?          @relation(fields: [folderId], references: [id])
+  fillInTheBlanks FillInTheBlank[]
+  pointsUpdates   PointsUpdate[]
+  questions       Question[]
+  quizzes         Quiz[]
+  topics          Topic[]
 }
 
 model Quiz {
@@ -80,7 +79,7 @@ model FillInTheBlank {
   answer   String
   hint     String?
   blockId  String
-  Block    Block   @relation(fields: [blockId], references: [id])
+  block    Block   @relation(fields: [blockId], references: [id])
 }
 
 model Topic {
@@ -88,8 +87,8 @@ model Topic {
   name     String
   blockId  String
   examples String[]
-  Quiz     Quiz[]
-  Block    Block    @relation(fields: [blockId], references: [id])
+  quizzes  Quiz[]
+  block    Block    @relation(fields: [blockId], references: [id])
 }
 
 model PointsUpdate {

@@ -194,10 +194,10 @@ export async function getPointsUpdateBlock(id: string): Promise<Block | null> {
 
     const pointsUpdate = await prisma.pointsUpdate.findUnique({
       where: { id },
-      include: { Block: true }
+      include: { block: true }
     })
 
-    return pointsUpdate?.Block || null
+    return pointsUpdate?.block || null
   } catch (error) {
     if (error instanceof PointsUpdateError) throw error
     throw new PointsUpdateError(`Failed to get points update block: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
@@ -229,7 +229,7 @@ export async function getPointsUpdatesByBlock(blockId: string): Promise<PointsUp
 /**
  * Get points update with all related data
  * @param id - The points update's unique identifier
- * @returns Promise<PointsUpdate & { Block: Block }> - Points update with related data
+ * @returns Promise<PointsUpdate & { block: Block }> - Points update with related data
  */
 export async function getPointsUpdateWithRelations(id: string) {
   try {
@@ -239,7 +239,7 @@ export async function getPointsUpdateWithRelations(id: string) {
 
     const pointsUpdate = await prisma.pointsUpdate.findUnique({
       where: { id },
-      include: { Block: true }
+      include: { block: true }
     })
 
     return pointsUpdate

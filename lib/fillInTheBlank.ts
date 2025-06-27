@@ -286,10 +286,10 @@ export async function getFillInTheBlankBlock(id: string): Promise<Block | null> 
 
     const fillInTheBlank = await prisma.fillInTheBlank.findUnique({
       where: { id },
-      include: { Block: true }
+      include: { block: true }
     })
 
-    return fillInTheBlank?.Block || null
+    return fillInTheBlank?.block || null
   } catch (error) {
     if (error instanceof FillInTheBlankError) throw error
     throw new FillInTheBlankError(`Failed to get fill-in-the-blank block: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
@@ -321,7 +321,7 @@ export async function getFillInTheBlanksByBlock(blockId: string): Promise<FillIn
 /**
  * Get fill-in-the-blank with all related data
  * @param id - The fill-in-the-blank's unique identifier
- * @returns Promise<FillInTheBlank & { Block: Block }> - Fill-in-the-blank with related data
+ * @returns Promise<FillInTheBlank & { block: Block }> - Fill-in-the-blank with related data
  */
 export async function getFillInTheBlankWithRelations(id: string) {
   try {
@@ -331,7 +331,7 @@ export async function getFillInTheBlankWithRelations(id: string) {
 
     const fillInTheBlank = await prisma.fillInTheBlank.findUnique({
       where: { id },
-      include: { Block: true }
+      include: { block: true }
     })
 
     return fillInTheBlank

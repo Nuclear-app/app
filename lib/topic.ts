@@ -310,10 +310,10 @@ export async function getTopicBlock(id: string): Promise<Block | null> {
 
     const topic = await prisma.topic.findUnique({
       where: { id },
-      include: { Block: true }
+      include: { block: true }
     })
 
-    return topic?.Block || null
+    return topic?.block || null
   } catch (error) {
     if (error instanceof TopicError) throw error
     throw new TopicError(`Failed to get topic block: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
@@ -323,7 +323,7 @@ export async function getTopicBlock(id: string): Promise<Block | null> {
 /**
  * Get topic's quizzes
  * @param id - The topic's unique identifier
- * @returns Promise<Quiz[]> - Array of topic's quizzes
+ * @returns Promise<Quiz[]> - Array of quizzes for the topic
  */
 export async function getTopicQuizzes(id: string): Promise<Quiz[]> {
   try {
@@ -333,10 +333,10 @@ export async function getTopicQuizzes(id: string): Promise<Quiz[]> {
 
     const topic = await prisma.topic.findUnique({
       where: { id },
-      include: { Quiz: true }
+      include: { quizzes: true }
     })
 
-    return topic?.Quiz || []
+    return topic?.quizzes || []
   } catch (error) {
     if (error instanceof TopicError) throw error
     throw new TopicError(`Failed to get topic quizzes: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
@@ -368,7 +368,7 @@ export async function getTopicsByBlock(blockId: string): Promise<Topic[]> {
 /**
  * Get topic with all related data
  * @param id - The topic's unique identifier
- * @returns Promise<Topic & { Block: Block, Quiz: Quiz[] }> - Topic with related data
+ * @returns Promise<Topic & { block: Block; quizzes: Quiz[] }> - Topic with related data
  */
 export async function getTopicWithRelations(id: string) {
   try {
@@ -378,10 +378,7 @@ export async function getTopicWithRelations(id: string) {
 
     const topic = await prisma.topic.findUnique({
       where: { id },
-      include: {
-        Block: true,
-        Quiz: true
-      }
+      include: { block: true, quizzes: true }
     })
 
     return topic
@@ -583,12 +580,12 @@ export async function getTopicsWithQuizzes(): Promise<Topic[]> {
   try {
     const topics = await prisma.topic.findMany({
       where: {
-        Quiz: {
+        quizzes: {
           some: {}
         }
       },
       include: {
-        Quiz: true
+        quizzes: true
       }
     })
 
