@@ -5,6 +5,7 @@ import { generateExamples } from "@/lib/examplesPerplexity";
 import prisma from "@/lib/prisma";
 import { generateQuizzes } from "@/lib/quizGen";
 import { JSONContent } from "novel";
+import { getFullContext } from "../actions";
 
 export async function getNoteContent(blockId: string) {
   if (!blockId) {
@@ -64,7 +65,7 @@ export async function getNoteContent(blockId: string) {
 }
 
 export async function bgFunction(blockId: string) {
-  const content = await fetchContext(blockId);
+  const content = await getFullContext(blockId);
   generateExamples(content, blockId)
   generateQuizzes(content, blockId)
 }

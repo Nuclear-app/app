@@ -2,7 +2,7 @@
 
 import FAQ from "@/components/faq";
 import { useEffect, useState, use } from "react";
-import { getBlockContext } from "../../actions";
+import { getFullContext } from "../../actions";
 import { BlockViewNav } from "@/components/blockViewNav";
 
 interface Props {
@@ -24,7 +24,7 @@ export default function FAQPage({ params }: Props) {
 
             console.log('Loading context for block:', id);
             try {
-                const blockContext = await getBlockContext(id);
+                const blockContext = await getFullContext(id);
                 console.log('Fetched context:', blockContext);
                 setContext(blockContext || "");
             } catch (error) {
