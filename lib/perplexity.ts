@@ -32,7 +32,7 @@ IMPORTANT RULES:
    - Preserve the original context from the text
    - Be clear and unambiguous
 3. Each answer must be:
-   - A single word or at most 2-3 words
+   - It must be a single word
    - A meaningful term, concept, or key phrase (NOT articles, prepositions, or common words)
    - Something that tests understanding of the text's main concepts
    - A term that appears in the original text (no paraphrasing)

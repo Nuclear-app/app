@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { fetchQuiz, updateMistake} from "@/lib/quizFetch"
+import { fetchQuiz, updateMistake, removeMistake } from "@/lib/quizFetch"
 import { updatePoints } from "@/lib/blockFetch"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import sad from "@/public/quizJonas/sad.svg"
 import happy from "@/public/quizJonas/happy.svg"
 import neutral from "@/public/quizJonas/neutral.svg"
+import { Loading } from "@/components/ui/loading"
 
 interface QuizProps {
     blockId: string
@@ -33,7 +34,49 @@ export function Quiz({ blockId }: QuizProps) {
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
     const [score, setScore] = useState(0)
     const [lastQuestionPoints, setLastQuestionPoints] = useState<number>(0)
+    const [randomizedOptions, setRandomizedOptions] = useState<string[]>([])
     const router = useRouter()
+
+    // Arrays of motivational messages
+    const correctMessages = [
+        "You got that right!",
+        "Excellent work!",
+        "Perfect answer!",
+        "You're on fire!",
+        "Brilliant!",
+        "That's the way!",
+        "You nailed it!",
+        "Outstanding!",
+        "Great job!",
+        "You're crushing it!"
+    ]
+
+    const wrongMessages = [
+        "Wrong don't give up",
+        "Keep trying!",
+        "Don't worry, you'll get it!",
+        "Almost there!",
+        "You're learning!",
+        "Next time for sure!",
+        "Stay positive!",
+        "You've got this!",
+        "Keep going!",
+        "Learning is a journey!"
+    ]
+
+    // Function to get random message from array
+    const getRandomMessage = (messages: string[]) => {
+        return messages[Math.floor(Math.random() * messages.length)]
+    }
+
+    const randomNumber = (min: number, max: number) => {
+        return Math.floor(Math.random() * (max - min + 1)) + min
+    }
+
+    // Function to randomize options
+    const randomizeOptions = (options: string[]) => {
+        return [...options].sort(() => Math.random() - 0.5)
+    }
 
     useEffect(() => {
         const loadQuizzes = async () => {
@@ -45,6 +88,13 @@ export function Quiz({ blockId }: QuizProps) {
 
     const currentQuiz = quizzes[currentQuizIndex]
 
+    // Randomize options when current quiz changes
+    useEffect(() => {
+        if (currentQuiz) {
+            setRandomizedOptions(randomizeOptions(currentQuiz.options))
+        }
+    }, [currentQuiz])
+
     const handleAnswer = async (answer: string) => {
         setSelectedAnswer(answer)
         const correct = answer === currentQuiz.correctAns
@@ -53,11 +103,16 @@ export function Quiz({ blockId }: QuizProps) {
         if (correct) {
             setScore(prev => prev + 1)
             setLastQuestionPoints(20)
-            await updatePoints(blockId, 5)
+            await updatePoints(blockId, randomNumber(5, 10))
+            
+            // If this was a previous mistake question, remove the mistake
+            if (currentQuiz.mistake) {
+                await removeMistake(currentQuiz.id)
+            }
         } else {
             setLastQuestionPoints(-10)
             await updateMistake(currentQuiz.id, answer)
-            await updatePoints(blockId, -5)
+            await updatePoints(blockId, randomNumber(-5, 0))
         }
     }
 
@@ -73,40 +128,71 @@ export function Quiz({ blockId }: QuizProps) {
     }
 
     if (!currentQuiz) {
-        return <div>Loading...</div>
+        return (
+            <div className="h-5/6 flex flex-col items-center justify-center">
+                <Loading />
+            </div>
+        )
     }
 
     return (
-        <div className="h-5/6 p-4 grid grid-cols-3 gap-4 grid-rows-3">
+        <div className="h-5/6 flex flex-col items-center justify-center">
             {/* Main content - takes 3 columns */}
-            <div className="col-span-2 row-span-3 rounded-xl border-8 border-[#161616] bg-[#292929] p-4">
-                <div className="mb-4">
-                    <h2 className="text-2xl font-bold mb-2">Quiz</h2>
-                    <p className="text-sm text-gray-500">Test your knowledge {score}</p>
+            
+            <div className="rounded-xl  p-4 w-3/4 md:w-1/2 ">
+                <div className="mb-8">
+                    <div className="w-full bg-[#221D1D] rounded-full h-6">
+                        <div 
+                            className="bg-[#00D3BE] h-6 rounded-full transition-all duration-300 ease-out"
+                            style={{ width: `${((currentQuizIndex + 1) / quizzes.length) * 100}%` }}
+                        ></div>
+                    </div>
                 </div>
 
-                <Card className="bg-[#292929]">
-                    <h3 className="text-xl rounded-xl bg-[#161616] font-semibold mb-4 p-2">{currentQuiz.question}</h3>
-                    <p className="text-xl pb-2 text-bold">Choose</p>
-                    <div className="space-y-2">
-                        {currentQuiz.options.map((option, index) => (
-                            <Button
-                                key={index}
-                                variant={selectedAnswer === option
-                                    ? (isCorrect ? "default" : "destructive")
-                                    : "outline"}
-                                className="w-full p-5 justify-start rounded-xl bg-[#161616] hover:bg-[#161616]/80"
-                                onClick={() => !selectedAnswer && handleAnswer(option)}
-                                disabled={selectedAnswer !== null}
-                            >
-                                {option}
-                            </Button>
-                        ))}
+                <Card className="p-6 rounded-3xl bg-[#221D1D]">
+
+                    <h3 className="text-2xl rounded-3xl font-black p-2">{currentQuiz.question}</h3>
+                    {currentQuiz.mistake && (
+                        <span className="inline-block mb-6 px-4 py-2 text-lg font-semibold bg-[#3C3535] text-white rounded-full">Previous Mistake</span>
+                    )}
+                    <div className="space-y-4">
+                        {randomizedOptions.map((option, index) => {
+                            let buttonVariant: "link" | "outline" | "default" | "destructive" | "secondary" | "ghost" = "outline";
+                            let buttonClassName = "w-full p-12 justify-start rounded-xl bg-[#3C3535] text-wrap hover:bg-[#3C3535]/80";
+                            
+                            if (selectedAnswer) {
+                                if (option === currentQuiz.correctAns) {
+                                    // Correct answer - always green
+                                    buttonVariant = "default";
+                                    buttonClassName = "w-full p-12 justify-start rounded-xl bg-green-600 text-wrap hover:bg-green-600/80";
+                                } else if (selectedAnswer === option && !isCorrect) {
+                                    // Wrong selected answer - red
+                                    buttonVariant = "destructive";
+                                    buttonClassName = "w-full p-12 justify-start rounded-xl bg-red-600 text-wrap hover:bg-red-600/80";
+                                }
+                            } else if (selectedAnswer === option) {
+                                // User's selection before checking
+                                buttonVariant = isCorrect ? "default" : "destructive";
+                                buttonClassName = "w-full p-12 justify-start rounded-xl bg-[#3C3535] text-wrap hover:bg-[#3C3535]/80";
+                            }
+                            
+                            return (
+                                <Button
+                                    key={index}
+                                    variant={buttonVariant}
+                                    className={buttonClassName}
+                                    onClick={() => !selectedAnswer && handleAnswer(option)}
+                                    disabled={selectedAnswer !== null}
+                                >
+                                    {option}
+                                </Button>
+                            );
+                        })}
                     </div>
                 </Card>
 
                 {selectedAnswer && (
-                    <div className="space-y-4 mt-4">
+                    <div className="space-y-8 mt-8">
                         {/* <div className={`p-4 rounded-lg ${isCorrect ? "bg-green-100 dark:bg-green-900" : "bg-red-100 dark:bg-red-900"}`}>
                             <p className="font-medium">
                                 {isCorrect ? "Correct!" : "Incorrect!"}
@@ -117,52 +203,15 @@ export function Quiz({ blockId }: QuizProps) {
                                 </p>
                             )}
                         </div> */}
-                        <Button className="w-full" onClick={handleNext}>
-                            {currentQuizIndex < quizzes.length - 1 ? "Next Question" : "Finish Quiz"}
+                        <Button className="w-full p-8 h-12 rounded-3xl font-black text-2xl" onClick={handleNext}>
+                            {currentQuizIndex < quizzes.length - 1 
+                                ? (isCorrect ? getRandomMessage(correctMessages) : getRandomMessage(wrongMessages))
+                                : "All done! Go to the block"
+                            }
                         </Button>
                     </div>
                 )}
             </div>
-
-            {/* Top right card - takes 1 column */}
-            <Card className="bg-[#292929] row-span-1 p-4 flex flex-col items-center justify-center">
-                <h3 className="text-xl font-semibold mb-2">Points</h3>
-                {selectedAnswer && (
-                    <div className="flex items-center justify-center gap-2">
-                        <span className="text-2xl">
-                            {lastQuestionPoints > 0 ? '📈' : lastQuestionPoints < 0 ? '📉' : ''}
-                        </span>
-                        <span className={`text-2xl font-bold ${
-                            lastQuestionPoints > 0 ? 'text-green-500' : 
-                            lastQuestionPoints < 0 ? 'text-red-500' : 
-                            'text-gray-400'
-                        }`}>
-                            {lastQuestionPoints > 0 ? `+${lastQuestionPoints}` : lastQuestionPoints}
-                        </span>
-                    </div>
-                )}
-            </Card>
-
-            {/* Bottom right card - takes 1 column */}
-            <Card className="bg-[#292929] row-span-2 p-4 flex flex-col justify-between">
-                {selectedAnswer && (
-                    <div className="flex flex-col gap-2">
-                        <span className={`text-xl font-bold`}>
-                            {isCorrect 
-                                ? <><span className="text-green-500 font-extrabold">{selectedAnswer}</span> is the correct answer!</>
-                                : <><span className="text-red-500 font-extrabold">{selectedAnswer}</span> is not the correct answer. The correct answer is <span className="text-green-500 font-extrabold">{currentQuiz.correctAns}</span></>
-                            }
-                        </span>
-                    </div>
-                )}
-                <div className="flex justify-end">
-                    <Image 
-                        src={isCorrect ? happy : isCorrect === null ? neutral : sad} 
-                        alt="Correct" 
-                        className="w-3/4 h-3/4"
-                    />
-                </div>
-            </Card>
         </div>
     )
 }

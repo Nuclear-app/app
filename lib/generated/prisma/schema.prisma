@@ -36,6 +36,7 @@ model Block {
   questions      Question[]
   quizzes        Quiz[]
   topic          Topic[]
+  pointsUpdates  PointsUpdate[]
 }
 
 model Quiz {
@@ -92,11 +93,11 @@ model Topic {
 }
 
 model PointsUpdate {
-  id        String   @id
+  id        String   @id @default(uuid())
   blockId   String
   points    Int      @default(0)
   createdAt DateTime @default(now())
-  Block     Block    @relation(fields: [blockId], references: [id], onDelete: Cascade)
+  block     Block    @relation(fields: [blockId], references: [id], onDelete: Cascade)
 }
 
 enum Mode {

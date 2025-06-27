@@ -4,7 +4,7 @@ import { BlockViewNav } from "@/components/blockViewNav";
 import FAQ from "@/components/faq";
 import { FeatureDock } from "@/components/featureDock";
 import FileUpload, { FileState } from "@/components/fileUpload";
-import { FillInBlank } from "@/components/fill-in-blank";
+import { FillInBlank } from "@/components/FITB/fill-in-blanks";
 import { Quiz } from "@/components/quiz";
 import { useState } from "react";
 

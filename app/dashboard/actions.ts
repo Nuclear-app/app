@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
+import { Mode } from "@/lib/generated/prisma";
 
 const ROOT_FOLDER_ID = "f2120a35-5e3f-488e-be86-f0753af42e77";
 
@@ -36,10 +37,10 @@ const getUser = async () => {
     const supabase = await createClient();
     const { data: { user }, error } = await supabase.auth.getUser();
 
-    if (error) throw new Error("Authentication failed");
-    if (!user) throw new Error("No authenticated user found");
+    // if (error) throw new Error("Authentication failed");
+    // if (!user) throw new Error("No authenticated user found");
 
-    return user.id;
+    return user?.id;
 };
 
 // Single-purpose query methods
@@ -323,20 +324,21 @@ export const fetchCrates = async () => {
     }
 };
 
-export const addBlock = async (title: string, folderId: string | null = ROOT_FOLDER_ID) => {
+export const addBlock = async (title: string, folderId: string | null = ROOT_FOLDER_ID, mode?: Mode) => {
     try {
         const userId = await getUser();
-
+        console.log("This is how the block is actually created")
         const block = await prisma.block.create({
             data: {
                 title: title.trim(),
-                authorId: userId,
+                authorId: userId || "",
                 folderId,
                 context: "",
                 note: JSON.stringify({
                     type: "doc",
                     content: [{ type: "paragraph" }]
-                })
+                }),
+                points: 0
             },
             select: {
                 id: true,
@@ -474,7 +476,7 @@ export const deleteBlock = async (blockId: string) => {
             }),
             // Finally, delete the block itself
             prisma.block.delete({
-                where: { id: blockId }
+            where: { id: blockId }
             })
         ]);
 

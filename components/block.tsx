@@ -75,7 +75,7 @@ export function Block({ blockId }: BlockProps) {
                            Upload your learning materials here. You can drag and drop files or click to browse.
                         </DialogDescription>
                      </DialogHeader>
-                     <FileUpload returnFiles={handleFileUpload} mode="upload" />
+                     <FileUpload returnFiles={handleFileUpload} mode="upload" blockId={blockId} newBlock={false} />
                   </DialogContent>
                </Dialog>
             )}

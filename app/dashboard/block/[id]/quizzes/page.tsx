@@ -2,6 +2,7 @@
 import { Quiz } from "@/components/quiz";
 import { useEffect, useState, use } from "react";
 import { getBlockContext } from "../../actions";
+import { BlockViewNav } from "@/components/blockViewNav";
 
 interface Props {
     params: Promise<{ id: string }>;
@@ -48,8 +49,11 @@ export default function QuizzesPage({ params }: Props) {
         return <div>Loading context...</div>;
     }
     return (
-        <div>
-            <Quiz blockId={id} />
+        <div className="flex flex-col min-h-screen">
+            <BlockViewNav blockId={id} />
+            <div className="flex flex-1 items-center justify-center">
+                <Quiz blockId={id} />
+            </div>
         </div>
     );
 }

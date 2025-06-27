@@ -33,25 +33,6 @@ export async function createInitialBlock(mode?: Mode): Promise<BlockResponse> {
       }
     });
 
-    // Set initial points based on mode
-    switch (mode) {
-      case Mode.EASY:
-        // Easy mode starts with 0 points
-        break;
-      case Mode.MEDIUM:
-        // Medium mode starts with 10 points (after fill in blanks)
-        await updatePoints(block.id, 10);
-        break;
-      case Mode.HARD:
-        console.log("Hard mode chosen, why isn't this working?");
-        // Hard mode starts with 20 points
-        await updatePoints(block.id, 20);
-        break;
-      default:
-        // Default to 0 points if no mode specified
-        break;
-    }
-
     return { success: true, data: block };
   } catch (error) {
     console.error('Error creating initial block:', error);

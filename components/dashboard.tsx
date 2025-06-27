@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Mode } from "@/lib/generated/prisma";
 import {
     Ampersands,
     Anvil,
@@ -130,6 +131,7 @@ const blockFormSchema = z.object({
     }).max(50, {
         message: "Title must be less than 50 characters.",
     }),
+    mode: z.nativeEnum(Mode).optional(),
 });
 
 const crateFormSchema = z.object({
@@ -206,6 +208,7 @@ export default function Dashboard() {
         resolver: zodResolver(blockFormSchema),
         defaultValues: {
             title: "",
+            mode: undefined,
         },
     });
 
@@ -220,7 +223,10 @@ export default function Dashboard() {
 
     const handleCreateBlock = async (values: z.infer<typeof blockFormSchema>) => {
         try {
-            const block = await addBlock(values.title);
+            console.log("Form values:", values);
+            console.log("Mode value:", values.mode);
+            console.log("Mode type:", typeof values.mode);
+            const block = await addBlock(values.title, undefined, values.mode);
             setBlocks(prev => [...prev, { id: block.id, title: block.title }]);
             blockForm.reset();
             setBlockDialogOpen(false);
@@ -337,6 +343,32 @@ export default function Dashboard() {
                                         <FormLabel>Title</FormLabel>
                                         <FormControl>
                                             <Input {...field} className="bg-[#292929] border rounded-md p-2" />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={blockForm.control}
+                                name="mode"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Study Mode</FormLabel>
+                                        <FormControl>
+                                            <select 
+                                                {...field} 
+                                                className="bg-[#292929] border rounded-md p-2 w-full"
+                                                value={field.value || ""}
+                                                onChange={(e) => {
+                                                    console.log("Select onChange:", e.target.value);
+                                                    field.onChange(e.target.value || undefined);
+                                                }}
+                                            >
+                                                <option value="">Select a mode (optional)</option>
+                                                <option value="sandbox">Deathmarch</option>
+                                                <option value="campaign">Story & Sword</option>
+                                                <option value="story">Just the Story</option>
+                                            </select>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
