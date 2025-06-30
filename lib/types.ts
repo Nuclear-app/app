@@ -39,7 +39,7 @@ export interface Block {
 
 export interface Crate {
     id: string;
-    title: string;
+    name: string;
     icon: string;
     createdAt: Date;
 }

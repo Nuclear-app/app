@@ -66,6 +66,7 @@ export async function getNoteContent(blockId: string) {
 
 export async function bgFunction(blockId: string) {
   const content = await getFullContext(blockId);
+  console.log(content);
   generateExamples(content, blockId)
   generateQuizzes(content, blockId)
 }

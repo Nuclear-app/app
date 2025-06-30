@@ -59,23 +59,23 @@ export async function getFullContext(blockId: string) {
     return context + note;
 }
 
-// Test function - you can call this from a client component or API route
-async function testGetFullContext(blockId: string) {
-    try {
-        const result = await getFullContext(blockId);
-        console.log('Context:', await getBlockContext(blockId));
-        console.log('Note:', await getNoteContent(blockId));
-        console.log('Full result:', result);
-        return result;
-    } catch (error) {
-        console.error('Test failed:', error);
-        throw error;
-    }
-}
+// // Test function - you can call this from a client component or API route
+// async function testGetFullContext(blockId: string) {
+//     try {
+//         const result = await getFullContext(blockId);
+//         console.log('Context:', await getBlockContext(blockId));
+//         console.log('Note:', await getNoteContent(blockId));
+//         console.log('Full result:', result);
+//         return result;
+//     } catch (error) {
+//         console.error('Test failed:', error);
+//         throw error;
+//     }
+// }
 
-// Simple test call
-testGetFullContext("4ef58849-f01e-4651-acae-53042d9c26e0").then(result => {
-    console.log("Test completed successfully:", result);
-}).catch(error => {
-    console.log("Test failed:", error);
-});
+// // Simple test call
+// testGetFullContext("4ef58849-f01e-4651-acae-53042d9c26e0").then(result => {
+//     console.log("Test completed successfully:", result);
+// }).catch(error => {
+//     console.log("Test failed:", error);
+// });

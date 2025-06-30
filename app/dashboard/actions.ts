@@ -584,4 +584,71 @@ export const deleteCrate = async (crateId: string) => {
         console.error("Failed to delete crate:", error);
         throw error;
     }
-}; 
+};
+
+export const renameBlock = async (blockId: string, newTitle: string) => {
+    try {
+        const userId = await getUser();
+        
+        // Check if block exists and user owns it
+        const block = await prisma.block.findUnique({
+            where: { id: blockId },
+            select: { authorId: true }
+        });
+
+        if (!block || block.authorId !== userId) {
+            throw new Error("Unauthorized to rename this block");
+        }
+
+        // Update the block title
+        const updatedBlock = await prisma.block.update({
+            where: { id: blockId },
+            data: { title: newTitle.trim() },
+            select: {
+                id: true,
+                title: true,
+                createdAt: true,
+                folderId: true,
+                authorId: true
+            }
+        });
+
+        return updatedBlock;
+    } catch (error) {
+        console.error("Failed to rename block:", error);
+        throw error;
+    }
+};
+
+// export const renameCrate = async (crateId: string, newName: string) => {
+//     try {
+//         const userId = await getUser();
+        
+//         // Check if crate exists and user owns it
+//         const crate = await prisma.folder.findUnique({
+//             where: { id: crateId },
+//             select: { authorId: true }
+//         });
+
+//         if (!crate || crate.authorId !== userId) {
+//             throw new Error("Unauthorized to rename this crate");
+//         }
+
+//         // Update the crate name
+//         const updatedCrate = await prisma.folder.update({
+//             where: { id: crateId },
+//             data: { name: newName.trim() },
+//             select: {
+//                 id: true,
+//                 name: true,
+//                 icon: true,
+//                 createdAt: true
+//             }
+//         });
+
+//         return updatedCrate;
+//     } catch (error) {
+//         console.error("Failed to rename crate:", error);
+//         throw error;
+//     }
+// }; 
