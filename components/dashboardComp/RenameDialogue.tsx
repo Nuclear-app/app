@@ -195,7 +195,17 @@ export function RenameDialogue({ open, onOpenChange, onRename, currentName }: Re
                                 <FormItem>
                                     <FormLabel>Title</FormLabel>
                                     <FormControl>
-                                        <Input {...field} className="bg-[#292929] border rounded-md p-2" />
+                                        <Input 
+                                            {...field} 
+                                            className="bg-[#292929] border rounded-md p-2" 
+                                            autoFocus
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    form.handleSubmit(handleSubmit)();
+                                                }
+                                            }}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
