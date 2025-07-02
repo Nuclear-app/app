@@ -10,6 +10,8 @@ import { CrateDialog } from "./CrateDialog";
 import { SelectionDialog } from "./SelectionDialog";
 import { addBlock, addCrate, deleteBlock, deleteCrate } from "@/app/dashboard/actions";
 import { loadData } from "../../lib/loadData";
+import { createClient } from "@/utils/supabase/client";
+import { isTrialExpired, getTrialDaysRemaining, updateExpiredTrial } from "@/lib/user";
 
 export default function Dashboard() {
     const router = useRouter();
@@ -39,10 +41,40 @@ export default function Dashboard() {
         }
     };
 
+    // Check trial status
+    const checkTrialStatus = async () => {
+        try {
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (user) {
+                // First, update any expired trials
+                const wasUpdated = await updateExpiredTrial(user.id);
+                if (wasUpdated) {
+                    console.log('Trial status updated to EXPIRED');
+                }
+                
+                const trialExpired = await isTrialExpired(user.id);
+                const daysRemaining = await getTrialDaysRemaining(user.id);
+                
+                if (trialExpired) {
+                    router.push('/transaction');
+                    return;
+                }
+                
+                // Optional: Show trial countdown in console for debugging
+                console.log(`Trial days remaining: ${daysRemaining}`);
+            }
+        } catch (error) {
+            console.error("Failed to check trial status:", error);
+        }
+    };
+
     // Initial load
     useEffect(() => {
         console.log('Component mounted, loading initial data...');
         fetchData(selectedTypes);
+        checkTrialStatus(); // Check trial status on mount
     }, []);
 
     const toggleSelection = (type: 'blocks' | 'crates') => {

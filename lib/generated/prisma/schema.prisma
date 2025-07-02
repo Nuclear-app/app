@@ -11,12 +11,14 @@ datasource db {
 }
 
 model User {
-  id      String   @id @default(uuid())
-  email   String   @unique
-  name    String?
-  mode    Mode?
-  posts   Block[]
-  folders Folder[]
+  id                 String             @id @default(uuid())
+  email              String             @unique
+  name               String?
+  mode               Mode?
+  createdAt          DateTime           @default(now())
+  subscriptionStatus SubscriptionStatus @default(TRIAL)
+  posts              Block[]
+  folders            Folder[]
 }
 
 model Block {
@@ -103,4 +105,10 @@ enum Mode {
   EASY
   MEDIUM
   HARD
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  PAID
+  EXPIRED
 }

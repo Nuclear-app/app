@@ -1,5 +1,5 @@
 import prisma from './prisma'
-import { User, Mode } from './generated/prisma'
+import { User, Mode, SubscriptionStatus } from './generated/prisma'
 
 /**
  * Custom error class for User operations
@@ -157,6 +157,52 @@ export async function getUserMode(id: string): Promise<Mode | null> {
   }
 }
 
+/**
+ * Get user's creation date
+ * @param id - The user's unique identifier
+ * @returns Promise<Date | null> - The user's creation date or null if not found
+ */
+export async function getUserCreatedAt(id: string): Promise<Date | null> {
+  try {
+    if (!id || typeof id !== 'string') {
+      throw new UserError('Invalid user ID provided', 'INVALID_ID')
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: { createdAt: true }
+    })
+
+    return user?.createdAt || null
+  } catch (error) {
+    if (error instanceof UserError) throw error
+    throw new UserError(`Failed to get user creation date: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
+  }
+}
+
+/**
+ * Get user's subscription status
+ * @param id - The user's unique identifier
+ * @returns Promise<SubscriptionStatus | null> - The user's subscription status or null if not found
+ */
+export async function getUserSubscriptionStatus(id: string): Promise<SubscriptionStatus | null> {
+  try {
+    if (!id || typeof id !== 'string') {
+      throw new UserError('Invalid user ID provided', 'INVALID_ID')
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: { subscriptionStatus: true }
+    })
+
+    return user?.subscriptionStatus || null
+  } catch (error) {
+    if (error instanceof UserError) throw error
+    throw new UserError(`Failed to get user subscription status: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
+  }
+}
+
 // ==================== SETTERS ====================
 
 /**
@@ -284,6 +330,37 @@ export async function setUserMode(id: string, mode: Mode): Promise<User> {
       throw new UserError('User not found', 'NOT_FOUND')
     }
     throw new UserError(`Failed to set user mode: ${error instanceof Error ? error.message : 'Unknown error'}`, 'UPDATE_ERROR')
+  }
+}
+
+/**
+ * Set user's subscription status
+ * @param id - The user's unique identifier
+ * @param subscriptionStatus - The new subscription status
+ * @returns Promise<User> - The updated user object
+ */
+export async function setUserSubscriptionStatus(id: string, subscriptionStatus: SubscriptionStatus): Promise<User> {
+  try {
+    if (!id || typeof id !== 'string') {
+      throw new UserError('Invalid user ID provided', 'INVALID_ID')
+    }
+
+    if (!Object.values(SubscriptionStatus).includes(subscriptionStatus)) {
+      throw new UserError('Invalid subscription status value', 'INVALID_SUBSCRIPTION_STATUS')
+    }
+
+    const user = await prisma.user.update({
+      where: { id },
+      data: { subscriptionStatus }
+    })
+
+    return user
+  } catch (error) {
+    if (error instanceof UserError) throw error
+    if (error instanceof Error && error.message.includes('Record to update not found')) {
+      throw new UserError('User not found', 'NOT_FOUND')
+    }
+    throw new UserError(`Failed to set user subscription status: ${error instanceof Error ? error.message : 'Unknown error'}`, 'UPDATE_ERROR')
   }
 }
 
@@ -527,5 +604,164 @@ export async function searchUsersByName(searchTerm: string): Promise<User[]> {
   } catch (error) {
     if (error instanceof UserError) throw error
     throw new UserError(`Failed to search users: ${error instanceof Error ? error.message : 'Unknown error'}`, 'SEARCH_ERROR')
+  }
+}
+
+/**
+ * Get users by subscription status
+ * @param status - The subscription status to filter by
+ * @returns Promise<User[]> - Array of users with the specified subscription status
+ */
+export async function getUsersBySubscriptionStatus(status: SubscriptionStatus): Promise<User[]> {
+  try {
+    if (!Object.values(SubscriptionStatus).includes(status)) {
+      throw new UserError('Invalid subscription status value', 'INVALID_SUBSCRIPTION_STATUS')
+    }
+
+    const users = await prisma.user.findMany({
+      where: { subscriptionStatus: status }
+    })
+
+    return users
+  } catch (error) {
+    if (error instanceof UserError) throw error
+    throw new UserError(`Failed to get users by subscription status: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
+  }
+}
+
+/**
+ * Check if user's trial has expired (2 weeks from creation)
+ * @param userId - The user's unique identifier
+ * @returns Promise<boolean> - True if trial has expired, false otherwise
+ */
+export async function isTrialExpired(userId: string): Promise<boolean> {
+  try {
+    if (!userId || typeof userId !== 'string') {
+      throw new UserError('Invalid user ID provided', 'INVALID_ID')
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { createdAt: true, subscriptionStatus: true }
+    })
+
+    if (!user) {
+      throw new UserError('User not found', 'NOT_FOUND')
+    }
+
+    // If user is already PAID, trial hasn't expired
+    if (user.subscriptionStatus === 'PAID') {
+      return false
+    }
+
+    // Calculate 2 weeks from creation date
+    const trialEndDate = new Date(user.createdAt)
+    trialEndDate.setDate(trialEndDate.getDate() + 14) // 14 days = 2 weeks
+
+    // Check if current date is past trial end date
+    return new Date() > trialEndDate
+  } catch (error) {
+    if (error instanceof UserError) throw error
+    throw new UserError(`Failed to check trial status: ${error instanceof Error ? error.message : 'Unknown error'}`, 'TRIAL_CHECK_ERROR')
+  }
+}
+
+/**
+ * Get user's trial end date
+ * @param userId - The user's unique identifier
+ * @returns Promise<Date | null> - The trial end date or null if user not found
+ */
+export async function getTrialEndDate(userId: string): Promise<Date | null> {
+  try {
+    if (!userId || typeof userId !== 'string') {
+      throw new UserError('Invalid user ID provided', 'INVALID_ID')
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { createdAt: true }
+    })
+
+    if (!user) {
+      return null
+    }
+
+    // Calculate 2 weeks from creation date
+    const trialEndDate = new Date(user.createdAt)
+    trialEndDate.setDate(trialEndDate.getDate() + 14) // 14 days = 2 weeks
+
+    return trialEndDate
+  } catch (error) {
+    throw new UserError(`Failed to get trial end date: ${error instanceof Error ? error.message : 'Unknown error'}`, 'TRIAL_DATE_ERROR')
+  }
+}
+
+/**
+ * Get days remaining in trial
+ * @param userId - The user's unique identifier
+ * @returns Promise<number> - Days remaining in trial (negative if expired)
+ */
+export async function getTrialDaysRemaining(userId: string): Promise<number> {
+  try {
+    if (!userId || typeof userId !== 'string') {
+      throw new UserError('Invalid user ID provided', 'INVALID_ID')
+    }
+
+    const trialEndDate = await getTrialEndDate(userId)
+    if (!trialEndDate) {
+      throw new UserError('User not found', 'NOT_FOUND')
+    }
+
+    const now = new Date()
+    const timeDiff = trialEndDate.getTime() - now.getTime()
+    const daysRemaining = Math.ceil(timeDiff / (1000 * 3600 * 24))
+
+    return daysRemaining
+  } catch (error) {
+    if (error instanceof UserError) throw error
+    throw new UserError(`Failed to get trial days remaining: ${error instanceof Error ? error.message : 'Unknown error'}`, 'TRIAL_DAYS_ERROR')
+  }
+}
+
+/**
+ * Update expired trials to EXPIRED status
+ * This function should be called periodically or when checking trial status
+ * @param userId - The user's unique identifier
+ * @returns Promise<boolean> - True if status was updated, false otherwise
+ */
+export async function updateExpiredTrial(userId: string): Promise<boolean> {
+  try {
+    if (!userId || typeof userId !== 'string') {
+      throw new UserError('Invalid user ID provided', 'INVALID_ID')
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { subscriptionStatus: true, createdAt: true }
+    })
+
+    if (!user) {
+      throw new UserError('User not found', 'NOT_FOUND')
+    }
+
+    // Don't update if already PAID or EXPIRED
+    if (user.subscriptionStatus === 'PAID' || user.subscriptionStatus === 'EXPIRED') {
+      return false
+    }
+
+    // Check if trial has expired
+    const trialEndDate = new Date(user.createdAt)
+    trialEndDate.setDate(trialEndDate.getDate() + 14) // 14 days = 2 weeks
+
+    if (new Date() > trialEndDate) {
+      // Update to EXPIRED
+      await setUserSubscriptionStatus(userId, 'EXPIRED')
+      return true
+    }
+
+    return false
+  } catch (error) {
+    if (error instanceof UserError) throw error
+    throw new UserError(`Failed to update expired trial: ${error instanceof Error ? error.message : 'Unknown error'}`, 'TRIAL_UPDATE_ERROR')
   }
 } 
