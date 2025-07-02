@@ -1,7 +1,7 @@
 'use client'
 import TailwindAdvancedEditor from "@/components/tailwind/advanced-editor";
 import { useParams, useSearchParams } from 'next/navigation';
-import { bgFunction, getNoteContent } from './actions';
+import { getNoteContent } from './actions';
 import { useEffect, useState, Suspense, useRef } from 'react';
 import { type JSONContent } from "novel";
 import { BlockViewNav } from "@/components/blockViewNav";
@@ -16,16 +16,9 @@ function BlockPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
   const searchParams = useSearchParams();
-  const fromFileInput = searchParams.get('fromFileInput');
   const mode = searchParams.get('mode');
 
   const pointsUpdatedRef = useRef(false);
-
-  useEffect(() => {
-    if (fromFileInput === "true") {
-      bgFunction(blockId);
-    }
-  }, [fromFileInput, blockId])
 
   useEffect(() => {
     if (!pointsUpdatedRef.current && mode) {

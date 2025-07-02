@@ -64,9 +64,73 @@ export async function getNoteContent(blockId: string) {
   }
 }
 
+export async function generateExamplesIfNeeded(blockId: string) {
+  const content = await getFullContext(blockId);
+  console.log("Checking for existing examples...");
+  
+  // Check if examples (topics) already exist
+  const existingTopics = await prisma.topic.findMany({
+    where: { blockId },
+    select: { id: true }
+  });
+  
+  // Only generate examples if none exist
+  if (existingTopics.length === 0) {
+    console.log("No topics found, generating examples...");
+    await generateExamples(content, blockId);
+  } else {
+    console.log(`Found ${existingTopics.length} existing topics, skipping example generation`);
+  }
+}
+
+export async function generateQuizzesIfNeeded(blockId: string) {
+  const content = await getFullContext(blockId);
+  console.log("Checking for existing quizzes...");
+  
+  // Check if quizzes already exist
+  const existingQuizzes = await prisma.quiz.findMany({
+    where: { blockId },
+    select: { id: true }
+  });
+  
+  // Only generate quizzes if none exist
+  if (existingQuizzes.length === 0) {
+    console.log("No quizzes found, generating quizzes...");
+    await generateQuizzes(content, blockId);
+  } else {
+    console.log(`Found ${existingQuizzes.length} existing quizzes, skipping quiz generation`);
+  }
+}
+
 export async function bgFunction(blockId: string) {
   const content = await getFullContext(blockId);
   console.log(content);
-  generateExamples(content, blockId)
-  generateQuizzes(content, blockId)
+  
+  // Check if examples (topics) already exist
+  const existingTopics = await prisma.topic.findMany({
+    where: { blockId },
+    select: { id: true }
+  });
+  
+  // Check if quizzes already exist
+  const existingQuizzes = await prisma.quiz.findMany({
+    where: { blockId },
+    select: { id: true }
+  });
+  
+  // Only generate examples if none exist
+  if (existingTopics.length === 0) {
+    console.log("No topics found, generating examples...");
+    await generateExamples(content, blockId);
+  } else {
+    console.log(`Found ${existingTopics.length} existing topics, skipping example generation`);
+  }
+  
+  // Only generate quizzes if none exist
+  if (existingQuizzes.length === 0) {
+    console.log("No quizzes found, generating quizzes...");
+    await generateQuizzes(content, blockId);
+  } else {
+    console.log(`Found ${existingQuizzes.length} existing quizzes, skipping quiz generation`);
+  }
 }

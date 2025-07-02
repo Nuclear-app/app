@@ -6,10 +6,8 @@ import { Card } from "@/components/ui/card"
 import { fetchQuiz, updateMistake, removeMistake } from "@/lib/quizFetch"
 import { updatePoints } from "@/lib/blockFetch"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
-import sad from "@/public/quizJonas/sad.svg"
-import happy from "@/public/quizJonas/happy.svg"
-import neutral from "@/public/quizJonas/neutral.svg"
+import { generateQuizzesIfNeeded } from "@/app/dashboard/block/[id]/actions";
+import { RefreshCw } from "lucide-react";
 import { Loading } from "@/components/ui/loading"
 
 interface QuizProps {
@@ -35,6 +33,7 @@ export function Quiz({ blockId }: QuizProps) {
     const [score, setScore] = useState(0)
     const [lastQuestionPoints, setLastQuestionPoints] = useState<number>(0)
     const [randomizedOptions, setRandomizedOptions] = useState<string[]>([])
+    const [isRegenerating, setIsRegenerating] = useState(false);
     const router = useRouter()
 
     // Arrays of motivational messages
@@ -102,17 +101,27 @@ export function Quiz({ blockId }: QuizProps) {
 
         if (correct) {
             setScore(prev => prev + 1)
-            setLastQuestionPoints(20)
-            await updatePoints(blockId, randomNumber(5, 10))
+            const pointsEarned = randomNumber(5, 10)
+            setLastQuestionPoints(pointsEarned)
+            try {
+                await updatePoints(blockId, pointsEarned)
+            } catch (error) {
+                console.error('Failed to update points:', error)
+            }
             
             // If this was a previous mistake question, remove the mistake
             if (currentQuiz.mistake) {
                 await removeMistake(currentQuiz.id)
             }
         } else {
-            setLastQuestionPoints(-10)
+            const pointsLost = randomNumber(-5, 0)
+            setLastQuestionPoints(pointsLost)
+            try {
+                await updatePoints(blockId, pointsLost)
+            } catch (error) {
+                console.error('Failed to update points:', error)
+            }
             await updateMistake(currentQuiz.id, answer)
-            await updatePoints(blockId, randomNumber(-5, 0))
         }
     }
 
@@ -126,6 +135,22 @@ export function Quiz({ blockId }: QuizProps) {
             router.push(`/dashboard/block/${blockId}`)
         }
     }
+
+    const handleRegenerate = async () => {
+        if (!blockId) return;
+        
+        setIsRegenerating(true);
+        try {
+            console.log('Regenerating quizzes for block:', blockId);
+            generateQuizzesIfNeeded(blockId);
+            // Force a page refresh to show new quizzes
+            window.location.reload();
+        } catch (error) {
+            console.error('Error regenerating quizzes:', error);
+        } finally {
+            setIsRegenerating(false);
+        }
+    };
 
     if (!currentQuiz) {
         return (
@@ -149,7 +174,19 @@ export function Quiz({ blockId }: QuizProps) {
                     </div>
                 </div>
 
-                <Card className="p-6 rounded-3xl bg-[#221D1D]">
+                <Card className="p-6 rounded-3xl bg-[#221D1D] relative">
+
+                    <div className="absolute top-4 right-4">
+                        <Button 
+                            variant="ghost" 
+                            size="icon"
+                            onClick={handleRegenerate}
+                            disabled={isRegenerating}
+                            className="h-10 w-10"
+                        >
+                            <RefreshCw className={`h-5 w-5 ${isRegenerating ? 'animate-spin' : ''}`} />
+                        </Button>
+                    </div>
 
                     <h3 className="text-2xl rounded-3xl font-black p-2">{currentQuiz.question}</h3>
                     {currentQuiz.mistake && (

@@ -3,6 +3,7 @@
 import Examples from "@/components/examples";
 import { useEffect, useState, use } from "react";
 import { getFullContext } from "../../actions";
+import { generateExamplesIfNeeded } from "../actions";
 import { BlockViewNav } from "@/components/blockViewNav";
 
 interface Props {
@@ -37,10 +38,18 @@ export default function ExamplesPage({ params }: Props) {
         loadContext();
     }, [id]);
 
+    // Run bgFunction when examples page mounts to ensure examples are generated
+    useEffect(() => {
+        if (id) {
+            console.log('Examples page mounted, running bgFunction for block:', id);
+            generateExamplesIfNeeded(id);
+        }
+    }, [id]);
+
     // Log whenever context changes
     useEffect(() => {
         console.log('Current context state:', context);
-    }, [context]);
+    }, [context]);    
 
     if (!id) {
         return <div>No block ID provided</div>;
@@ -53,7 +62,7 @@ export default function ExamplesPage({ params }: Props) {
     return (
         <div className="flex flex-col gap-4">
             <BlockViewNav blockId={id} />
-            <Examples blockID={id} />
+            <Examples blockID={id} />            
         </div>
-      );
+    );
 }
