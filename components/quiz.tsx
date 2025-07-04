@@ -33,7 +33,6 @@ export function Quiz({ blockId }: QuizProps) {
     const [score, setScore] = useState(0)
     const [lastQuestionPoints, setLastQuestionPoints] = useState<number>(0)
     const [randomizedOptions, setRandomizedOptions] = useState<string[]>([])
-    const [isRegenerating, setIsRegenerating] = useState(false);
     const router = useRouter()
 
     // Arrays of motivational messages
@@ -136,22 +135,6 @@ export function Quiz({ blockId }: QuizProps) {
         }
     }
 
-    const handleRegenerate = async () => {
-        if (!blockId) return;
-        
-        setIsRegenerating(true);
-        try {
-            console.log('Regenerating quizzes for block:', blockId);
-            generateQuizzesIfNeeded(blockId);
-            // Force a page refresh to show new quizzes
-            window.location.reload();
-        } catch (error) {
-            console.error('Error regenerating quizzes:', error);
-        } finally {
-            setIsRegenerating(false);
-        }
-    };
-
     if (!currentQuiz) {
         return (
             <div className="h-5/6 flex flex-col items-center justify-center">
@@ -175,18 +158,6 @@ export function Quiz({ blockId }: QuizProps) {
                 </div>
 
                 <Card className="p-6 rounded-3xl bg-[#221D1D] relative">
-
-                    <div className="absolute top-4 right-4">
-                        <Button 
-                            variant="ghost" 
-                            size="icon"
-                            onClick={handleRegenerate}
-                            disabled={isRegenerating}
-                            className="h-10 w-10"
-                        >
-                            <RefreshCw className={`h-5 w-5 ${isRegenerating ? 'animate-spin' : ''}`} />
-                        </Button>
-                    </div>
 
                     <h3 className="text-2xl rounded-3xl font-black p-2">{currentQuiz.question}</h3>
                     {currentQuiz.mistake && (

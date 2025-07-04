@@ -91,10 +91,10 @@ export async function generateExamples(text: string, blockId: string) {
   try {
     const response = await model.invoke(prompt);
     const parsedOutput = await parser.parse(response.content.toString());
-    
+
     // Use Promise.all to wait for all topics to be created
     const storedTopics = await Promise.all(
-      parsedOutput.topics.map((topic) => 
+      parsedOutput.topics.map((topic) =>
         prisma.topic.create({
           data: {
             name: topic.topic,
@@ -104,7 +104,7 @@ export async function generateExamples(text: string, blockId: string) {
         })
       )
     );
-    
+
     return storedTopics;
   } catch (error) {
     console.error("Error generating Examples:", error);

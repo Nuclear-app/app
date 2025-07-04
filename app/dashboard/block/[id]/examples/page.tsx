@@ -49,7 +49,7 @@ export default function ExamplesPage({ params }: Props) {
     // Log whenever context changes
     useEffect(() => {
         console.log('Current context state:', context);
-    }, [context]);    
+    }, [context]);
 
     if (!id) {
         return <div>No block ID provided</div>;
@@ -62,7 +62,7 @@ export default function ExamplesPage({ params }: Props) {
     return (
         <div className="flex flex-col gap-4">
             <BlockViewNav blockId={id} />
-            <Examples blockID={id} />            
+            <Examples blockID={id} />
         </div>
-    );
+      );
 }
