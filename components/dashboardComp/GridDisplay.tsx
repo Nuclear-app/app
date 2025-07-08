@@ -102,7 +102,7 @@ export function GridDisplay({ blocks, crates, selectedTypes, onDeleteBlock, onDe
                                                     key={i}
                                                     className="absolute top-1/2 left-1/2 w-2 h-2 rounded-full"
                                                     style={{ backgroundColor: particle.color }}
-                                                    variants={particleVariants}
+                                                    variants={particleVariants as any}
                                                     initial="initial"
                                                     animate="animate"
                                                     exit="exit"
@@ -122,7 +122,7 @@ export function GridDisplay({ blocks, crates, selectedTypes, onDeleteBlock, onDe
                                                     key={i}
                                                     className="absolute top-1/2 left-1/2 w-2 h-2 rounded-full"
                                                     style={{ backgroundColor: particle.color }}
-                                                    variants={particleVariants}
+                                                    variants={particleVariants as any}
                                                     initial="initial"
                                                     animate="animate"
                                                     exit="exit"
@@ -178,7 +178,7 @@ export function GridDisplay({ blocks, crates, selectedTypes, onDeleteBlock, onDe
                                                 key={i}
                                                 className="absolute top-1/2 left-1/2 w-2 h-2 rounded-full"
                                                 style={{ backgroundColor: particle.color }}
-                                                variants={particleVariants}
+                                                variants={particleVariants as any}
                                                 initial="initial"
                                                 animate="animate"
                                                 exit="exit"
@@ -221,7 +221,7 @@ export function GridDisplay({ blocks, crates, selectedTypes, onDeleteBlock, onDe
                                                 key={i}
                                                 className="absolute top-1/2 left-1/2 w-2 h-2 rounded-full"
                                                 style={{ backgroundColor: particle.color }}
-                                                variants={particleVariants}
+                                                variants={particleVariants as any}
                                                 initial="initial"
                                                 animate="animate"
                                                 exit="exit"

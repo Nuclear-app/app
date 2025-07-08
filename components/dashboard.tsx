@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+// I doubt that this type of Mode is being used in the implementation
 import { Mode } from "@/lib/generated/prisma";
 import {
     Ampersands,

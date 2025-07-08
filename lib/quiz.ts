@@ -1,3 +1,4 @@
+
 import prisma from './prisma'
 import { Quiz, Block, Topic } from './generated/prisma'
 

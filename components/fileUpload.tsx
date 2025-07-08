@@ -10,7 +10,6 @@ import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 import FilePondPluginFileEncode from 'filepond-plugin-file-encode';
 import { createPortal } from 'react-dom';
 import { createBrowserClient } from '@supabase/ssr';
-import prisma from '@/lib/prisma';
 import { addFile, removeFile } from '@/lib/fileUpload';
 import SparklesText from "./ui/sparkles-text";
 import { FunFacts } from "./ui/fun-facts";

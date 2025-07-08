@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { ny } from "@/lib/utils";
 
 interface LoadingTextProps {
     text?: string;
@@ -7,7 +7,7 @@ interface LoadingTextProps {
 
 export function LoadingText({ text = "Loading note content", className }: LoadingTextProps) {
     return (
-        <div className={cn("flex items-center gap-2 text-muted-foreground", className)}>
+        <div className={ny("flex items-center gap-2 text-muted-foreground", className)}>
             <span>{text}</span>
             <span className="inline-block w-1 h-4 bg-muted-foreground animate-blink" />
             <span className="flex gap-1">

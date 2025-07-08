@@ -1,3 +1,4 @@
+
 import prisma from './prisma'
 import { PointsUpdate, Block } from './generated/prisma'
 
