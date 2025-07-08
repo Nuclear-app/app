@@ -115,8 +115,9 @@ export default function CrateComponent({ crateId }: CrateComponentProps) {
                     blocks={blocks}
                     crates={crates}
                     selectedTypes={selectedTypes}
-                    onDeleteBlock={() => {}}
-                    onDeleteCrate={() => {}}
+                    isLoading={false}
+                    onDeleteBlock={() => Promise.resolve(undefined)}
+                    onDeleteCrate={() => Promise.resolve(undefined)}
                 />
             </div>
 

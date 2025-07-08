@@ -308,7 +308,10 @@ export async function getFillInTheBlanksByBlock(blockId: string): Promise<FillIn
     }
 
     const fillInTheBlanks = await prisma.fillInTheBlank.findMany({
-      where: { blockId }
+      where: { blockId },
+      orderBy: {
+        id: 'asc',
+      },
     })
 
     return fillInTheBlanks
@@ -408,6 +411,19 @@ export async function deleteFillInTheBlank(id: string): Promise<FillInTheBlank> 
       throw new FillInTheBlankError('Fill-in-the-blank not found', 'NOT_FOUND')
     }
     throw new FillInTheBlankError(`Failed to delete fill-in-the-blank: ${error instanceof Error ? error.message : 'Unknown error'}`, 'DELETE_ERROR')
+  }
+}
+
+export async function deleteFillInTheBlanksByBlock(blockId: string): Promise<{ success: boolean }> {
+  try {
+    const fillInTheBlanks = await prisma.fillInTheBlank.deleteMany({
+      where: { blockId }
+    })
+
+    return { success: true }
+  } catch (error) {
+    if (error instanceof FillInTheBlankError) throw error
+    throw new FillInTheBlankError(`Failed to delete fill-in-the-blanks by block: ${error instanceof Error ? error.message : 'Unknown error'}`, 'DELETE_ERROR')
   }
 }
 

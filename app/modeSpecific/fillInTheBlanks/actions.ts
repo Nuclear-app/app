@@ -1,26 +1,8 @@
 'use server'
 
-import prisma from "@/lib/prisma";
 import { generateFillInTheBlank } from "@/lib/perplexity";
-
-export async function getBlockContext(blockId: string) {
-  if (!blockId) {
-    throw new Error("Block ID is required");
-  }
-
-  const block = await prisma.block.findUnique({
-    where: { id: blockId },
-    select: {
-      context: true,
-    },
-  });
-
-  if (!block || !block.context) {
-    throw new Error("Block or context not found");
-  }
-
-  return block.context;
-}
+import { getBlockContext } from "@/lib/block";
+import { deleteFillInTheBlanksByBlock, getFillInTheBlanksByBlock, createFillInTheBlank } from "@/lib/fillInTheBlank";
 
 export async function createFillInTheBlanks(blockId: string) {
   if (!blockId) {
@@ -29,20 +11,21 @@ export async function createFillInTheBlanks(blockId: string) {
 
   // Get the block context
   const context = await getBlockContext(blockId);
+  if (!context) {
+    throw new Error("Block context not found");
+  }
 
   // Generate questions using Perplexity
   const questions = await generateFillInTheBlank(context);
 
-  // Store questions in the database
-  const createdQuestions = await prisma.$transaction(
+  // Store questions in the database using the library function
+  const createdQuestions = await Promise.all(
     questions.map((question) =>
-      prisma.fillInTheBlank.create({
-        data: {
-          sentence: question.sentence,
-          answer: question.answer,
-          hint: question.hint || null,
-          blockId: blockId,
-        },
+      createFillInTheBlank({
+        sentence: question.sentence,
+        answer: question.answer,
+        hint: question.hint || undefined,
+        blockId: blockId,
       })
     )
   );
@@ -55,14 +38,7 @@ export async function getFillInTheBlanks(blockId: string) {
     throw new Error("Block ID is required");
   }
 
-  return await prisma.fillInTheBlank.findMany({
-    where: {
-      blockId: blockId,
-    },
-    orderBy: {
-      id: 'asc',
-    },
-  });
+  return getFillInTheBlanksByBlock(blockId);
 }
 
 export async function deleteFillInTheBlanks(blockId: string) {
@@ -70,9 +46,5 @@ export async function deleteFillInTheBlanks(blockId: string) {
     throw new Error("Block ID is required");
   }
 
-  await prisma.fillInTheBlank.deleteMany({
-    where: {
-      blockId: blockId,
-    },
-  });
+  return deleteFillInTheBlanksByBlock(blockId);
 } 

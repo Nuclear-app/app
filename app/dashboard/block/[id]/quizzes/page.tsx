@@ -1,7 +1,7 @@
 "use client";
 import { Quiz } from "@/components/quiz";
 import { useEffect, useState, use } from "react";
-import { getBlockContext } from "../../actions";
+import { getBlockContext } from "@/lib/block";
 import { BlockViewNav } from "@/components/blockViewNav";
 
 interface Props {
