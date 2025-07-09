@@ -1,3 +1,4 @@
+
 import { createWorker } from 'tesseract.js';
 
 export const parseImage = async (image: File | null) => {

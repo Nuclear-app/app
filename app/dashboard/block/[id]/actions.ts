@@ -1,8 +1,7 @@
-'use server'
+
 
 import { fetchContext } from "@/app/modeSpecific/fileInput/actions";
 import { generateExamples } from "@/lib/examplesPerplexity";
-import prisma from "@/lib/prisma";
 import { generateQuizzes } from "@/lib/quizGen";
 import { JSONContent } from "novel";
 import { getFullContext } from "../actions";
@@ -12,12 +11,7 @@ export async function getNoteContent(blockId: string) {
     throw new Error("Block ID is required " + blockId);
   }
 
-  const block = await prisma.block.findUnique({
-    where: { id: blockId },
-    select: {
-      note: true,
-    },
-  });
+  const block = await getBlockNote(blockId)
 
   if (!block) {
     throw new Error("Block not found");

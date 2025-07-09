@@ -3,6 +3,7 @@
 import { createClient } from "@/utils/supabase/server"
 import prisma from "@/lib/prisma"
 import { redirect } from "next/navigation"
+import { updateUser } from "@/lib/user"
 
 export async function updateNameAction(data: { name: string }) {
   const supabase = await createClient()
@@ -12,10 +13,7 @@ export async function updateNameAction(data: { name: string }) {
     redirect("/sign-in")
   }
   
-  await prisma.user.update({
-    where: { id: user.id },
-    data: { name: data.name }
-  })
+  await updateUser(user.id, { name: data.name })
 
   redirect("/protected")
 } 

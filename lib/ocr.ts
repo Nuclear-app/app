@@ -1,3 +1,4 @@
+
 export type OCRResult = {
     text: string;
     status: 'success' | 'error' | 'processing';

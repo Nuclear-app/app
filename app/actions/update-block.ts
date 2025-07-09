@@ -1,9 +1,10 @@
 "use server"
 
-import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { JSONContent } from "novel";
 import { createClient } from "@/utils/supabase/server";
+import { createBlock, getBlockById, updateBlock as updateBlockLib } from "@/lib/block";
+
 
 export async function updateBlock(content: JSONContent, blockId?: string) {
   try {
@@ -22,19 +23,16 @@ export async function updateBlock(content: JSONContent, blockId?: string) {
     const serializedContent = JSON.parse(JSON.stringify(content));
 
     // Try to find existing block
-    const existingBlock = blockId ? await prisma.block.findUnique({
-      where: { id: blockId },
-    }) : null;
+    const existingBlock = blockId ? await getBlockById(blockId) : null;
 
     if (!blockId) {
       // Create new block
-      const newBlock = await prisma.block.create({
-        data: {
-          title: "Untitled Note",
-          authorId: user.id,
-          note: serializedContent,
-        },
-      });
+      const newBlock = await createBlock({
+        title: "Untitled Note",
+        authorId: user.id,
+        note: serializedContent,
+      })
+
       revalidatePath("/");
       return {
         success: true,
@@ -46,10 +44,7 @@ export async function updateBlock(content: JSONContent, blockId?: string) {
     }
 
     // Update existing block
-    const updatedBlock = await prisma.block.update({
-      where: { id: blockId },
-      data: { note: content as any },
-    });
+    const updatedBlock = await updateBlockLib(blockId, { note: serializedContent });
     revalidatePath("/");
     return {
       success: true,

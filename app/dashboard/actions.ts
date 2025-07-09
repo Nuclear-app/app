@@ -1,9 +1,11 @@
-"use server"
 
-import prisma from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { Mode } from "@/lib/generated/prisma";
+import { getUserById, getUserCrates, getUserName } from "@/lib/user";
+import { getUserFolders, getUserPosts } from "@/lib/user";
+import { createFolder, deleteFolder, getFolderById, getTopLevelFolders } from "@/lib/folder";
+import { createBlock, getTopLevelBlocks } from "@/lib/block";
 
 const ROOT_FOLDER_ID = "f2120a35-5e3f-488e-be86-f0753af42e77";
 
@@ -46,121 +48,35 @@ const getUser = async () => {
 // Single-purpose query methods
 export const fetchUserBlocks = async () => {
     const userId = await getUser();
-    
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: {
-            posts: {
-                select: {
-                    id: true,
-                    title: true,
-                    createdAt: true,
-                    folderId: true
-                },
-                orderBy: {
-                    createdAt: 'desc'
-                }
-            }
-        }
-    });
 
-    if (!user) {
-        throw new Error("User not found");
-    }
-
-    return user.posts;
+    const userPosts = await getUserPosts(userId || "");
+    return userPosts;
 };
 
 export const fetchUserFolders = async () => {
     const userId = await getUser();
     console.log('fetchUserFolders - Fetching for user:', userId);
     
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: {
-            folders: {
-                select: {
-                    id: true,
-                    name: true,
-                    icon: true,
-                    createdAt: true,
-                    parentId: true,
-                    authorId: true  // Add this to check if folders are properly linked
-                },
-                orderBy: {
-                    createdAt: 'desc'
-                }
-            }
-        }
-    });
+    const userFolders = getUserFolders(userId || "'");
 
-    if (!user) {
-        console.log('fetchUserFolders - User not found');
-        throw new Error("User not found");
-    }
-
-    console.log('fetchUserFolders - Found folders:', user.folders.length);
-    console.log('fetchUserFolders - Folders data:', JSON.stringify(user.folders, null, 2));
-    return user.folders;
+    console.log('fetchUserFolders - Folders data:', JSON.stringify(userFolders, null, 2));
+    return userFolders;
 };
 
 export const fetchRootBlocks = async () => {
     const userId = await getUser();
     
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: {
-            posts: {
-                where: {
-                    folderId: ROOT_FOLDER_ID
-                },
-                select: {
-                    id: true,
-                    title: true,
-                    createdAt: true
-                },
-                orderBy: {
-                    createdAt: 'desc'
-                }
-            }
-        }
-    });
+    const blocks = await getTopLevelBlocks(userId || "");
 
-    if (!user) {
-        throw new Error("User not found");
-    }
-
-    return user.posts;
+    return blocks;
 };
 
 export const fetchRootFolders = async () => {
     const userId = await getUser();
     
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: {
-            folders: {
-                where: {
-                    parentId: ROOT_FOLDER_ID
-                },
-                select: {
-                    id: true,
-                    name: true,
-                    icon: true,
-                    createdAt: true
-                },
-                orderBy: {
-                    createdAt: 'desc'
-                }
-            }
-        }
-    });
+    const folders = await getTopLevelFolders(userId || "");
 
-    if (!user) {
-        throw new Error("User not found");
-    }
-
-    return user.folders;
+    return folders;
 };
 
 // Composite methods that use single-purpose queries
@@ -169,56 +85,18 @@ export const fetchDashboardItems = async () => {
         const userId = await getUser();
         console.log('fetchDashboardItems - Fetching for user:', userId);
 
-        const user = await prisma.user.findUnique({
-            where: { id: userId },
-            select: {
-                posts: {
-                    select: {
-                        id: true,
-                        title: true,
-                        createdAt: true,
-                        folderId: true,
-                        authorId: true  // Add this to check if blocks are properly linked
-                    },
-                    orderBy: {
-                        createdAt: 'desc'
-                    }
-                },
-                folders: {
-                    select: {
-                        id: true,
-                        name: true,
-                        icon: true,
-                        createdAt: true,
-                        parentId: true,
-                        authorId: true  // Add this to check if folders are properly linked
-                    },
-                    orderBy: {
-                        createdAt: 'desc'
-                    }
-                }
-            }
-        });
+        const blocks = await getUserPosts(userId || "");
 
-        if (!user) {
-            console.log('fetchDashboardItems - User not found');
-            throw new Error("User not found");
-        }
-
-        // Log detailed information about the query results
-        console.log('fetchDashboardItems - Found posts:', user.posts.length);
-        console.log('fetchDashboardItems - Found folders:', user.folders.length);
-        console.log('fetchDashboardItems - Posts data:', JSON.stringify(user.posts, null, 2));
-        console.log('fetchDashboardItems - Folders data:', JSON.stringify(user.folders, null, 2));
+        const folders = await getUserFolders(userId || "");
 
         const result = {
-            blocks: user.posts.map(block => ({
+            blocks: blocks.map(block => ({
                 id: block.id,
                 title: block.title,
                 createdAt: block.createdAt,
                 folderId: block.folderId
             })),
-            folders: user.folders.map(folder => ({
+            folders: folders.map(folder => ({
                 id: folder.id,
                 name: folder.name,
                 icon: folder.icon,
@@ -253,31 +131,24 @@ export const fetchFileSystemStructure = async (): Promise<DatabaseItem[]> => {
         const userId = await getUser();
 
         const [blocks, folders] = await Promise.all([
-            prisma.block.findMany({
-                where: {
-                    authorId: userId,
-                    NOT: {
-                        folderId: null
-                    }
-                },
-                select: {
-                    id: true,
-                    title: true,
-                    folderId: true
-                }
-            }),
-            prisma.folder.findMany({
-                where: {
-                    NOT: {
-                        parentId: null
-                    }
-                },
-                select: {
-                    id: true,
-                    name: true,
-                    parentId: true
-                }
-            })
+            getUserPosts(userId || "").then(posts => 
+                posts
+                    .filter(block => block.folderId !== null)
+                    .map(block => ({
+                        id: block.id,
+                        title: block.title,
+                        folderId: block.folderId
+                    }))
+            ),
+            getUserFolders(userId || "").then(folders => 
+                folders
+                    .filter(folder => folder.parentId !== null)
+                    .map(folder => ({
+                        id: folder.id,
+                        name: folder.name,
+                        parentId: folder.parentId
+                    }))
+            )
         ]);
 
         const structure: DatabaseItem[] = [
@@ -305,19 +176,7 @@ export const fetchFileSystemStructure = async (): Promise<DatabaseItem[]> => {
 export const fetchCrates = async () => {
     try {
         const userId = await getUser();
-
-        const folders = await prisma.folder.findMany({
-            where: {
-                parentId: null, // Only root level folders
-                authorId: userId // Only folders belonging to the current user
-            },
-            select: {
-                id: true,
-                name: true,
-                createdAt: true
-            }
-        });
-        return folders;
+        return getUserCrates(userId || "");
     } catch (error) {
         console.error("Failed to fetch crates:", error);
         throw new Error("Failed to fetch crates");
@@ -328,30 +187,21 @@ export const addBlock = async (title: string, folderId: string | null = ROOT_FOL
     try {
         const userId = await getUser();
         console.log("This is how the block is actually created")
-        const block = await prisma.block.create({
-            data: {
-                title: title.trim(),
-                authorId: userId || "",
-                folderId,
-                context: "",
-                note: JSON.stringify({
-                    type: "doc",
-                    content: [{ type: "paragraph" }]
-                }),
-                points: 0
-            },
-            select: {
-                id: true,
-                title: true,
-                createdAt: true,
-                folderId: true,
-                authorId: true
-            }
-        });
+        const block = await createBlock({
+            title,
+            authorId: userId || "",
+            folderId: folderId || undefined,
+            context: "",
+            note: JSON.stringify({
+                type: "doc",
+                content: [{ type: "paragraph" }]
+            }),
+            points: 0
+        })
 
         return block;
     } catch (error) {
-        console.error("Failed to create block:", error);
+        console.error("Failed to add block:", error);
         throw error;
     }
 };
@@ -360,19 +210,11 @@ export const addCrate = async (name: string, icon: string | null = null, parentI
     try {
         const userId = await getUser();
 
-        const folder = await prisma.folder.create({
-            data: {
-                name,
-                parentId,
-                icon,
-                authorId: userId
-            },
-            select: {
-                id: true,
-                name: true,
-                icon: true,
-                createdAt: true
-            }
+        const folder = await createFolder({
+            name,
+            parentId: parentId || undefined,
+            icon: icon || undefined,
+            authorId: userId
         });
 
         return folder;
@@ -386,12 +228,7 @@ export const fetchUserName = async () => {
     try {
         const userId = await getUser();
         
-        const user = await prisma.user.findUnique({
-            where: { id: userId },
-            select: { name: true, }
-        });
-
-        return user?.name || null;
+        return getUserName(userId || "");
     } catch (error) {
         console.error("Failed to fetch user name:", error);
         throw error;
@@ -403,17 +240,7 @@ export const fetchCratePath = async (crateId: string): Promise<CratePath[]> => {
         const userId = await getUser();
         const path: CratePath[] = [];
         
-        let currentCrate = await prisma.folder.findUnique({
-            where: { 
-                id: crateId,
-                authorId: userId
-            },
-            select: {
-                id: true,
-                name: true,
-                parentId: true
-            }
-        });
+        let currentCrate = await getFolderById(crateId)
 
         while (currentCrate) {
             path.unshift({
@@ -423,17 +250,7 @@ export const fetchCratePath = async (crateId: string): Promise<CratePath[]> => {
 
             if (!currentCrate.parentId || currentCrate.parentId === ROOT_FOLDER_ID) break;
 
-            currentCrate = await prisma.folder.findUnique({
-                where: { 
-                    id: currentCrate.parentId,
-                    authorId: userId
-                },
-                select: {
-                    id: true,
-                    name: true,
-                    parentId: true
-                }
-            });
+            currentCrate = await getFolderById(currentCrate.parentId)
         }
 
         return path;
@@ -443,59 +260,11 @@ export const fetchCratePath = async (crateId: string): Promise<CratePath[]> => {
     }
 };
 
-export const deleteBlock = async (blockId: string) => {
+export const deleteBlock = async (blockId: string, userId?: string): Promise<{ success: boolean }> => {
     try {
         const userId = await getUser();
         
-        const block = await prisma.block.findUnique({
-            where: { id: blockId },
-            select: { authorId: true }
-        });
-
-        if (!block || block.authorId !== userId) {
-            throw new Error("Unauthorized to delete this block");
-        }
-
-        // Delete all related data in a transaction
-        await prisma.$transaction([
-            // Delete all FillInTheBlank entries
-            prisma.fillInTheBlank.deleteMany({
-                where: { blockId }
-            }),
-            // Delete all Questions
-            prisma.question.deleteMany({
-                where: { blockId }
-            }),
-            // Delete all Quizzes
-            prisma.quiz.deleteMany({
-                where: { blockId }
-            }),
-            // Delete all Topics
-            prisma.topic.deleteMany({
-                where: { blockId }
-            }),
-            // Finally, delete the block itself
-            prisma.block.delete({
-            where: { id: blockId }
-            })
-        ]);
-
-        // Clean up any uploaded files in Supabase storage
-        const supabase = await createClient();
-        const { data: files } = await supabase
-            .storage
-            .from('blocks')
-            .list(`${blockId}`);
-
-        if (files && files.length > 0) {
-            const filePaths = files.map((file: { name: string }) => `${blockId}/${file.name}`);
-            await supabase
-                .storage
-                .from('blocks')
-                .remove(filePaths);
-        }
-
-        return { success: true };
+        return deleteBlock(blockId, userId);
     } catch (error) {
         console.error("Failed to delete block:", error);
         throw error;
@@ -506,80 +275,7 @@ export const deleteCrate = async (crateId: string) => {
     try {
         const userId = await getUser();
         
-        const crate = await prisma.folder.findUnique({
-            where: { id: crateId },
-            select: { 
-                authorId: true,
-                blocks: {
-                    select: {
-                        id: true
-                    }
-                },
-                children: {
-                    select: {
-                        id: true
-                    }
-                }
-            }
-        });
-
-        if (!crate || crate.authorId !== userId) {
-            throw new Error("Unauthorized to delete this crate");
-        }
-
-        // Delete all related data in a transaction
-        await prisma.$transaction(async (tx) => {
-            // First, recursively delete all child crates and their contents
-            for (const child of crate.children) {
-                await deleteCrate(child.id);
-            }
-
-            // Delete all blocks in this crate
-            for (const block of crate.blocks) {
-                // Delete all FillInTheBlank entries
-                await tx.fillInTheBlank.deleteMany({
-                    where: { blockId: block.id }
-                });
-                // Delete all Questions
-                await tx.question.deleteMany({
-                    where: { blockId: block.id }
-                });
-                // Delete all Quizzes
-                await tx.quiz.deleteMany({
-                    where: { blockId: block.id }
-                });
-                // Delete all Topics
-                await tx.topic.deleteMany({
-                    where: { blockId: block.id }
-                });
-                // Delete the block itself
-                await tx.block.delete({
-                    where: { id: block.id }
-                });
-
-                // Clean up any uploaded files in Supabase storage for this block
-                const supabase = await createClient();
-                const { data: files } = await supabase
-                    .storage
-                    .from('blocks')
-                    .list(`${block.id}`);
-
-                if (files && files.length > 0) {
-                    const filePaths = files.map((file: { name: string }) => `${block.id}/${file.name}`);
-                    await supabase
-                        .storage
-                        .from('blocks')
-                        .remove(filePaths);
-                }
-            }
-
-            // Finally, delete the crate itself
-            await tx.folder.delete({
-                where: { id: crateId }
-            });
-        });
-
-        return { success: true };
+        return deleteFolder(crateId, userId);
     } catch (error) {
         console.error("Failed to delete crate:", error);
         throw error;

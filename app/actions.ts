@@ -1,11 +1,10 @@
 "use server";
-
 import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import prisma from "@/lib/prisma";
 import { Mode } from '@/lib/generated/prisma';
+import { createUser, getUserMode, updateUser } from "@/lib/user";
 
 
 export const signUpAction = async (formData: FormData) => {
@@ -46,13 +45,11 @@ export const signUpAction = async (formData: FormData) => {
 
   try {
     // Create user in Prisma database
-    await prisma.user.create({
-      data: {
-          id: authData.user.id,
-        email: email,
-        name: null, // Can be updated later
-      },
-    });
+    await createUser({
+      email: email,
+      name: undefined, // Can be updated later
+    })
+    
     } catch (prismaError: any) {
       // If the error is because the user already exists, that's fine
       // The user can still proceed with email verification
@@ -249,14 +246,8 @@ export async function setMode(mode: Difficulty) {
   }
 
   try {
-    await prisma.user.update({
-      where: {
-        id: session.user.id,
-      },
-      data: {
-        mode: mode as Mode,
-      },
-    });
+
+    await updateUser(session.user.id, { mode: mode as Mode })
 
     return { success: true, mode };
   } catch (error) {
@@ -274,16 +265,8 @@ export async function getMode(): Promise<Difficulty> {
   }
 
   try {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: session.user.id,
-      },
-      select: {
-        mode: true,
-      },
-    });
-
-    return (user?.mode || Mode.MEDIUM) as Difficulty;
+    const userMode = await getUserMode(session.user.id)
+    return (userMode || Mode.MEDIUM) as Difficulty;
   } catch (error) {
     console.error('Error getting mode:', error);
     throw new Error('Failed to get mode');

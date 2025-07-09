@@ -1,34 +1,24 @@
 "use server"
 
-import prisma from "@/lib/prisma"
+import { createClient } from "@/utils/supabase/server"
+import { redirect } from "next/navigation"
 import { generateHTML } from '@tiptap/html'
 import { StarterKit } from "@tiptap/starter-kit"
 import { generateNotes } from "@/lib/generateNotes"
+import { getBlockContext, getBlockNote, setBlockNote, updateBlock } from "@/lib/block"
 
 export async function updateContext(data: { blockId: string, context: string }) {  
-  await prisma.block.update({
-    where: { id: data.blockId },
-    data: { context: data.context }
-  })
+  await updateBlock(data.blockId, { context: data.context })
 } 
 
 export async function fetchContext(blockId: string): Promise<string> {
-  const block = await prisma.block.findUnique({
-    where: { id: blockId },
-    select: { context: true }
-  });
-  return block?.context || '';
+  const context = await getBlockContext(blockId)
+  return context || '';
 }
 
 export async function fetchNotes(blockId: string): Promise<string> {
   try {
-    const block = await prisma.block.findUnique({
-      where: { id: blockId },
-      select: {
-        note: true,
-        context: true,
-      }
-    });
+    const block = await getBlockNote(blockId)
 
     if (!block) {
       return '';
@@ -61,10 +51,7 @@ export async function saveGeneratedNotes(blockId: string) {
     const notes = await generateNotes(blockId);
 
     // Update the block with the generated notes
-    const updatedBlock = await prisma.block.update({
-      where: { id: blockId },
-      data: { note: notes },
-    });
+    const updatedBlock = await setBlockNote(blockId, notes)
 
     return { success: true, data: updatedBlock };
   } catch (error) {
