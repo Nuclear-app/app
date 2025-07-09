@@ -3,15 +3,26 @@ import prisma from "@/lib/prisma";
 
 export const redis = Redis.fromEnv();
 
-export async function cacheAside(key: string, ttlSeconds: number, fetcher: () => Promise<any>) {
-    const cached = await redis.get(key);
-    if (cached) {
-        return JSON.parse(cached as string);
-    }
-    const data = await fetcher();
-    await redis.set(key, JSON.stringify(data), { ex: ttlSeconds });
-    return data;
-}
+// export async function cacheAside(key: string, ttlSeconds: number, fetcher: () => Promise<any>) {
+//     const cached = await redis.get(key);
+//     if (cached) {
+//         return JSON.parse(cached as string);
+//     }
+//     const data = await fetcher();
+//     await redis.set(key, JSON.stringify(data), { ex: ttlSeconds });
+//     return data;
+// }
+
+export async function cacheAside<T>(key: string, ttlSeconds: number, fetcher: () => Promise<T>): Promise<T> {
+    const cached = await redis.get<T>(key)
+    if (cached !== null) {
+      return cached
+    }  
+    const data = await fetcher()
+    await redis.set(key, data, { ex: ttlSeconds })
+    return data
+  }
+  
 
 export async function getBlockWithCache(blockId: string, ttlSeconds = 3600) {
     return cacheAside(
