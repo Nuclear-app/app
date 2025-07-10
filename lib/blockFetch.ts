@@ -5,13 +5,11 @@ import { generateHTML } from '@tiptap/html'
 import StarterKit from '@tiptap/starter-kit'
 import { JSONContent } from '@tiptap/react'
 import { createInitialBlock } from "@/app/actions/create-initial-block";
+import { getBlockPointsWithCache, getBlockWithCache, invalidateBlockCache } from "@/lib/redis";
 
 export const fetchPoints = async (blockId: string) => {
-  const block = await prisma.block.findUnique({
-    where: { id: blockId },
-    select: { points: true },
-  });
-  return block?.points ?? 0;
+  const points = await getBlockPointsWithCache(blockId);
+  return points;
 };
 
 export const updatePoints = async (
@@ -63,13 +61,7 @@ export const updatePoints = async (
 };
 
 export const fetchNotes = async (blockId: string) => {
-  const block = await prisma.block.findUnique({
-    where: { id: blockId },
-    select: { 
-      note: true,
-      context: true 
-    },
-  });
+  const block = await getBlockWithCache(blockId);
   
   if (!block) return null;
   

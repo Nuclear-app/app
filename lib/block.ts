@@ -178,9 +178,9 @@ export async function getBlockFiles(id: string): Promise<string[] | null> {
 /**
  * Get block's note
  * @param id - The block's unique identifier
- * @returns Promise<any | null> - The block's note or null if not found
+ * @returns Promise<any | null> - The block object with note and context, or null if not found
  */
-export async function getBlockNote(id: string): Promise<any | null> {
+export async function getBlockNote(id: string): Promise<{note: any, context: string | null} | null> {
   try {
     if (!id || typeof id !== 'string') {
       throw new BlockError('Invalid block ID provided', 'INVALID_ID')
@@ -193,7 +193,7 @@ export async function getBlockNote(id: string): Promise<any | null> {
       }
     })
 
-    return block?.note || null
+    return block
   } catch (error) {
     if (error instanceof BlockError) throw error
     throw new BlockError(`Failed to get block note: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')

@@ -2,7 +2,8 @@
 
 import FAQ from "@/components/faq";
 import { useEffect, useState, use } from "react";
-import { getFullContext } from "../../actions";
+import { getBlockContext } from "@/lib/block";
+import { getFullContext } from "@/lib/context";
 import { BlockViewNav } from "@/components/blockViewNav";
 
 interface Props {

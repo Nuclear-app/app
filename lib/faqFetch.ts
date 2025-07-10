@@ -1,6 +1,7 @@
 "use server";
 
-import prisma from "@/lib/prisma";
+import { Question } from "@/lib/generated/prisma";
+import { getQuestionsByBlockWithCache } from "@/lib/redis";
 
 export interface FAQItem {
     id: string;
@@ -11,15 +12,7 @@ export interface FAQItem {
 
 export async function fetchAllFAQs(blockId: string): Promise<FAQItem[]> {
     try {
-        const faqs = await prisma.question.findMany({
-            where: {
-                blockId: blockId
-            },
-            orderBy: {
-                id: 'desc'
-            }
-        });
-
+        const faqs = await getQuestionsByBlockWithCache(blockId);
         return faqs;
     } catch (error) {
         console.error("Error fetching FAQs:", error);

@@ -3,7 +3,7 @@
 import Examples from "@/components/examples";
 import { useEffect, useState, use } from "react";
 import { getBlockContext } from "@/lib/block";
-import { getFullContext } from "../../actions";
+import { getFullContext } from "@/lib/context";
 import { generateExamplesIfNeeded } from "../actions";
 import { BlockViewNav } from "@/components/blockViewNav";
 

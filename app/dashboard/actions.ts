@@ -1,3 +1,4 @@
+"use server";
 
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
@@ -5,7 +6,19 @@ import { Mode } from "@/lib/generated/prisma";
 import { getUserById, getUserCrates, getUserName } from "@/lib/user";
 import { getUserFolders, getUserPosts } from "@/lib/user";
 import { createFolder, deleteFolder, getFolderById, getTopLevelFolders } from "@/lib/folder";
-import { createBlock, getTopLevelBlocks } from "@/lib/block";
+import { createBlock, getTopLevelBlocks, getBlockById, setBlockTitle, deleteBlock as removeBlock } from "@/lib/block";
+import { 
+  getUserBlocksWithCache, 
+  getUserFoldersWithCache, 
+  getTopLevelBlocksWithCache, 
+  getTopLevelFoldersWithCache,
+  getDashboardItemsWithCache,
+  getFileSystemStructureWithCache,
+  getUserNameWithCache,
+  invalidateUserCache,
+  invalidateBlockCache,
+  invalidateFolderCache
+} from "@/lib/redis";
 
 const ROOT_FOLDER_ID = "f2120a35-5e3f-488e-be86-f0753af42e77";
 
@@ -34,49 +47,35 @@ export interface CratePath {
     name: string;
 }
 
-// Authentication helper
-const getUser = async () => {
+export async function getUser() {
     const supabase = await createClient();
-    const { data: { user }, error } = await supabase.auth.getUser();
-
-    // if (error) throw new Error("Authentication failed");
-    // if (!user) throw new Error("No authenticated user found");
-
+    const { data: { user } } = await supabase.auth.getUser();
     return user?.id;
-};
+}
 
 // Single-purpose query methods
 export const fetchUserBlocks = async () => {
     const userId = await getUser();
-
-    const userPosts = await getUserPosts(userId || "");
-    return userPosts;
+    return await getUserBlocksWithCache(userId || "");
 };
 
 export const fetchUserFolders = async () => {
     const userId = await getUser();
     console.log('fetchUserFolders - Fetching for user:', userId);
     
-    const userFolders = getUserFolders(userId || "'");
-
+    const userFolders = await getUserFoldersWithCache(userId || "");
     console.log('fetchUserFolders - Folders data:', JSON.stringify(userFolders, null, 2));
     return userFolders;
 };
 
 export const fetchRootBlocks = async () => {
     const userId = await getUser();
-    
-    const blocks = await getTopLevelBlocks(userId || "");
-
-    return blocks;
+    return await getTopLevelBlocksWithCache(userId || "", ROOT_FOLDER_ID);
 };
 
 export const fetchRootFolders = async () => {
     const userId = await getUser();
-    
-    const folders = await getTopLevelFolders(userId || "");
-
-    return folders;
+    return await getTopLevelFoldersWithCache(userId || "", ROOT_FOLDER_ID);
 };
 
 // Composite methods that use single-purpose queries
@@ -85,24 +84,22 @@ export const fetchDashboardItems = async () => {
         const userId = await getUser();
         console.log('fetchDashboardItems - Fetching for user:', userId);
 
-        const blocks = await getUserPosts(userId || "");
-
-        const folders = await getUserFolders(userId || "");
+        const userData = await getDashboardItemsWithCache(userId || "");
 
         const result = {
-            blocks: blocks.map(block => ({
+            blocks: (userData as any)?.posts?.map((block: any) => ({
                 id: block.id,
                 title: block.title,
                 createdAt: block.createdAt,
                 folderId: block.folderId
-            })),
-            folders: folders.map(folder => ({
+            })) || [],
+            folders: (userData as any)?.folders?.map((folder: any) => ({
                 id: folder.id,
                 name: folder.name,
                 icon: folder.icon,
                 createdAt: folder.createdAt,
                 parentId: folder.parentId
-            }))
+            })) || []
         };
 
         return result;
@@ -129,27 +126,7 @@ export const fetchRootItems = async () => {
 export const fetchFileSystemStructure = async (): Promise<DatabaseItem[]> => {
     try {
         const userId = await getUser();
-
-        const [blocks, folders] = await Promise.all([
-            getUserPosts(userId || "").then(posts => 
-                posts
-                    .filter(block => block.folderId !== null)
-                    .map(block => ({
-                        id: block.id,
-                        title: block.title,
-                        folderId: block.folderId
-                    }))
-            ),
-            getUserFolders(userId || "").then(folders => 
-                folders
-                    .filter(folder => folder.parentId !== null)
-                    .map(folder => ({
-                        id: folder.id,
-                        name: folder.name,
-                        parentId: folder.parentId
-                    }))
-            )
-        ]);
+        const { blocks, folders } = await getFileSystemStructureWithCache(userId || "");
 
         const structure: DatabaseItem[] = [
             ...blocks.map(block => ({
@@ -173,98 +150,90 @@ export const fetchFileSystemStructure = async (): Promise<DatabaseItem[]> => {
     }
 };
 
-export const fetchCrates = async () => {
+export const fetchUserName = async () => {
+    const userId = await getUser();
+    return await getUserNameWithCache(userId || "");
+};
+
+export const fetchCratePath = async (crateId: string) => {
     try {
-        const userId = await getUser();
-        return getUserCrates(userId || "");
+        const path: { id: string; name: string }[] = [];
+        let currentId = crateId;
+
+        while (currentId && currentId !== ROOT_FOLDER_ID) {
+            const folder = await getFolderById(currentId);
+            if (folder) {
+                path.unshift({ id: folder.id, name: folder.name });
+                currentId = folder.parentId || "";
+            } else {
+                break;
+            }
+        }
+
+        return path;
     } catch (error) {
-        console.error("Failed to fetch crates:", error);
-        throw new Error("Failed to fetch crates");
+        console.error("Failed to fetch crate path:", error);
+        return [];
     }
 };
 
-export const addBlock = async (title: string, folderId: string | null = ROOT_FOLDER_ID, mode?: Mode) => {
+// ==================== CREATE OPERATIONS ====================
+
+export const addBlock = async (title: string) => {
     try {
         const userId = await getUser();
-        console.log("This is how the block is actually created")
+        if (!userId) throw new Error("User not authenticated");
+
         const block = await createBlock({
             title,
-            authorId: userId || "",
-            folderId: folderId || undefined,
-            context: "",
-            note: JSON.stringify({
-                type: "doc",
-                content: [{ type: "paragraph" }]
-            }),
-            points: 0
-        })
-
+            authorId: userId
+        });
+        
+        // Invalidate relevant caches
+        await invalidateUserCache(userId);
+        
         return block;
     } catch (error) {
-        console.error("Failed to add block:", error);
+        console.error("Failed to create block:", error);
         throw error;
     }
 };
 
-export const addCrate = async (name: string, icon: string | null = null, parentId: string | null = ROOT_FOLDER_ID) => {
+export const addCrate = async (title: string, icon: string) => {
     try {
         const userId = await getUser();
+        if (!userId) throw new Error("User not authenticated");
 
-        const folder = await createFolder({
-            name,
-            parentId: parentId || undefined,
-            icon: icon || undefined,
-            authorId: userId
+        const crate = await createFolder({
+            name: title,
+            authorId: userId,
+            icon
         });
-
-        return folder;
+        
+        // Invalidate relevant caches
+        await invalidateUserCache(userId);
+        
+        return crate;
     } catch (error) {
         console.error("Failed to create crate:", error);
         throw error;
     }
 };
 
-export const fetchUserName = async () => {
+// ==================== DELETE OPERATIONS ====================
+
+export const deleteBlock = async (blockId: string) => {
     try {
         const userId = await getUser();
+        if (!userId) throw new Error("User not authenticated");
+
+        await removeBlock(blockId, userId);
         
-        return getUserName(userId || "");
-    } catch (error) {
-        console.error("Failed to fetch user name:", error);
-        throw error;
-    }
-};
-
-export const fetchCratePath = async (crateId: string): Promise<CratePath[]> => {
-    try {
-        const userId = await getUser();
-        const path: CratePath[] = [];
+        // Invalidate relevant caches
+        await invalidateBlockCache(blockId);
+        await invalidateUserCache(userId);
         
-        let currentCrate = await getFolderById(crateId)
-
-        while (currentCrate) {
-            path.unshift({
-                id: currentCrate.id,
-                name: currentCrate.name
-            });
-
-            if (!currentCrate.parentId || currentCrate.parentId === ROOT_FOLDER_ID) break;
-
-            currentCrate = await getFolderById(currentCrate.parentId)
-        }
-
-        return path;
-    } catch (error) {
-        console.error("Failed to fetch crate path:", error);
-        throw error;
-    }
-};
-
-export const deleteBlock = async (blockId: string, userId?: string): Promise<{ success: boolean }> => {
-    try {
-        const userId = await getUser();
-        
-        return deleteBlock(blockId, userId);
+        return { success: true };
     } catch (error) {
         console.error("Failed to delete block:", error);
         throw error;
@@ -274,77 +243,33 @@ export const deleteBlock = async (blockId: string, userId?: string): Promise<{ s
 export const deleteCrate = async (crateId: string) => {
     try {
         const userId = await getUser();
+        if (!userId) throw new Error("User not authenticated");
+
+        await deleteFolder(crateId, userId);
         
-        return deleteFolder(crateId, userId);
+        // Invalidate relevant caches
+        await invalidateFolderCache(crateId);
+        await invalidateUserCache(userId);
+        
+        return { success: true };
     } catch (error) {
         console.error("Failed to delete crate:", error);
         throw error;
     }
 };
 
-export const renameBlock = async (blockId: string, newTitle: string) => {
+// ==================== UPDATE OPERATIONS ====================
+
+export const updateBlockTitle = async (blockId: string, newTitle: string) => {
     try {
-        const userId = await getUser();
+        await setBlockTitle(blockId, newTitle);
         
-        // Check if block exists and user owns it
-        const block = await prisma.block.findUnique({
-            where: { id: blockId },
-            select: { authorId: true }
-        });
-
-        if (!block || block.authorId !== userId) {
-            throw new Error("Unauthorized to rename this block");
-        }
-
-        // Update the block title
-        const updatedBlock = await prisma.block.update({
-            where: { id: blockId },
-            data: { title: newTitle.trim() },
-            select: {
-                id: true,
-                title: true,
-                createdAt: true,
-                folderId: true,
-                authorId: true
-            }
-        });
-
-        return updatedBlock;
+        // Invalidate relevant caches
+        await invalidateBlockCache(blockId);
+        
+        return { success: true };
     } catch (error) {
-        console.error("Failed to rename block:", error);
+        console.error("Failed to update block title:", error);
         throw error;
     }
-};
-
-// export const renameCrate = async (crateId: string, newName: string) => {
-//     try {
-//         const userId = await getUser();
-        
-//         // Check if crate exists and user owns it
-//         const crate = await prisma.folder.findUnique({
-//             where: { id: crateId },
-//             select: { authorId: true }
-//         });
-
-//         if (!crate || crate.authorId !== userId) {
-//             throw new Error("Unauthorized to rename this crate");
-//         }
-
-//         // Update the crate name
-//         const updatedCrate = await prisma.folder.update({
-//             where: { id: crateId },
-//             data: { name: newName.trim() },
-//             select: {
-//                 id: true,
-//                 name: true,
-//                 icon: true,
-//                 createdAt: true
-//             }
-//         });
-
-//         return updatedCrate;
-//     } catch (error) {
-//         console.error("Failed to rename crate:", error);
-//         throw error;
-//     }
-// }; 
+}; 

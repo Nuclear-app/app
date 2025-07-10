@@ -1,7 +1,8 @@
 "use client";
 import { Quiz } from "@/components/quiz";
 import { useEffect, useState, use } from "react";
-import { getFullContext } from "../../actions";
+import { getBlockContext } from "@/lib/block";
+import { getFullContext } from "@/lib/context";
 import { generateQuizzesIfNeeded } from "../actions";
 import { BlockViewNav } from "@/components/blockViewNav";
 
