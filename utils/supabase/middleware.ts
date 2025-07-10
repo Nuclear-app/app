@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
+import { isTrialExpired, getUserSubscriptionStatus } from "@/lib/user";
 
 // Function to check if user owns a block via API call
 async function checkBlockOwnership(blockId: string, userId: string): Promise<boolean> {
@@ -38,6 +39,28 @@ async function checkCrateOwnership(crateId: string, userId: string): Promise<boo
   } catch (error) {
     console.error("Error checking crate ownership:", error);
     return false;
+  }
+}
+
+// Function to check subscription status
+async function checkSubscriptionStatus(userId: string): Promise<boolean> {
+  try {
+    const subscriptionStatus = await getUserSubscriptionStatus(userId);
+    
+    // Allow access if user is PAID
+    if (subscriptionStatus === 'PAID') {
+      return true;
+    }
+    
+    // Check if trial has expired
+    const trialExpired = await isTrialExpired(userId);
+    
+    // Allow access if trial hasn't expired
+    return !trialExpired;
+  } catch (error) {
+    console.error("Error checking subscription status:", error);
+    // In case of error, allow access (fail open)
+    return true;
   }
 }
 
@@ -162,6 +185,15 @@ export const updateSession = async (request: NextRequest) => {
 
         if (!hasAccess) {
           return NextResponse.redirect(new URL("/dashboard", request.url));
+        }
+      }
+      
+      // Check subscription status for protected routes (except transaction page)
+      if (!request.nextUrl.pathname.startsWith("/transaction")) {
+        const hasValidSubscription = await checkSubscriptionStatus(user.id);
+        
+        if (!hasValidSubscription) {
+          return NextResponse.redirect(new URL("/transaction", request.url));
         }
       }
     }

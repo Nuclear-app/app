@@ -66,11 +66,24 @@ export namespace $Enums {
 
 export type Mode = (typeof Mode)[keyof typeof Mode]
 
+
+export const SubscriptionStatus: {
+  TRIAL: 'TRIAL',
+  PAID: 'PAID',
+  EXPIRED: 'EXPIRED'
+};
+
+export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus]
+
 }
 
 export type Mode = $Enums.Mode
 
 export const Mode: typeof $Enums.Mode
+
+export type SubscriptionStatus = $Enums.SubscriptionStatus
+
+export const SubscriptionStatus: typeof $Enums.SubscriptionStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -1716,6 +1729,8 @@ export namespace Prisma {
     email: string | null
     name: string | null
     mode: $Enums.Mode | null
+    createdAt: Date | null
+    subscriptionStatus: $Enums.SubscriptionStatus | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -1723,6 +1738,8 @@ export namespace Prisma {
     email: string | null
     name: string | null
     mode: $Enums.Mode | null
+    createdAt: Date | null
+    subscriptionStatus: $Enums.SubscriptionStatus | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -1730,6 +1747,8 @@ export namespace Prisma {
     email: number
     name: number
     mode: number
+    createdAt: number
+    subscriptionStatus: number
     _all: number
   }
 
@@ -1739,6 +1758,8 @@ export namespace Prisma {
     email?: true
     name?: true
     mode?: true
+    createdAt?: true
+    subscriptionStatus?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -1746,6 +1767,8 @@ export namespace Prisma {
     email?: true
     name?: true
     mode?: true
+    createdAt?: true
+    subscriptionStatus?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -1753,6 +1776,8 @@ export namespace Prisma {
     email?: true
     name?: true
     mode?: true
+    createdAt?: true
+    subscriptionStatus?: true
     _all?: true
   }
 
@@ -1833,6 +1858,8 @@ export namespace Prisma {
     email: string
     name: string | null
     mode: $Enums.Mode | null
+    createdAt: Date
+    subscriptionStatus: $Enums.SubscriptionStatus
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -1857,6 +1884,8 @@ export namespace Prisma {
     email?: boolean
     name?: boolean
     mode?: boolean
+    createdAt?: boolean
+    subscriptionStatus?: boolean
     posts?: boolean | User$postsArgs<ExtArgs>
     folders?: boolean | User$foldersArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1867,6 +1896,8 @@ export namespace Prisma {
     email?: boolean
     name?: boolean
     mode?: boolean
+    createdAt?: boolean
+    subscriptionStatus?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1874,6 +1905,8 @@ export namespace Prisma {
     email?: boolean
     name?: boolean
     mode?: boolean
+    createdAt?: boolean
+    subscriptionStatus?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -1881,9 +1914,11 @@ export namespace Prisma {
     email?: boolean
     name?: boolean
     mode?: boolean
+    createdAt?: boolean
+    subscriptionStatus?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "mode", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "mode" | "createdAt" | "subscriptionStatus", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     posts?: boolean | User$postsArgs<ExtArgs>
     folders?: boolean | User$foldersArgs<ExtArgs>
@@ -1903,6 +1938,8 @@ export namespace Prisma {
       email: string
       name: string | null
       mode: $Enums.Mode | null
+      createdAt: Date
+      subscriptionStatus: $Enums.SubscriptionStatus
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -2332,6 +2369,8 @@ export namespace Prisma {
     readonly email: FieldRef<"User", 'String'>
     readonly name: FieldRef<"User", 'String'>
     readonly mode: FieldRef<"User", 'Mode'>
+    readonly createdAt: FieldRef<"User", 'DateTime'>
+    readonly subscriptionStatus: FieldRef<"User", 'SubscriptionStatus'>
   }
     
 
@@ -10651,7 +10690,9 @@ export namespace Prisma {
     id: 'id',
     email: 'email',
     name: 'name',
-    mode: 'mode'
+    mode: 'mode',
+    createdAt: 'createdAt',
+    subscriptionStatus: 'subscriptionStatus'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -10829,6 +10870,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'SubscriptionStatus'
+   */
+  export type EnumSubscriptionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubscriptionStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'SubscriptionStatus[]'
+   */
+  export type ListEnumSubscriptionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubscriptionStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -10888,6 +10943,8 @@ export namespace Prisma {
     email?: StringFilter<"User"> | string
     name?: StringNullableFilter<"User"> | string | null
     mode?: EnumModeNullableFilter<"User"> | $Enums.Mode | null
+    createdAt?: DateTimeFilter<"User"> | Date | string
+    subscriptionStatus?: EnumSubscriptionStatusFilter<"User"> | $Enums.SubscriptionStatus
     posts?: BlockListRelationFilter
     folders?: FolderListRelationFilter
   }
@@ -10897,6 +10954,8 @@ export namespace Prisma {
     email?: SortOrder
     name?: SortOrderInput | SortOrder
     mode?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    subscriptionStatus?: SortOrder
     posts?: BlockOrderByRelationAggregateInput
     folders?: FolderOrderByRelationAggregateInput
   }
@@ -10909,6 +10968,8 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     name?: StringNullableFilter<"User"> | string | null
     mode?: EnumModeNullableFilter<"User"> | $Enums.Mode | null
+    createdAt?: DateTimeFilter<"User"> | Date | string
+    subscriptionStatus?: EnumSubscriptionStatusFilter<"User"> | $Enums.SubscriptionStatus
     posts?: BlockListRelationFilter
     folders?: FolderListRelationFilter
   }, "id" | "email">
@@ -10918,6 +10979,8 @@ export namespace Prisma {
     email?: SortOrder
     name?: SortOrderInput | SortOrder
     mode?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    subscriptionStatus?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -10931,6 +10994,8 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"User"> | string
     name?: StringNullableWithAggregatesFilter<"User"> | string | null
     mode?: EnumModeNullableWithAggregatesFilter<"User"> | $Enums.Mode | null
+    createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+    subscriptionStatus?: EnumSubscriptionStatusWithAggregatesFilter<"User"> | $Enums.SubscriptionStatus
   }
 
   export type BlockWhereInput = {
@@ -11390,6 +11455,8 @@ export namespace Prisma {
     email: string
     name?: string | null
     mode?: $Enums.Mode | null
+    createdAt?: Date | string
+    subscriptionStatus?: $Enums.SubscriptionStatus
     posts?: BlockCreateNestedManyWithoutAuthorInput
     folders?: FolderCreateNestedManyWithoutAuthorInput
   }
@@ -11399,6 +11466,8 @@ export namespace Prisma {
     email: string
     name?: string | null
     mode?: $Enums.Mode | null
+    createdAt?: Date | string
+    subscriptionStatus?: $Enums.SubscriptionStatus
     posts?: BlockUncheckedCreateNestedManyWithoutAuthorInput
     folders?: FolderUncheckedCreateNestedManyWithoutAuthorInput
   }
@@ -11408,6 +11477,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    subscriptionStatus?: EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
     posts?: BlockUpdateManyWithoutAuthorNestedInput
     folders?: FolderUpdateManyWithoutAuthorNestedInput
   }
@@ -11417,6 +11488,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    subscriptionStatus?: EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
     posts?: BlockUncheckedUpdateManyWithoutAuthorNestedInput
     folders?: FolderUncheckedUpdateManyWithoutAuthorNestedInput
   }
@@ -11426,6 +11499,8 @@ export namespace Prisma {
     email: string
     name?: string | null
     mode?: $Enums.Mode | null
+    createdAt?: Date | string
+    subscriptionStatus?: $Enums.SubscriptionStatus
   }
 
   export type UserUpdateManyMutationInput = {
@@ -11433,6 +11508,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    subscriptionStatus?: EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -11440,6 +11517,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    subscriptionStatus?: EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   }
 
   export type BlockCreateInput = {
@@ -11935,6 +12014,24 @@ export namespace Prisma {
     not?: NestedEnumModeNullableFilter<$PrismaModel> | $Enums.Mode | null
   }
 
+  export type DateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type EnumSubscriptionStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SubscriptionStatus | EnumSubscriptionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SubscriptionStatus[] | ListEnumSubscriptionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SubscriptionStatus[] | ListEnumSubscriptionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSubscriptionStatusFilter<$PrismaModel> | $Enums.SubscriptionStatus
+  }
+
   export type BlockListRelationFilter = {
     every?: BlockWhereInput
     some?: BlockWhereInput
@@ -11965,6 +12062,8 @@ export namespace Prisma {
     email?: SortOrder
     name?: SortOrder
     mode?: SortOrder
+    createdAt?: SortOrder
+    subscriptionStatus?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -11972,6 +12071,8 @@ export namespace Prisma {
     email?: SortOrder
     name?: SortOrder
     mode?: SortOrder
+    createdAt?: SortOrder
+    subscriptionStatus?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -11979,6 +12080,8 @@ export namespace Prisma {
     email?: SortOrder
     name?: SortOrder
     mode?: SortOrder
+    createdAt?: SortOrder
+    subscriptionStatus?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -12027,7 +12130,7 @@ export namespace Prisma {
     _max?: NestedEnumModeNullableFilter<$PrismaModel>
   }
 
-  export type DateTimeFilter<$PrismaModel = never> = {
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
     notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -12035,7 +12138,20 @@ export namespace Prisma {
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type EnumSubscriptionStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SubscriptionStatus | EnumSubscriptionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SubscriptionStatus[] | ListEnumSubscriptionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SubscriptionStatus[] | ListEnumSubscriptionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSubscriptionStatusWithAggregatesFilter<$PrismaModel> | $Enums.SubscriptionStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSubscriptionStatusFilter<$PrismaModel>
+    _max?: NestedEnumSubscriptionStatusFilter<$PrismaModel>
   }
 
   export type IntNullableFilter<$PrismaModel = never> = {
@@ -12178,20 +12294,6 @@ export namespace Prisma {
 
   export type BlockSumOrderByAggregateInput = {
     points?: SortOrder
-  }
-
-  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
   export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -12485,6 +12587,14 @@ export namespace Prisma {
     set?: $Enums.Mode | null
   }
 
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
+  }
+
+  export type EnumSubscriptionStatusFieldUpdateOperationsInput = {
+    set?: $Enums.SubscriptionStatus
+  }
+
   export type BlockUpdateManyWithoutAuthorNestedInput = {
     create?: XOR<BlockCreateWithoutAuthorInput, BlockUncheckedCreateWithoutAuthorInput> | BlockCreateWithoutAuthorInput[] | BlockUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: BlockCreateOrConnectWithoutAuthorInput | BlockCreateOrConnectWithoutAuthorInput[]
@@ -12625,10 +12735,6 @@ export namespace Prisma {
     connectOrCreate?: TopicCreateOrConnectWithoutBlockInput | TopicCreateOrConnectWithoutBlockInput[]
     createMany?: TopicCreateManyBlockInputEnvelope
     connect?: TopicWhereUniqueInput | TopicWhereUniqueInput[]
-  }
-
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
   }
 
   export type NullableIntFieldUpdateOperationsInput = {
@@ -13109,6 +13215,24 @@ export namespace Prisma {
     not?: NestedEnumModeNullableFilter<$PrismaModel> | $Enums.Mode | null
   }
 
+  export type NestedDateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type NestedEnumSubscriptionStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SubscriptionStatus | EnumSubscriptionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SubscriptionStatus[] | ListEnumSubscriptionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SubscriptionStatus[] | ListEnumSubscriptionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSubscriptionStatusFilter<$PrismaModel> | $Enums.SubscriptionStatus
+  }
+
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -13175,17 +13299,6 @@ export namespace Prisma {
     _max?: NestedEnumModeNullableFilter<$PrismaModel>
   }
 
-  export type NestedDateTimeFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -13198,6 +13311,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSubscriptionStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SubscriptionStatus | EnumSubscriptionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SubscriptionStatus[] | ListEnumSubscriptionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SubscriptionStatus[] | ListEnumSubscriptionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSubscriptionStatusWithAggregatesFilter<$PrismaModel> | $Enums.SubscriptionStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSubscriptionStatusFilter<$PrismaModel>
+    _max?: NestedEnumSubscriptionStatusFilter<$PrismaModel>
   }
 
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -13429,6 +13552,8 @@ export namespace Prisma {
     email: string
     name?: string | null
     mode?: $Enums.Mode | null
+    createdAt?: Date | string
+    subscriptionStatus?: $Enums.SubscriptionStatus
     folders?: FolderCreateNestedManyWithoutAuthorInput
   }
 
@@ -13437,6 +13562,8 @@ export namespace Prisma {
     email: string
     name?: string | null
     mode?: $Enums.Mode | null
+    createdAt?: Date | string
+    subscriptionStatus?: $Enums.SubscriptionStatus
     folders?: FolderUncheckedCreateNestedManyWithoutAuthorInput
   }
 
@@ -13610,6 +13737,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    subscriptionStatus?: EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
     folders?: FolderUpdateManyWithoutAuthorNestedInput
   }
 
@@ -13618,6 +13747,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    subscriptionStatus?: EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
     folders?: FolderUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
@@ -14040,6 +14171,8 @@ export namespace Prisma {
     email: string
     name?: string | null
     mode?: $Enums.Mode | null
+    createdAt?: Date | string
+    subscriptionStatus?: $Enums.SubscriptionStatus
     posts?: BlockCreateNestedManyWithoutAuthorInput
   }
 
@@ -14048,6 +14181,8 @@ export namespace Prisma {
     email: string
     name?: string | null
     mode?: $Enums.Mode | null
+    createdAt?: Date | string
+    subscriptionStatus?: $Enums.SubscriptionStatus
     posts?: BlockUncheckedCreateNestedManyWithoutAuthorInput
   }
 
@@ -14147,6 +14282,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    subscriptionStatus?: EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
     posts?: BlockUpdateManyWithoutAuthorNestedInput
   }
 
@@ -14155,6 +14292,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     mode?: NullableEnumModeFieldUpdateOperationsInput | $Enums.Mode | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    subscriptionStatus?: EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
     posts?: BlockUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
