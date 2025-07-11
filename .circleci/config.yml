@@ -18,15 +18,14 @@ jobs:
             rm -rf ~/.cache/circleci
             rm -rf ~/.npm
       
-      # Install Bun
+      # Install Bun and set up environment
       - run:
           name: Install Bun
           command: |
             curl -fsSL https://bun.sh/install | bash
-            export BUN_INSTALL="$HOME/.bun"
-            export PATH="$BUN_INSTALL/bin:$PATH"
             echo 'export BUN_INSTALL="$HOME/.bun"' >> $BASH_ENV
-            echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >> $BASH_ENV
+            echo 'export PATH="$HOME/.bun/bin:$PATH"' >> $BASH_ENV
+            source $BASH_ENV
       
       # Restore cache for faster builds
       - restore_cache:
@@ -38,8 +37,7 @@ jobs:
       - run:
           name: Install Dependencies
           command: |
-            export BUN_INSTALL="$HOME/.bun"
-            export PATH="$BUN_INSTALL/bin:$PATH"
+            source $BASH_ENV
             bun install
       
       # Save cache
@@ -52,33 +50,29 @@ jobs:
       - run:
           name: Setup Prisma
           command: |
-            export BUN_INSTALL="$HOME/.bun"
-            export PATH="$BUN_INSTALL/bin:$PATH"
+            source $BASH_ENV
             bun add -g prisma
-            bunx prisma generate
+            bun run prisma generate
       
       # Type checking
       - run:
           name: Type Check
           command: |
-            export BUN_INSTALL="$HOME/.bun"
-            export PATH="$BUN_INSTALL/bin:$PATH"
-            bunx tsc --noEmit
+            source $BASH_ENV
+            bun run tsc --noEmit
       
       # Linting
       - run:
           name: Lint Check
           command: |
-            export BUN_INSTALL="$HOME/.bun"
-            export PATH="$BUN_INSTALL/bin:$PATH"
-            bunx next lint
+            source $BASH_ENV
+            bun run next lint
       
       # Build the application
       - run:
           name: Build Application
           command: |
-            export BUN_INSTALL="$HOME/.bun"
-            export PATH="$BUN_INSTALL/bin:$PATH"
+            source $BASH_ENV
             bun run build
       
       # Test build output
@@ -108,28 +102,24 @@ jobs:
           name: Install Bun
           command: |
             curl -fsSL https://bun.sh/install | bash
-            export BUN_INSTALL="$HOME/.bun"
-            export PATH="$BUN_INSTALL/bin:$PATH"
             echo 'export BUN_INSTALL="$HOME/.bun"' >> $BASH_ENV
-            echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >> $BASH_ENV
+            echo 'export PATH="$HOME/.bun/bin:$PATH"' >> $BASH_ENV
+            source $BASH_ENV
       - run:
           name: Install Dependencies
           command: |
-            export BUN_INSTALL="$HOME/.bun"
-            export PATH="$BUN_INSTALL/bin:$PATH"
+            source $BASH_ENV
             bun install
       - run:
           name: Setup Prisma
           command: |
-            export BUN_INSTALL="$HOME/.bun"
-            export PATH="$BUN_INSTALL/bin:$PATH"
+            source $BASH_ENV
             bun add -g prisma
-            bunx prisma generate
+            bun run prisma generate
       - run:
           name: Build for Staging
           command: |
-            export BUN_INSTALL="$HOME/.bun"
-            export PATH="$BUN_INSTALL/bin:$PATH"
+            source $BASH_ENV
             bun run build
       - run:
           name: Deploy to Staging
@@ -147,28 +137,24 @@ jobs:
           name: Install Bun
           command: |
             curl -fsSL https://bun.sh/install | bash
-            export BUN_INSTALL="$HOME/.bun"
-            export PATH="$BUN_INSTALL/bin:$PATH"
             echo 'export BUN_INSTALL="$HOME/.bun"' >> $BASH_ENV
-            echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >> $BASH_ENV
+            echo 'export PATH="$HOME/.bun/bin:$PATH"' >> $BASH_ENV
+            source $BASH_ENV
       - run:
           name: Install Dependencies
           command: |
-            export BUN_INSTALL="$HOME/.bun"
-            export PATH="$BUN_INSTALL/bin:$PATH"
+            source $BASH_ENV
             bun install
       - run:
           name: Setup Prisma
           command: |
-            export BUN_INSTALL="$HOME/.bun"
-            export PATH="$BUN_INSTALL/bin:$PATH"
+            source $BASH_ENV
             bun add -g prisma
-            bunx prisma generate
+            bun run prisma generate
       - run:
           name: Build for Production
           command: |
-            export BUN_INSTALL="$HOME/.bun"
-            export PATH="$BUN_INSTALL/bin:$PATH"
+            source $BASH_ENV
             bun run build
       - run:
           name: Deploy to Production
