@@ -1,3 +1,5 @@
+"use client";
+
 import { Redis } from "@upstash/redis";
 import { 
   getBlockById,
