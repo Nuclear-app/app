@@ -1,0 +1,37 @@
+version: 2.1
+
+jobs:
+  simple-test:
+    docker:
+      - image: cimg/node:20.11
+    steps:
+      - checkout
+      - run:
+          name: Install Bun
+          command: |
+            curl -fsSL https://bun.sh/install | bash
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            echo 'export BUN_INSTALL="$HOME/.bun"' >> $BASH_ENV
+            echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >> $BASH_ENV
+      - run:
+          name: Install Dependencies
+          command: |
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            bun install
+      - run:
+          name: Build Test
+          command: |
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            bun run build
+      - run:
+          name: Success Message
+          command: echo "✅ Simple build successful!"
+
+workflows:
+  version: 2
+  simple:
+    jobs:
+      - simple-test 

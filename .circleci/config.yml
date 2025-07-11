@@ -10,44 +10,76 @@ jobs:
     steps:
       - checkout
       
+      # Clear any old cache to force fresh build
+      - run:
+          name: Clear Old Cache
+          command: |
+            echo "🧹 Clearing old cache..."
+            rm -rf ~/.cache/circleci
+            rm -rf ~/.npm
+      
+      # Install Bun
+      - run:
+          name: Install Bun
+          command: |
+            curl -fsSL https://bun.sh/install | bash
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            echo 'export BUN_INSTALL="$HOME/.bun"' >> $BASH_ENV
+            echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >> $BASH_ENV
+      
       # Restore cache for faster builds
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package-lock.json" }}
+            - v1-dependencies-{{ checksum "bun.lock" }}
             - v1-dependencies-
       
-      # Install dependencies
+      # Install dependencies with Bun
       - run:
           name: Install Dependencies
-          command: npm ci
+          command: |
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            bun install
       
       # Save cache
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package-lock.json" }}
+          key: v1-dependencies-{{ checksum "bun.lock" }}
       
       # Install Prisma CLI and generate client
       - run:
           name: Setup Prisma
           command: |
-            npm install -g prisma
-            npx prisma generate
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            bun add -g prisma
+            bunx prisma generate
       
       # Type checking
       - run:
           name: Type Check
-          command: npx tsc --noEmit
+          command: |
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            bunx tsc --noEmit
       
       # Linting
       - run:
           name: Lint Check
-          command: npx next lint
+          command: |
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            bunx next lint
       
       # Build the application
       - run:
           name: Build Application
-          command: npm run build
+          command: |
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            bun run build
       
       # Test build output
       - run:
@@ -73,22 +105,38 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install Bun
+          command: |
+            curl -fsSL https://bun.sh/install | bash
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            echo 'export BUN_INSTALL="$HOME/.bun"' >> $BASH_ENV
+            echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >> $BASH_ENV
+      - run:
           name: Install Dependencies
-          command: npm ci
+          command: |
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            bun install
       - run:
           name: Setup Prisma
           command: |
-            npm install -g prisma
-            npx prisma generate
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            bun add -g prisma
+            bunx prisma generate
       - run:
           name: Build for Staging
-          command: npm run build
+          command: |
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            bun run build
       - run:
           name: Deploy to Staging
           command: |
             echo "🚀 Deploying to staging environment..."
             # Add your staging deployment commands here
-            # Example: npm run deploy:staging
+            # Example: bun run deploy:staging
 
   deploy-production:
     docker:
@@ -96,22 +144,38 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install Bun
+          command: |
+            curl -fsSL https://bun.sh/install | bash
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            echo 'export BUN_INSTALL="$HOME/.bun"' >> $BASH_ENV
+            echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >> $BASH_ENV
+      - run:
           name: Install Dependencies
-          command: npm ci
+          command: |
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            bun install
       - run:
           name: Setup Prisma
           command: |
-            npm install -g prisma
-            npx prisma generate
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            bun add -g prisma
+            bunx prisma generate
       - run:
           name: Build for Production
-          command: npm run build
+          command: |
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            bun run build
       - run:
           name: Deploy to Production
           command: |
             echo "🚀 Deploying to production environment..."
             # Add your production deployment commands here
-            # Example: npm run deploy:production
+            # Example: bun run deploy:production
 
 workflows:
   version: 2
