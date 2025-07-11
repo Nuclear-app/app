@@ -3,7 +3,6 @@
 import { ny } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import notesBg from '@/public/notesbg.webp'
 import Image from 'next/image'
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
@@ -272,7 +271,7 @@ export function SignUpForm({
                   className="relative hidden bg-muted md:block"
                >
                   <Image
-                     src={notesBg}
+                     src="/notesbg.webp"
                      alt="Image"
                      className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.5] dark:grayscale"
                   />

@@ -7,7 +7,6 @@ import Link from "next/link";
 import { GalleryVerticalEnd } from "lucide-react"
 import { LoginForm } from "@/components/login-form"
 import Image from 'next/image'
-import notesBg from './notesbg.webp'
 
 
 export default async function Login(props: { searchParams: Promise<Message> }) {
