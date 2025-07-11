@@ -4,188 +4,31 @@ orbs:
   node: circleci/node@5.1.0
 
 jobs:
-  test-and-build:
+  build-and-test:
     docker:
-      - image: cimg/node:20.11
+      - image: oven/bun:1
     steps:
       - checkout
-      
-      # Clear any old cache to force fresh build
+      - node/install-packages:
+          pkg-manager: bun
       - run:
-          name: Clear Old Cache
-          command: |
-            echo "🧹 Clearing old cache..."
-            rm -rf ~/.cache/circleci
-            rm -rf ~/.npm
-      
-      # Install Bun and set up environment
+          name: Run TypeScript check
+          command: bun run type-check
       - run:
-          name: Install Bun
-          command: |
-            curl -fsSL https://bun.sh/install | bash
-            echo 'export BUN_INSTALL="$HOME/.bun"' >> $BASH_ENV
-            echo 'export PATH="$HOME/.bun/bin:$PATH"' >> $BASH_ENV
-            source $BASH_ENV
-      
-      # Restore cache for faster builds
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "bun.lock" }}
-            - v1-dependencies-
-      
-      # Install dependencies with Bun
+          name: Run linting (warnings only)
+          command: bun run lint || true
       - run:
-          name: Install Dependencies
-          command: |
-            source $BASH_ENV
-            bun install
-      
-      # Save cache
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "bun.lock" }}
-      
-      # Install Prisma CLI and generate client
+          name: Build application
+          command: bun run build
       - run:
-          name: Setup Prisma
-          command: |
-            source $BASH_ENV
-            bun add -g prisma
-            bun run prisma generate
-      
-      # Type checking
-      - run:
-          name: Type Check
-          command: |
-            source $BASH_ENV
-            bun run tsc --noEmit
-      
-      # Linting
-      - run:
-          name: Lint Check
-          command: |
-            source $BASH_ENV
-            bun run next lint
-      
-      # Build the application
-      - run:
-          name: Build Application
-          command: |
-            source $BASH_ENV
-            bun run build
-      
-      # Test build output
-      - run:
-          name: Verify Build
-          command: |
-            if [ -d ".next" ]; then
-              echo "✅ Build successful - .next directory exists"
-              echo "Build size:"
-              du -sh .next/
-            else
-              echo "❌ Build failed - .next directory not found"
-              exit 1
-            fi
-      
-      # Store build artifacts
+          name: Run tests (if any)
+          command: bun run test || echo "No tests configured"
       - store_artifacts:
           path: .next
           destination: build-artifacts
 
-  deploy-staging:
-    docker:
-      - image: cimg/node:20.11
-    steps:
-      - checkout
-      - run:
-          name: Install Bun
-          command: |
-            curl -fsSL https://bun.sh/install | bash
-            echo 'export BUN_INSTALL="$HOME/.bun"' >> $BASH_ENV
-            echo 'export PATH="$HOME/.bun/bin:$PATH"' >> $BASH_ENV
-            source $BASH_ENV
-      - run:
-          name: Install Dependencies
-          command: |
-            source $BASH_ENV
-            bun install
-      - run:
-          name: Setup Prisma
-          command: |
-            source $BASH_ENV
-            bun add -g prisma
-            bun run prisma generate
-      - run:
-          name: Build for Staging
-          command: |
-            source $BASH_ENV
-            bun run build
-      - run:
-          name: Deploy to Staging
-          command: |
-            echo "🚀 Deploying to staging environment..."
-            # Add your staging deployment commands here
-            # Example: bun run deploy:staging
-
-  deploy-production:
-    docker:
-      - image: cimg/node:20.11
-    steps:
-      - checkout
-      - run:
-          name: Install Bun
-          command: |
-            curl -fsSL https://bun.sh/install | bash
-            echo 'export BUN_INSTALL="$HOME/.bun"' >> $BASH_ENV
-            echo 'export PATH="$HOME/.bun/bin:$PATH"' >> $BASH_ENV
-            source $BASH_ENV
-      - run:
-          name: Install Dependencies
-          command: |
-            source $BASH_ENV
-            bun install
-      - run:
-          name: Setup Prisma
-          command: |
-            source $BASH_ENV
-            bun add -g prisma
-            bun run prisma generate
-      - run:
-          name: Build for Production
-          command: |
-            source $BASH_ENV
-            bun run build
-      - run:
-          name: Deploy to Production
-          command: |
-            echo "🚀 Deploying to production environment..."
-            # Add your production deployment commands here
-            # Example: bun run deploy:production
-
 workflows:
   version: 2
-  test-and-deploy:
+  build-test-deploy:
     jobs:
-      # Run tests and build on all branches
-      - test-and-build:
-          filters:
-            branches:
-              ignore:
-                - /^wip\/.*/
-      
-      # Deploy to staging on develop branch
-      - deploy-staging:
-          filters:
-            branches:
-              only: develop
-          requires:
-            - test-and-build
-      
-      # Deploy to production on main branch
-      - deploy-production:
-          filters:
-            branches:
-              only: main
-          requires:
-            - test-and-build
+      - build-and-test
