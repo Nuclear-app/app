@@ -1,3 +1,4 @@
+
 import {
     Ampersands,
     Anvil,
@@ -76,3 +77,14 @@ export const iconMap: Record<string, React.ComponentType<{ className?: string }>
     flame: Flame,
     plus: Plus
 }; 
+
+
+export interface DatabaseItem {
+    id: string;
+    title: string;
+    note: string;
+    createdAt: Date;
+    name: string;      // Add this
+    type: 'block' | 'folder'; // Add this
+    parent: string | null;    // Add this
+}

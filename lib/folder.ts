@@ -1,5 +1,9 @@
 import prisma from './prisma'
 import { Folder, User, Block } from './generated/prisma'
+import { createClient } from '@/utils/supabase/server';
+
+const ROOT_FOLDER_ID = process.env.ROOT_FOLDER_ID ;
+
 
 /**
  * Custom error class for Folder operations
@@ -63,6 +67,30 @@ export async function getFolderCount(): Promise<number> {
     return count
   } catch (error) {
     throw new FolderError(`Failed to get folder count: ${error instanceof Error ? error.message : 'Unknown error'}`, 'COUNT_ERROR')
+  }
+}
+
+
+export async function getTopLevelFolders(userId: string): Promise<Folder[]> {
+  try {
+    if (!userId || typeof userId !== 'string') {
+      throw new FolderError('Invalid user ID provided', 'INVALID_USER_ID')
+    }
+
+    const folders = await prisma.folder.findMany({
+      where: {
+        parentId: ROOT_FOLDER_ID,
+        authorId: userId
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+
+    return folders
+  } catch (error) {
+    if (error instanceof FolderError) throw error
+    throw new FolderError(`Failed to get top level folders: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
   }
 }
 
@@ -410,21 +438,7 @@ export async function getFoldersByAuthor(authorId: string): Promise<Folder[]> {
   }
 }
 
-/**
- * Get root folders (folders without parent)
- * @returns Promise<Folder[]> - Array of root folders
- */
-export async function getRootFolders(): Promise<Folder[]> {
-  try {
-    const folders = await prisma.folder.findMany({
-      where: { parentId: null }
-    })
 
-    return folders
-  } catch (error) {
-    throw new FolderError(`Failed to get root folders: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
-  }
-}
 
 /**
  * Get folder with all related data
@@ -500,24 +514,86 @@ export async function createFolder(data: {
  * @param id - The folder's unique identifier
  * @returns Promise<Folder> - The deleted folder object
  */
-export async function deleteFolder(id: string): Promise<Folder> {
+export async function deleteFolder(id: string, userId?: string): Promise<{ success: boolean }> {
   try {
-    if (!id || typeof id !== 'string') {
-      throw new FolderError('Invalid folder ID provided', 'INVALID_ID')
-    }
+    const crate = await prisma.folder.findUnique({
+      where: { id: id },
+      select: { 
+          authorId: true,
+          blocks: {
+              select: {
+                  id: true
+              }
+          },
+          children: {
+              select: {
+                  id: true
+              }
+          }
+      }
+  });
 
-    const folder = await prisma.folder.delete({
-      where: { id }
-    })
-
-    return folder
-  } catch (error) {
-    if (error instanceof FolderError) throw error
-    if (error instanceof Error && error.message.includes('Record to delete does not exist')) {
-      throw new FolderError('Folder not found', 'NOT_FOUND')
-    }
-    throw new FolderError(`Failed to delete folder: ${error instanceof Error ? error.message : 'Unknown error'}`, 'DELETE_ERROR')
+  if (!crate || crate.authorId !== userId) {
+      throw new Error("Unauthorized to delete this crate");
   }
+
+  // Delete all related data in a transaction
+  await prisma.$transaction(async (tx) => {
+      // First, recursively delete all child crates and their contents
+      for (const child of crate.children) {
+          await deleteFolder(child.id, userId);
+      }
+
+      // Delete all blocks in this crate
+      for (const block of crate.blocks) {
+          // Delete all FillInTheBlank entries
+          await tx.fillInTheBlank.deleteMany({
+              where: { blockId: block.id }
+          });
+          // Delete all Questions
+          await tx.question.deleteMany({
+              where: { blockId: block.id }
+          });
+          // Delete all Quizzes
+          await tx.quiz.deleteMany({
+              where: { blockId: block.id }
+          });
+          // Delete all Topics
+          await tx.topic.deleteMany({
+              where: { blockId: block.id }
+          });
+          // Delete the block itself
+          await tx.block.delete({
+              where: { id: block.id }
+          });
+
+          // Clean up any uploaded files in Supabase storage for this block
+          const supabase = await createClient();
+          const { data: files } = await supabase
+              .storage
+              .from('blocks')
+              .list(`${block.id}`);
+
+          if (files && files.length > 0) {
+              const filePaths = files.map((file: { name: string }) => `${block.id}/${file.name}`);
+              await supabase
+                  .storage
+                  .from('blocks')
+                  .remove(filePaths);
+          }
+      }
+
+      // Finally, delete the crate itself
+      await tx.folder.delete({
+          where: { id: id }
+      });
+  });
+
+  return { success: true };
+} catch (error) {
+  console.error("Failed to delete crate:", error);
+  throw error;
+}
 }
 
 /**
@@ -582,9 +658,7 @@ export async function getFolderHierarchy(id: string): Promise<Folder[]> {
     }
 
     const hierarchy: Folder[] = []
-    let currentFolder = await prisma.folder.findUnique({
-      where: { id }
-    })
+    let currentFolder = await getFolderById(id)
 
     if (!currentFolder) {
       throw new FolderError('Folder not found', 'NOT_FOUND')
@@ -595,9 +669,7 @@ export async function getFolderHierarchy(id: string): Promise<Folder[]> {
       hierarchy.unshift(currentFolder)
       
       if (currentFolder.parentId) {
-        currentFolder = await prisma.folder.findUnique({
-          where: { id: currentFolder.parentId }
-        })
+        currentFolder = await getFolderById(currentFolder.parentId)
       } else {
         currentFolder = null
       }

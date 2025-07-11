@@ -1,5 +1,8 @@
 import prisma from './prisma'
 import { Block, User, Folder } from './generated/prisma'
+import { createClient } from '@supabase/supabase-js';
+
+const ROOT_FOLDER_ID = process.env.ROOT_FOLDER_ID ;
 
 /**
  * Custom error class for Block operations
@@ -37,6 +40,20 @@ export async function getBlockById(id: string): Promise<Block | null> {
   } catch (error) {
     if (error instanceof BlockError) throw error
     throw new BlockError(`Failed to get block by ID: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
+  }
+}
+
+export async function getTopLevelBlocks(userId: string): Promise<Block[]> {
+  try {
+    const blocks = await prisma.block.findMany({
+      where: { folderId: ROOT_FOLDER_ID, authorId: userId },
+      orderBy: { createdAt: 'desc' }
+    })
+
+    return blocks
+  } catch (error) {
+    if (error instanceof BlockError) throw error
+    throw new BlockError(`Failed to get top level blocks: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
   }
 }
 
@@ -161,9 +178,9 @@ export async function getBlockFiles(id: string): Promise<string[] | null> {
 /**
  * Get block's note
  * @param id - The block's unique identifier
- * @returns Promise<any | null> - The block's note or null if not found
+ * @returns Promise<any | null> - The block object with note and context, or null if not found
  */
-export async function getBlockNote(id: string): Promise<any | null> {
+export async function getBlockNote(id: string): Promise<{note: any, context: string | null} | null> {
   try {
     if (!id || typeof id !== 'string') {
       throw new BlockError('Invalid block ID provided', 'INVALID_ID')
@@ -171,10 +188,12 @@ export async function getBlockNote(id: string): Promise<any | null> {
 
     const block = await prisma.block.findUnique({
       where: { id },
-      select: { note: true }
+      select: { note: true,
+        context: true,
+      }
     })
 
-    return block?.note || null
+    return block
   } catch (error) {
     if (error instanceof BlockError) throw error
     throw new BlockError(`Failed to get block note: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
@@ -687,24 +706,68 @@ export async function createBlock(data: {
 /**
  * Delete a block by ID
  * @param id - The block's unique identifier
+ * @param userId - The user ID for authorization check
  * @returns Promise<Block> - The deleted block object
  */
-export async function deleteBlock(id: string): Promise<Block> {
+export async function deleteBlock(id: string, userId?: string): Promise<{ success: boolean }> {
   try {
     if (!id || typeof id !== 'string') {
       throw new BlockError('Invalid block ID provided', 'INVALID_ID')
     }
 
-    const block = await prisma.block.delete({
-      where: { id }
-    })
+    const block = await getBlockById(id)
 
-    return block
-  } catch (error) {
-    if (error instanceof BlockError) throw error
-    if (error instanceof Error && error.message.includes('Record to delete does not exist')) {
+    if (!block) {
       throw new BlockError('Block not found', 'NOT_FOUND')
     }
+
+    // Check authorization if userId is provided
+    if (userId && block.authorId !== userId) {
+      throw new BlockError('Unauthorized to delete this block', 'UNAUTHORIZED')
+    }
+
+    // Delete all related data in a transaction
+    await prisma.$transaction([
+      // Delete all FillInTheBlank entries
+      prisma.fillInTheBlank.deleteMany({
+        where: { blockId: id }
+      }),
+      // Delete all Questions
+      prisma.question.deleteMany({
+        where: { blockId: id }
+      }),
+      // Delete all Quizzes
+      prisma.quiz.deleteMany({
+        where: { blockId: id }
+      }),
+      // Delete all Topics
+      prisma.topic.deleteMany({
+        where: { blockId: id }
+      }),
+      // Finally, delete the block itself
+      prisma.block.delete({
+        where: { id: id }
+      })
+    ]);
+
+    // Clean up any uploaded files in Supabase storage
+    const supabase = await createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
+    const { data: files } = await supabase
+      .storage
+      .from('blocks')
+      .list(`${id}`);
+
+    if (files && files.length > 0) {
+      const filePaths = files.map((file: { name: string }) => `${id}/${file.name}`);
+      await supabase
+        .storage
+        .from('blocks')
+        .remove(filePaths);
+    }
+
+    return { success: true }
+  } catch (error) {
+    if (error instanceof BlockError) throw error
     throw new BlockError(`Failed to delete block: ${error instanceof Error ? error.message : 'Unknown error'}`, 'DELETE_ERROR')
   }
 }

@@ -99,10 +99,15 @@ const AdvancedEditor = ({ blockId: initialBlockId, initialContent }: AdvancedEdi
   const debouncedUpdates = useDebouncedCallback(handleSave, 2000);
 
   useEffect(() => {
-    const content = window.localStorage.getItem("novel-content");
-    if (content) setContent(JSON.parse(content));
-    else setContent(defaultEditorContent);
-  }, []);
+    if (initialContent) {
+      setContent(initialContent);  // Prioritize server data
+    } else {
+      // Only use localStorage/default if no server data
+      const localContent = window.localStorage.getItem("novel-content");
+      if (localContent) setContent(JSON.parse(localContent));
+      else setContent(defaultEditorContent);
+    }
+  }, [initialContent]);
 
   if (!content) return null;
 

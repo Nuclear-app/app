@@ -1,3 +1,5 @@
+// "use server"
+
 import prisma from './prisma'
 import { Topic, Block, Quiz } from './generated/prisma'
 

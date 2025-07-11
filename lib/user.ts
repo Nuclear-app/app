@@ -378,7 +378,14 @@ export async function getUserPosts(userId: string) {
     }
 
     const posts = await prisma.block.findMany({
-      where: { authorId: userId }
+      where: { authorId: userId },
+      select: {
+        id: true,
+        title: true,
+        createdAt: true,
+        folderId: true
+      },
+      orderBy: { createdAt: 'desc' }
     })
 
     return posts
@@ -400,13 +407,50 @@ export async function getUserFolders(userId: string) {
     }
 
     const folders = await prisma.folder.findMany({
-      where: { authorId: userId }
+      where: { authorId: userId }, 
+      select: {
+        id: true,
+        name: true,
+        icon: true,
+        createdAt: true,
+        parentId: true,
+        authorId: true  // Add this to check if folders are properly linked
+    },
+    orderBy: {
+        createdAt: 'desc'
+    }
+
     })
 
     return folders
   } catch (error) {
     if (error instanceof UserError) throw error
     throw new UserError(`Failed to get user folders: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
+  }
+}
+
+export async function getUserCrates(userId: string) {
+  try {
+    if (!userId || typeof userId !== 'string') {
+      throw new UserError('Invalid user ID provided', 'INVALID_ID')
+    }
+
+    const crates = await prisma.folder.findMany({
+      where: {
+        parentId: null,
+        authorId: userId
+      },
+      select: {
+        id: true,
+        name: true,
+        icon: true,
+        createdAt: true
+      }
+    })
+    return crates;
+  } catch (error) {
+    console.error("Failed to fetch crates:", error);
+    throw new Error("Failed to fetch crates");
   }
 }
 

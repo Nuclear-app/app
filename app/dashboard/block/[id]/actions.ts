@@ -2,29 +2,30 @@
 
 import { fetchContext } from "@/app/modeSpecific/fileInput/actions";
 import { generateExamples } from "@/lib/examplesPerplexity";
-import prisma from "@/lib/prisma";
 import { generateQuizzes } from "@/lib/quizGen";
 import { JSONContent } from "novel";
-import { getFullContext } from "../actions";
+import { getFullContext } from "@/lib/context";
+import { getBlockNote } from "@/lib/block";
+import prisma from "@/lib/prisma";
 
 export async function getNoteContent(blockId: string) {
   if (!blockId) {
     throw new Error("Block ID is required " + blockId);
   }
 
-  const block = await prisma.block.findUnique({
-    where: { id: blockId },
-    select: {
-      note: true,
-    },
-  });
+  console.log("getNoteContent: Fetching block for ID:", blockId);
+  const block = await getBlockNote(blockId)
 
   if (!block) {
+    console.log("getNoteContent: Block not found for ID:", blockId);
     throw new Error("Block not found");
   }
 
+  console.log("getNoteContent: Block found, note type:", typeof block.note, "note value:", block.note);
+
   // Return empty editor state if no note exists
   if (!block.note) {
+    console.log("getNoteContent: No note content, returning empty editor state");
     const emptyContent: JSONContent = {
       type: "doc",
       content: [
@@ -43,11 +44,15 @@ export async function getNoteContent(blockId: string) {
       ? JSON.parse(block.note) 
       : block.note;
 
+    console.log("getNoteContent: Parsed note content:", noteContent);
+
     // Validate the structure
     if (!noteContent || typeof noteContent !== 'object' || !noteContent.type || !noteContent.content) {
+      console.log("getNoteContent: Invalid note format, returning empty state");
       throw new Error("Invalid note format");
     }
 
+    console.log("getNoteContent: Returning valid note content");
     return JSON.stringify(noteContent);
   } catch (error) {
     console.error("Error parsing note content:", error);
