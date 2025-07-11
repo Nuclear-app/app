@@ -3,7 +3,14 @@ import tseslint from '@typescript-eslint/eslint-plugin'
 import tsparser from '@typescript-eslint/parser'
 import reactHooks from 'eslint-plugin-react-hooks'
 import react from 'eslint-plugin-react'
+import nextPlugin from '@next/eslint-plugin-next';
 import globals from 'globals'
+
+function warnifyRules(rules) {
+  return Object.fromEntries(
+    Object.entries(rules).map(([k, v]) => [k, Array.isArray(v) ? ['warn', ...(v.slice(1))] : 'warn'])
+  );
+}
 
 export default [
   {
@@ -87,46 +94,16 @@ export default [
     plugins: {
       '@typescript-eslint': tseslint,
       'react': react,
-      'react-hooks': reactHooks
+      'react-hooks': reactHooks,
+      '@next/next': nextPlugin
     },
     rules: {
-      // Critical TypeScript rules (keep strict)
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-non-null-assertion': 'warn',
-      '@typescript-eslint/no-unused-vars': 'warn',
-      '@typescript-eslint/no-floating-promises': 'warn',
-      '@typescript-eslint/no-misused-promises': 'warn',
-      '@typescript-eslint/require-await': 'warn',
-      '@typescript-eslint/no-var-requires': 'warn',
-      '@typescript-eslint/no-require-imports': 'warn',
-      '@typescript-eslint/consistent-type-assertions': 'warn',
-      '@typescript-eslint/explicit-member-accessibility': 'off',
-      '@typescript-eslint/ban-ts-comment': 'warn',
-      '@typescript-eslint/prefer-optional-chain': 'warn',
-      '@typescript-eslint/no-redeclare': 'warn',
-      '@typescript-eslint/no-unused-expressions': 'warn',
-
-      // React rules (relaxed)
-      'react/jsx-pascal-case': 'warn',
-      'react/no-array-index-key': 'warn',
-      'react/no-unknown-property': 'warn',
-      'react/jsx-no-constructed-context-values': 'warn',
-      'react-hooks/exhaustive-deps': 'warn',
-
-      // General rules (relaxed)
-      'no-duplicate-imports': 'warn',
-      'no-redeclare': 'warn',
-      'no-useless-escape': 'warn',
-      'no-mixed-spaces-and-tabs': 'warn',
-      'eqeqeq': 'warn',
-      'complexity': 'warn',
-      'no-unused-expressions': 'warn',
-
-      // Disable overly strict rules
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-non-null-assertion': 'off',
-      'react-hooks/exhaustive-deps': 'off',
-      'complexity': 'off'
+      ...warnifyRules(js.configs.recommended.rules),
+      ...warnifyRules(tseslint.configs.recommended.rules),
+      ...warnifyRules(react.configs.recommended.rules),
+      ...warnifyRules(reactHooks.configs.recommended.rules),
+      ...warnifyRules(nextPlugin.configs.recommended.rules),
+      ...warnifyRules(nextPlugin.configs['core-web-vitals'].rules),
     },
     settings: {
       react: {
