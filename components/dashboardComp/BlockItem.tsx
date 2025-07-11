@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Block } from "@/lib/types";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
-import { MoreVertical, Trash2, Eye } from "lucide-react";
+import { MoreVertical, Trash2, Eye, Pencil } from "lucide-react";
 import {
     ContextMenu,
     ContextMenuContent,
@@ -17,10 +17,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { RenameDialogue } from "./RenameDialogue";
+import { renameBlock } from "@/app/dashboard/actions";
+// import RenameDialogue from "./RenameDialogue";
+// import { renameBlock } from "@/app/dashboard/actions";
 
 interface BlockItemProps {
     block: Block;
     onDelete: (id: string) => void;
+    onRename?: (id: string, newTitle: string) => void;
 }
 
 const truncateText = (text: string, maxLength: number) => {
@@ -28,8 +33,32 @@ const truncateText = (text: string, maxLength: number) => {
     return text.slice(0, maxLength) + '...';
 };
 
-export function BlockItem({ block, onDelete }: BlockItemProps) {
+export function BlockItem({ block, onDelete, onRename }: BlockItemProps) {
+    const [renameDialogueOpen, setRenameDialogueOpen] = useState(false);
+    
+    const handleRename = async (newTitle: string) => {
+        try {
+            await renameBlock(block.id, newTitle);
+            // Call the optional callback to update the UI
+            onRename?.(block.id, newTitle);
+            // Close the dialog after successful rename
+            setRenameDialogueOpen(false);
+        } catch (error) {
+            console.error("Failed to rename block:", error);
+            // Don't close the dialog if there's an error
+            throw error;
+        }
+    };
+
+    const openRenameDialogue = () => {
+        // Use setTimeout to prevent recursion issues with menu state
+        setTimeout(() => {
+            setRenameDialogueOpen(true);
+        }, 0);
+    };
+
     return (
+        <>
         <ContextMenu>
             <ContextMenuTrigger className="w-full">
         <div className="relative w-full">
@@ -71,6 +100,13 @@ export function BlockItem({ block, onDelete }: BlockItemProps) {
                                     <Eye className="h-4 w-4" />
                                     <span>View Block</span>
                                 </DropdownMenuItem>
+                                    <DropdownMenuItem 
+                                        className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]"
+                                        onClick={openRenameDialogue}
+                                    >
+                                        <Pencil className="h-4 w-4" />
+                                        <span>Rename Block</span>
+                                    </DropdownMenuItem>
                         <DropdownMenuItem
                                     className="flex items-center gap-2 cursor-pointer text-red-500 hover:bg-[#333333]"
                                     onClick={() => onDelete(block.id)}
@@ -83,11 +119,21 @@ export function BlockItem({ block, onDelete }: BlockItemProps) {
             </div>
         </div>
             </ContextMenuTrigger>
+
             <ContextMenuContent className="w-48 bg-[#292929] border border-[#333333]">
                 <ContextMenuItem className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]">
                     <Eye className="h-4 w-4" />
                     <span>View Block</span>
                 </ContextMenuItem>
+
+                    <ContextMenuItem
+                        className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]"
+                        onClick={openRenameDialogue}
+                    >
+                        <Pencil className="h-4 w-4" />
+                        <span>Rename Block</span>
+                    </ContextMenuItem>
+
                 <ContextMenuItem 
                     className="flex items-center gap-2 cursor-pointer text-red-500 hover:bg-[#333333]"
                     onClick={() => onDelete(block.id)}
@@ -97,6 +143,16 @@ export function BlockItem({ block, onDelete }: BlockItemProps) {
                 </ContextMenuItem>
             </ContextMenuContent>
         </ContextMenu>
+            
+            <RenameDialogue
+                type="block"
+                currentName={block.title}
+                id={block.id}
+                onRename={handleRename}
+                open={renameDialogueOpen}
+                onOpenChange={setRenameDialogueOpen}
+            />
+        </>
     );
 }
 

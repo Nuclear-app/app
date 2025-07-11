@@ -1,11 +1,7 @@
 "use server"
 
-import { createClient } from "@/utils/supabase/server"
 import prisma from "@/lib/prisma"
-import { redirect } from "next/navigation"
 import { generateHTML } from '@tiptap/html'
-import { generateExamples } from "@/lib/examplesPerplexity"
-import { generateQuizzes } from "@/lib/quizGen"
 import { StarterKit } from "@tiptap/starter-kit"
 import { generateNotes } from "@/lib/generateNotes"
 
@@ -84,3 +80,5 @@ export async function saveGeneratedNotes(blockId: string) {
 // const context = "This is a test context"
 
 // updateContext({ blockId, context })
+
+console.log(fetchContext("4ef58849-f01e-4651-acae-53042d9c26e0"))

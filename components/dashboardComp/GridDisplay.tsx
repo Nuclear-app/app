@@ -10,6 +10,8 @@ interface GridDisplayProps {
     selectedTypes: Set<'blocks' | 'crates'>;
     onDeleteBlock: (blockId: string) => Promise<void>;
     onDeleteCrate: (crateId: string) => Promise<void>;
+    onRenameBlock?: (blockId: string, newTitle: string) => Promise<void>;
+    // onRenameCrate?: (crateId: string, newName: string) => Promise<void>;
     isLoading: boolean;
 }
 
@@ -39,7 +41,16 @@ const createParticles = (count: number) => {
     });
 };
 
-export function GridDisplay({ blocks, crates, selectedTypes, onDeleteBlock, onDeleteCrate, isLoading }: GridDisplayProps) {
+export function GridDisplay({ 
+    blocks, 
+    crates, 
+    selectedTypes, 
+    onDeleteBlock, 
+    onDeleteCrate, 
+    onRenameBlock,
+    // onRenameCrate,
+    isLoading 
+}: GridDisplayProps) {
     if (selectedTypes.size === 0) {
         return (
             <div className="flex items-center justify-center h-full">
@@ -95,6 +106,7 @@ export function GridDisplay({ blocks, crates, selectedTypes, onDeleteBlock, onDe
                                         <BlockItem
                                             block={item}
                                             onDelete={() => onDeleteBlock(item.id)}
+                                            onRename={onRenameBlock}
                                         />
                                         <AnimatePresence>
                                             {createParticles(8).map((particle, i) => (
@@ -115,6 +127,7 @@ export function GridDisplay({ blocks, crates, selectedTypes, onDeleteBlock, onDe
                                         <CrateItem
                                             crate={item}
                                             onDelete={() => onDeleteCrate(item.id)}
+                                            // onRename={onRenameCrate}
                                         />
                                         <AnimatePresence>
                                             {createParticles(8).map((particle, i) => (
@@ -171,6 +184,7 @@ export function GridDisplay({ blocks, crates, selectedTypes, onDeleteBlock, onDe
                                     <BlockItem
                                         block={block}
                                         onDelete={() => onDeleteBlock(block.id)}
+                                        onRename={onRenameBlock}
                                     />
                                     <AnimatePresence>
                                         {createParticles(8).map((particle, i) => (
@@ -214,6 +228,7 @@ export function GridDisplay({ blocks, crates, selectedTypes, onDeleteBlock, onDe
                                     <CrateItem
                                         crate={crate}
                                         onDelete={() => onDeleteCrate(crate.id)}
+                                        // onRename={onRenameCrate}
                                     />
                                     <AnimatePresence>
                                         {createParticles(8).map((particle, i) => (

@@ -15,13 +15,27 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Crate } from "@/lib/types";
+// import RenameDialogue from "./RenameDialogue";
+// import { renameCrate } from "@/app/dashboard/actions";
 
 interface CrateItemProps {
     crate: Crate;
     onDelete: (id: string) => void;
+    // onRename?: (id: string, newName: string) => void;
 }
 
 export function CrateItem({ crate, onDelete }: CrateItemProps) {
+    // const handleRename = async (id: string, newName: string) => {
+    //     try {
+    //         // await renameCrate(id, newName);
+    //         // Call the optional callback to update the UI
+    //         onRename?.(id, newName);
+    //     } catch (error) {
+    //         console.error("Failed to rename crate:", error);
+    //         throw error;
+    //     }
+    // };
+
     return (
         <ContextMenu>
             <ContextMenuTrigger className="w-full">
@@ -55,6 +69,16 @@ export function CrateItem({ crate, onDelete }: CrateItemProps) {
                                     <Eye className="h-4 w-4" />
                                     <span>View Crate</span>
                                 </DropdownMenuItem>
+                                {/* <RenameDialogue
+                                    type="crate"
+                                    currentName={crate.name}
+                                    id={crate.id}
+                                    trigger={
+                                        <DropdownMenuItem className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]">
+                                            <span>Rename Crate</span>
+                                        </DropdownMenuItem>
+                                    }
+                                /> */}
                                 <DropdownMenuItem 
                                     className="flex items-center gap-2 cursor-pointer text-red-500 hover:bg-[#333333]"
                                     onClick={() => onDelete(crate.id)}
@@ -72,6 +96,16 @@ export function CrateItem({ crate, onDelete }: CrateItemProps) {
                     <Eye className="h-4 w-4" />
                     <span>View Crate</span>
                 </ContextMenuItem>
+                {/* <RenameDialogue
+                    type="crate"
+                    currentName={crate.name}
+                    id={crate.id}
+                    trigger={
+                        <ContextMenuItem className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]">
+                            <span>Rename Crate</span>
+                        </ContextMenuItem>
+                    }
+                /> */}
                 <ContextMenuItem 
                     className="flex items-center gap-2 cursor-pointer text-red-500 hover:bg-[#333333]"
                     onClick={() => onDelete(crate.id)}

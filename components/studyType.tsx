@@ -38,7 +38,7 @@ function StudyTypeContent() {
                 if (!blockId) {
                     throw new Error('Block ID is required for existing blocks');
                 }
-                router.push(`${path}?blockId=${encodeURIComponent(blockId)}`);
+                router.push(`${path}/${encodeURIComponent(blockId)}`);
                 return;
             }
 

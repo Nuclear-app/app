@@ -1,7 +1,8 @@
 "use client";
 import { Quiz } from "@/components/quiz";
 import { useEffect, useState, use } from "react";
-import { getBlockContext } from "../../actions";
+import { getFullContext } from "../../actions";
+import { generateQuizzesIfNeeded } from "../actions";
 import { BlockViewNav } from "@/components/blockViewNav";
 
 interface Props {
@@ -23,7 +24,7 @@ export default function QuizzesPage({ params }: Props) {
 
             console.log('Loading context for block:', id);
             try {
-                const blockContext = await getBlockContext(id);
+                const blockContext = await getFullContext(id);
                 console.log('Fetched context:', blockContext);
                 setContext(blockContext || "");
             } catch (error) {
@@ -36,10 +37,18 @@ export default function QuizzesPage({ params }: Props) {
         loadContext();
     }, [id]);
 
+    // Run bgFunction when quizzes page mounts to ensure quizzes are generated
+    useEffect(() => {
+        if (id) {
+            console.log('Quizzes page mounted, running bgFunction for block:', id);
+            generateQuizzesIfNeeded(id);
+        }
+    }, [id]);
+
     // Log whenever context changes
     useEffect(() => {
         console.log('Current context state:', context);
-    }, [context]);
+    }, [context]);    
 
     if (!id) {
         return <div>No block ID provided</div>;
@@ -53,7 +62,7 @@ export default function QuizzesPage({ params }: Props) {
             <BlockViewNav blockId={id} />
             <div className="flex flex-1 items-center justify-center">
                 <Quiz blockId={id} />
-            </div>
+            </div>            
         </div>
     );
 }

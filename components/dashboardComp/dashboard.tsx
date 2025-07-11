@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { Block, Crate } from "@/lib/types";
 import { DashboardHeader } from "./DashboardHeader";
 import { GridDisplay } from "./GridDisplay";
-import { BlockDialog } from "./BlockDialog";
-import { CrateDialog } from "./CrateDialog";
+import { BlockDialog } from "./BlockDialogue";
+import { CrateDialog } from "./CrateDialogue";
 import { SelectionDialog } from "./SelectionDialog";
 import { addBlock, addCrate, deleteBlock, deleteCrate } from "@/app/dashboard/actions";
 import { loadData } from "../../lib/loadData";
@@ -117,7 +117,7 @@ export default function Dashboard() {
             const crate = await addCrate(title, icon);
             setCrates(prev => [...prev, { 
                 id: crate.id, 
-                title: crate.name, 
+                name: crate.name, 
                 icon: crate.icon || "blocks",
                 createdAt: crate.createdAt 
             }]);
@@ -146,6 +146,31 @@ export default function Dashboard() {
         }
     };
 
+    const handleRenameBlock = async (blockId: string, newTitle: string) => {
+        try {            
+            setBlocks(prev => prev.map(block => 
+                block.id === blockId 
+                    ? { ...block, title: newTitle }
+                    : block
+            ));
+        } catch (error) {
+            console.error("Failed to rename block:", error);
+        }
+    };
+
+    // const handleRenameCrate = async (crateId: string, newName: string) => {
+    //     try {
+    //         // Update the UI immediately
+    //         setCrates(prev => prev.map(crate => 
+    //             crate.id === crateId 
+    //                 ? { ...crate, name: newName }
+    //                 : crate
+    //         ));
+    //     } catch (error) {
+    //         console.error("Failed to rename crate:", error);
+    //     }
+    // };
+
     return (
         <div className="container h-5/6 w-full px-[12%] pt-[10%] pb-[4%]">
             <DashboardHeader
@@ -162,6 +187,8 @@ export default function Dashboard() {
                     selectedTypes={selectedTypes}
                     onDeleteBlock={handleDeleteBlock}
                     onDeleteCrate={handleDeleteCrate}
+                    onRenameBlock={handleRenameBlock}
+                    // onRenameCrate={handleRenameCrate}
                     isLoading={isLoading}
                 />
             </div>

@@ -2,7 +2,8 @@
 
 import Examples from "@/components/examples";
 import { useEffect, useState, use } from "react";
-import { getBlockContext } from "../../actions";
+import { getFullContext } from "../../actions";
+import { generateExamplesIfNeeded } from "../actions";
 import { BlockViewNav } from "@/components/blockViewNav";
 
 interface Props {
@@ -24,7 +25,7 @@ export default function ExamplesPage({ params }: Props) {
 
             console.log('Loading context for block:', id);
             try {
-                const blockContext = await getBlockContext(id);
+                const blockContext = await getFullContext(id);
                 console.log('Fetched context:', blockContext);
                 setContext(blockContext || "");
             } catch (error) {
@@ -35,6 +36,14 @@ export default function ExamplesPage({ params }: Props) {
         };
 
         loadContext();
+    }, [id]);
+
+    // Run bgFunction when examples page mounts to ensure examples are generated
+    useEffect(() => {
+        if (id) {
+            console.log('Examples page mounted, running bgFunction for block:', id);
+            generateExamplesIfNeeded(id);
+        }
     }, [id]);
 
     // Log whenever context changes
