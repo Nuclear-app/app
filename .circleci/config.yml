@@ -25,9 +25,14 @@ jobs:
           name: Run tests (if any)
           command: bun run test || echo "No tests configured"
       - run:
+          name: Install curl for Discord notifications
+          command: |
+            # Install curl in the Bun Docker image
+            apt-get update && apt-get install -y curl
+      - run:
           name: Notify Discord - Build Success
           command: |
-            if [ "$CIRCLE_JOB" = "build-and-test" ]; then
+            if [ "$CIRCLE_JOB" = "build-and-test" ] && [ -n "$DISCORD_WEBHOOK_URL" ]; then
               curl -H "Content-Type: application/json" \
                    -d '{
                      "embeds": [{
@@ -54,13 +59,15 @@ jobs:
                        "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
                      }]
                    }' \
-                   $DISCORD_WEBHOOK_URL
+                   $DISCORD_WEBHOOK_URL || echo "Discord notification failed, but build succeeded"
+            else
+              echo "Discord webhook URL not configured or not in build job"
             fi
           when: on_success
       - run:
           name: Notify Discord - Build Failed
           command: |
-            if [ "$CIRCLE_JOB" = "build-and-test" ]; then
+            if [ "$CIRCLE_JOB" = "build-and-test" ] && [ -n "$DISCORD_WEBHOOK_URL" ]; then
               curl -H "Content-Type: application/json" \
                    -d '{
                      "embeds": [{
@@ -87,7 +94,9 @@ jobs:
                        "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
                      }]
                    }' \
-                   $DISCORD_WEBHOOK_URL
+                   $DISCORD_WEBHOOK_URL || echo "Discord notification failed"
+            else
+              echo "Discord webhook URL not configured or not in build job"
             fi
           when: on_fail
       - store_artifacts:
