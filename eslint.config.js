@@ -25,7 +25,9 @@ export default [
         sourceType: 'module',
         ecmaFeatures: {
           jsx: true
-        }
+        },
+        project: './tsconfig.json',
+        tsconfigRootDir: '.'
       },
       globals: {
         // Browser globals
@@ -82,6 +84,11 @@ export default [
       'react-hooks': reactHooksPlugin,
       '@next/next': nextPlugin
     },
+    settings: {
+      react: {
+        version: 'detect'
+      }
+    },
     rules: {
       // Base ESLint recommended rules
       ...js.configs.recommended.rules,
@@ -124,7 +131,6 @@ export default [
       'no-dupe-class-members': 'error',
       'no-dupe-else-if': 'error',
       'no-dupe-keys': 'error',
-      'no-dupe-returns': 'error',
       'no-duplicate-case': 'error',
       'no-duplicate-imports': 'error',
       'no-empty': 'error',
