@@ -20,16 +20,16 @@ export default function Dashboard({ initialBlocks = [], initialCrates = [] }: Da
   const [crates, setCrates] = useState<Crate[]>(initialCrates);
   const [loading, setLoading] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState<Set<'blocks' | 'crates'>>(new Set(['blocks', 'crates'] as const));
-  const router = useRouter();
+    const router = useRouter();
 
-  useEffect(() => {
+    useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         const result = await loadData({ types: selectedTypes });
         setBlocks(result.blocks);
         setCrates(result.crates);
-      } catch (error) {
+            } catch (error) {
         console.error('Failed to load data:', error);
       } finally {
         setLoading(false);
@@ -45,17 +45,17 @@ export default function Dashboard({ initialBlocks = [], initialCrates = [] }: Da
 
   const handleCrateClick = (crateId: string) => {
     router.push(`/dashboard/crate/${crateId}`);
-  };
+    };
 
-  return (
+    return (
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <Button onClick={() => router.push('/dashboard/block/new')}>
           Create New Block
-        </Button>
-      </div>
-
+                    </Button>
+                        </div>
+                        
       <Tabs defaultValue="blocks" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="blocks">Blocks ({blocks.length})</TabsTrigger>
@@ -66,7 +66,7 @@ export default function Dashboard({ initialBlocks = [], initialCrates = [] }: Da
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {blocks.map((block) => (
               <Card 
-                key={block.id} 
+                                    key={block.id} 
                 className="cursor-pointer hover:shadow-md transition-shadow"
                 onClick={() => handleBlockClick(block.id)}
               >
@@ -81,7 +81,7 @@ export default function Dashboard({ initialBlocks = [], initialCrates = [] }: Da
                 </CardContent>
               </Card>
             ))}
-          </div>
+                        </div>
         </TabsContent>
 
         <TabsContent value="crates" className="mt-6">
@@ -102,10 +102,10 @@ export default function Dashboard({ initialBlocks = [], initialCrates = [] }: Da
                   <Badge variant="outline">{crate.icon}</Badge>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+                                                ))}
+                                            </div>
         </TabsContent>
       </Tabs>
-    </div>
-  );
+        </div>
+    );
 }
