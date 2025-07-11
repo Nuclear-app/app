@@ -1,52 +1,141 @@
 version: 2.1
+
 orbs:
-  node: circleci/node@5
-  evals: circleci/evals@2.0
+  node: circleci/node@5.1.0
+
 jobs:
-  build-node:
-    executor: node/default
+  test-and-build:
+    docker:
+      - image: cimg/node:20.11
     steps:
       - checkout
+      
+      # Restore cache for faster builds
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+            - v1-dependencies-
+      
+      # Install dependencies
       - run:
-          name: Install Bun
+          name: Install Dependencies
+          command: npm ci
+      
+      # Save cache
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
+      
+      # Install Prisma CLI and generate client
+      - run:
+          name: Setup Prisma
           command: |
-            curl -fsSL https://bun.sh/install | bash
-            export BUN_INSTALL="$HOME/.bun"
-            export PATH="$BUN_INSTALL/bin:$PATH"
+            npm install -g prisma
+            npx prisma generate
+      
+      # Type checking
       - run:
-          command: bun install
+          name: Type Check
+          command: npx tsc --noEmit
+      
+      # Linting
       - run:
-          command: bun run build
+          name: Lint Check
+          command: npx next lint
+      
+      # Build the application
       - run:
-          name: Create the ~/artifacts directory if it doesn't exist
-          command: mkdir -p ~/artifacts
+          name: Build Application
+          command: npm run build
+      
+      # Test build output
       - run:
-          name: Copy artifacts
-          command: cp -R build dist public .output .next .docusaurus ~/artifacts 2>/dev/null || true
+          name: Verify Build
+          command: |
+            if [ -d ".next" ]; then
+              echo "✅ Build successful - .next directory exists"
+              echo "Build size:"
+              du -sh .next/
+            else
+              echo "❌ Build failed - .next directory not found"
+              exit 1
+            fi
+      
+      # Store build artifacts
       - store_artifacts:
-          path: ~/artifacts
-          destination: node-build
-  deploy:
+          path: .next
+          destination: build-artifacts
+
+  deploy-staging:
     docker:
-      - image: cimg/base:stable
-    steps:
-      - run:
-          name: deploy
-          command: "#e.g. ./deploy.sh"
-  evals-test-assertions-job:
-    docker:
-      - image: cimg/base:stable
+      - image: cimg/node:20.11
     steps:
       - checkout
-      - evals/test:
-          assertions: assertions.json
-          metrics: eval_results.json
-          results: test_results.xml
+      - run:
+          name: Install Dependencies
+          command: npm ci
+      - run:
+          name: Setup Prisma
+          command: |
+            npm install -g prisma
+            npx prisma generate
+      - run:
+          name: Build for Staging
+          command: npm run build
+      - run:
+          name: Deploy to Staging
+          command: |
+            echo "🚀 Deploying to staging environment..."
+            # Add your staging deployment commands here
+            # Example: npm run deploy:staging
+
+  deploy-production:
+    docker:
+      - image: cimg/node:20.11
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: npm ci
+      - run:
+          name: Setup Prisma
+          command: |
+            npm install -g prisma
+            npx prisma generate
+      - run:
+          name: Build for Production
+          command: npm run build
+      - run:
+          name: Deploy to Production
+          command: |
+            echo "🚀 Deploying to production environment..."
+            # Add your production deployment commands here
+            # Example: npm run deploy:production
+
 workflows:
-  build:
+  version: 2
+  test-and-deploy:
     jobs:
-      - build-node:
-          context: []
-  test-eval-workflow:
-    jobs:
-      - evals-test-assertions-job
+      # Run tests and build on all branches
+      - test-and-build:
+          filters:
+            branches:
+              ignore:
+                - /^wip\/.*/
+      
+      # Deploy to staging on develop branch
+      - deploy-staging:
+          filters:
+            branches:
+              only: develop
+          requires:
+            - test-and-build
+      
+      # Deploy to production on main branch
+      - deploy-production:
+          filters:
+            branches:
+              only: main
+          requires:
+            - test-and-build
