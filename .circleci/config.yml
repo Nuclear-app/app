@@ -33,32 +33,37 @@ jobs:
           name: Notify Discord - Build Success
           command: |
             if [ "$CIRCLE_JOB" = "build-and-test" ] && [ -n "$DISCORD_WEBHOOK_URL" ]; then
+              # Create JSON payload with proper variable substitution
+              JSON_PAYLOAD=$(cat <<EOF
+{
+  "embeds": [{
+    "title": "✅ Build Successful",
+    "description": "Your Next.js application has been built successfully!",
+    "color": 3066993,
+    "fields": [
+      {
+        "name": "Repository",
+        "value": "$CIRCLE_PROJECT_REPONAME",
+        "inline": true
+      },
+      {
+        "name": "Branch",
+        "value": "$CIRCLE_BRANCH",
+        "inline": true
+      },
+      {
+        "name": "Commit",
+        "value": "$(echo $CIRCLE_SHA1 | cut -c1-7)",
+        "inline": true
+      }
+    ],
+    "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  }]
+}
+EOF
+)
               curl -H "Content-Type: application/json" \
-                   -d '{
-                     "embeds": [{
-                       "title": "✅ Build Successful",
-                       "description": "Your Next.js application has been built successfully!",
-                       "color": 3066993,
-                       "fields": [
-                         {
-                           "name": "Repository",
-                           "value": "$CIRCLE_PROJECT_REPONAME",
-                           "inline": true
-                         },
-                         {
-                           "name": "Branch",
-                           "value": "$CIRCLE_BRANCH",
-                           "inline": true
-                         },
-                         {
-                           "name": "Commit",
-                           "value": "$CIRCLE_SHA1",
-                           "inline": true
-                         }
-                       ],
-                       "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
-                     }]
-                   }' \
+                   -d "$JSON_PAYLOAD" \
                    $DISCORD_WEBHOOK_URL || echo "Discord notification failed, but build succeeded"
             else
               echo "Discord webhook URL not configured or not in build job"
@@ -68,32 +73,37 @@ jobs:
           name: Notify Discord - Build Failed
           command: |
             if [ "$CIRCLE_JOB" = "build-and-test" ] && [ -n "$DISCORD_WEBHOOK_URL" ]; then
+              # Create JSON payload with proper variable substitution
+              JSON_PAYLOAD=$(cat <<EOF
+{
+  "embeds": [{
+    "title": "❌ Build Failed",
+    "description": "Your Next.js application build has failed. Please check the logs.",
+    "color": 15158332,
+    "fields": [
+      {
+        "name": "Repository",
+        "value": "$CIRCLE_PROJECT_REPONAME",
+        "inline": true
+      },
+      {
+        "name": "Branch",
+        "value": "$CIRCLE_BRANCH",
+        "inline": true
+      },
+      {
+        "name": "Commit",
+        "value": "$(echo $CIRCLE_SHA1 | cut -c1-7)",
+        "inline": true
+      }
+    ],
+    "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  }]
+}
+EOF
+)
               curl -H "Content-Type: application/json" \
-                   -d '{
-                     "embeds": [{
-                       "title": "❌ Build Failed",
-                       "description": "Your Next.js application build has failed. Please check the logs.",
-                       "color": 15158332,
-                       "fields": [
-                         {
-                           "name": "Repository",
-                           "value": "$CIRCLE_PROJECT_REPONAME",
-                           "inline": true
-                         },
-                         {
-                           "name": "Branch",
-                           "value": "$CIRCLE_BRANCH",
-                           "inline": true
-                         },
-                         {
-                           "name": "Commit",
-                           "value": "$CIRCLE_SHA1",
-                           "inline": true
-                         }
-                       ],
-                       "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
-                     }]
-                   }' \
+                   -d "$JSON_PAYLOAD" \
                    $DISCORD_WEBHOOK_URL || echo "Discord notification failed"
             else
               echo "Discord webhook URL not configured or not in build job"
