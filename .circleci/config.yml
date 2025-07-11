@@ -24,6 +24,72 @@ jobs:
       - run:
           name: Run tests (if any)
           command: bun run test || echo "No tests configured"
+      - run:
+          name: Notify Discord - Build Success
+          command: |
+            if [ "$CIRCLE_JOB" = "build-and-test" ]; then
+              curl -H "Content-Type: application/json" \
+                   -d '{
+                     "embeds": [{
+                       "title": "✅ Build Successful",
+                       "description": "Your Next.js application has been built successfully!",
+                       "color": 3066993,
+                       "fields": [
+                         {
+                           "name": "Repository",
+                           "value": "$CIRCLE_PROJECT_REPONAME",
+                           "inline": true
+                         },
+                         {
+                           "name": "Branch",
+                           "value": "$CIRCLE_BRANCH",
+                           "inline": true
+                         },
+                         {
+                           "name": "Commit",
+                           "value": "$CIRCLE_SHA1",
+                           "inline": true
+                         }
+                       ],
+                       "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+                     }]
+                   }' \
+                   $DISCORD_WEBHOOK_URL
+            fi
+          when: on_success
+      - run:
+          name: Notify Discord - Build Failed
+          command: |
+            if [ "$CIRCLE_JOB" = "build-and-test" ]; then
+              curl -H "Content-Type: application/json" \
+                   -d '{
+                     "embeds": [{
+                       "title": "❌ Build Failed",
+                       "description": "Your Next.js application build has failed. Please check the logs.",
+                       "color": 15158332,
+                       "fields": [
+                         {
+                           "name": "Repository",
+                           "value": "$CIRCLE_PROJECT_REPONAME",
+                           "inline": true
+                         },
+                         {
+                           "name": "Branch",
+                           "value": "$CIRCLE_BRANCH",
+                           "inline": true
+                         },
+                         {
+                           "name": "Commit",
+                           "value": "$CIRCLE_SHA1",
+                           "inline": true
+                         }
+                       ],
+                       "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+                     }]
+                   }' \
+                   $DISCORD_WEBHOOK_URL
+            fi
+          when: on_fail
       - store_artifacts:
           path: .next
           destination: build-artifacts
