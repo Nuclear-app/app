@@ -4,11 +4,6 @@ import { useState, useEffect } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
-interface UserPreference {
-  userId: string;
-  difficulty: string;
-}
-
 type UserPreferenceChange = RealtimePostgresChangesPayload<{
   userId: string;
   difficulty: string;
@@ -49,7 +44,7 @@ export function useDifficulty() {
       channel = supabase
         .channel('user_preferences_changes')
         .on(
-          'postgres_changes' as any,
+          'postgres_changes',
           {
             event: '*',
             schema: 'public',

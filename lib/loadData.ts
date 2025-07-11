@@ -17,6 +17,23 @@ interface LoadDataOptions {
     useSeparateQueries?: boolean;
 }
 
+// Type for raw data from API
+interface RawBlock {
+    id: string;
+    title: string;
+    createdAt: string;
+    folderId?: string;
+}
+
+// Type for folder data from API
+interface ApiFolder {
+    id: string;
+    name: string;
+    icon: string | null;
+    createdAt: Date;
+    parentId: string | null;
+}
+
 export async function loadData({ types, crateId, useSeparateQueries = false }: LoadDataOptions): Promise<LoadDataResult> {
     try {
         console.log('Loading data for types:', Array.from(types));
@@ -41,16 +58,16 @@ export async function loadData({ types, crateId, useSeparateQueries = false }: L
             if (crateId) {
                 // Filter for crate view
                 blocks = data.blocks
-                    .filter((block: any) => block.folderId === crateId)
-                    .map((block: any) => ({
+                    .filter((block: RawBlock) => block.folderId === crateId)
+                    .map((block: RawBlock) => ({
                         id: block.id,
                         title: block.title,
-                        createdAt: block.createdAt
+                        createdAt: new Date(block.createdAt)
                     }));
 
                 crates = data.folders
-                    .filter((folder: any) => folder.parentId === crateId)
-                    .map((crate: any) => ({
+                    .filter((folder: ApiFolder) => folder.parentId === crateId)
+                    .map((crate: ApiFolder) => ({
                         id: crate.id,
                         name: crate.name,
                         icon: crate.icon || "blocks",
@@ -58,13 +75,13 @@ export async function loadData({ types, crateId, useSeparateQueries = false }: L
                     }));
             } else {
                 // Dashboard view - no filtering
-                blocks = data.blocks.map((block: any) => ({
+                blocks = data.blocks.map((block: RawBlock) => ({
                     id: block.id,
                     title: block.title,
-                    createdAt: block.createdAt
+                    createdAt: new Date(block.createdAt)
                 }));
 
-                crates = data.folders.map((folder: any) => ({
+                crates = data.folders.map((folder: ApiFolder) => ({
                     id: folder.id,
                     name: folder.name,
                     icon: folder.icon || "blocks",
@@ -87,8 +104,8 @@ export async function loadData({ types, crateId, useSeparateQueries = false }: L
             if (types.has('crates')) {
                 const cratesData = await fetchUserFolders();
                 crates = cratesData
-                    .filter((folder: any) => crateId ? folder.parentId === crateId : true)
-                    .map((crate: any) => ({
+                    .filter((folder: ApiFolder) => crateId ? folder.parentId === crateId : true)
+                    .map((crate: ApiFolder) => ({
                         id: crate.id,
                         name: crate.name,
                         icon: crate.icon || "blocks",
@@ -98,8 +115,8 @@ export async function loadData({ types, crateId, useSeparateQueries = false }: L
         }
 
         // Sort both arrays by creation date
-        blocks.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        crates.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        blocks.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        crates.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
         return {
             blocks,

@@ -1,19 +1,14 @@
 import { Redis } from "@upstash/redis";
-import prisma from "@/lib/prisma";
 import { 
   getBlockById,
   getBlockWithRelations,
-  getBlockTitle,
   getBlockContext,
   getBlockPoints,
   getBlockFiles,
   getBlockNote,
   getBlocksByAuthor,
   getBlocksByFolder,
-  getTopLevelBlocks,
-  createBlock,
-  updateBlock,
-  deleteBlock
+  getTopLevelBlocks
 } from "@/lib/block";
 import {
   getUserById,
@@ -27,17 +22,12 @@ import {
   getFolderWithRelations,
   getFoldersByAuthor,
   getTopLevelFolders,
-  getFolderBlocks,
-  createFolder,
-  deleteFolder
+  getFolderBlocks
 } from "@/lib/folder";
 import {
   getQuizById,
   getQuizzesByBlock,
   getQuizWithRelations,
-  getUnusedQuizzes,
-  getUsedQuizzes,
-  markQuizAsUsed,
   getQuizzesByTopic
 } from "@/lib/quiz";
 import {

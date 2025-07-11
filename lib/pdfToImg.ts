@@ -1,5 +1,5 @@
 
-// @ts-ignore
+// @ts-expect-error - pdfjs-dist types are not properly exported
 import * as pdfjsLib from "pdfjs-dist/build/pdf";
 import { PDFPageProxy } from "pdfjs-dist/types/src/display/api";
 
