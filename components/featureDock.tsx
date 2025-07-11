@@ -2,9 +2,9 @@ import type React from "react"
 import Link from "next/link"
 import { Dock, DockIcon } from "./ui/dock"
 import { Separator } from "./ui/separator"
-import ex from "@/public/features/ex.svg"
-import nu from "@/public/features/nu.svg"
-import qz from "@/public/features/qz.svg"
+import ExIcon from "@/public/features/ex.svg"
+import NuIcon from "@/public/features/nu.svg"
+import QzIcon from "@/public/features/qz.svg"
 import Image from "next/image"
 import { Upload } from "lucide-react"
 import { useEffect } from "react"
@@ -36,13 +36,25 @@ export function FeatureDock({ blockId }: { blockId: string }) {
         <div>
             <Dock direction="middle" className="border-none">
                 <DockIcon size={500} className="rounded-xl bg-gradient-to-b from-[#EEEEEE]/70 to-[#EEEEEE]/70 bg-[radial-gradient(70.71%_70.71%_at_50%_50%,#9000FF_0%,#E46300_100%)] ">
-                    <Link href={`/dashboard/block/${blockId}/examples`}><Image src={ex} alt="examples" className="p-2" /></Link>
+                    <Link href={`/dashboard/block/${blockId}/examples`}>
+                        <div className="p-2">
+                            <ExIcon />
+                        </div>
+                    </Link>
                 </DockIcon>
                 <DockIcon size={500} className="rounded-xl bg-gradient-to-b from-[#EEEEEE]/70 to-[#EEEEEE]/70 bg-[radial-gradient(70.71%_70.71%_at_50%_50%,#E46300_13.75%,#00D3BE_97.99%)] ">
-                    <Link href={`/dashboard/block/${blockId}/faq`}><Image src={nu} alt="FAQs" className="p-2" /></Link>
+                    <Link href={`/dashboard/block/${blockId}/faq`}>
+                        <div className="p-2">
+                            <NuIcon />
+                        </div>
+                    </Link>
             </DockIcon>
                 <DockIcon size={500} className="rounded-xl bg-gradient-to-b from-[#EEEEEE]/70 to-[#EEEEEE]/70 bg-[radial-gradient(70.71%_70.71%_at_50%_50%,#00D3BE_0%,#9000FF_100%)] ">
-                    <Link href={`/dashboard/block/${blockId}/quizzes`}><Image src={qz} alt="quizzes" className="p-2" /></Link>
+                    <Link href={`/dashboard/block/${blockId}/quizzes`}>
+                        <div className="p-2">
+                            <QzIcon />
+                        </div>
+                    </Link>
             </DockIcon>
                 <DockIcon className="bg-[#3C3535] rounded-xl">
                     <Button className="bg-transparent hover:bg-transparent" variant="ghost" size="icon" onClick={() => setIsDialogOpen(true)}><Upload></Upload></Button>
