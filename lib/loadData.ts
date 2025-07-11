@@ -41,32 +41,32 @@ export async function loadData({ types, crateId, useSeparateQueries = false }: L
             if (crateId) {
                 // Filter for crate view
                 blocks = data.blocks
-                    .filter(block => block.folderId === crateId)
-                    .map(block => ({
+                    .filter((block: any) => block.folderId === crateId)
+                    .map((block: any) => ({
                         id: block.id,
                         title: block.title,
                         createdAt: block.createdAt
                     }));
 
                 crates = data.folders
-                    .filter(folder => folder.parentId === crateId)
-                    .map(crate => ({
+                    .filter((folder: any) => folder.parentId === crateId)
+                    .map((crate: any) => ({
                         id: crate.id,
-                        title: crate.name,
+                        name: crate.name,
                         icon: crate.icon || "blocks",
                         createdAt: crate.createdAt
                     }));
             } else {
                 // Dashboard view - no filtering
-                blocks = data.blocks.map(block => ({
+                blocks = data.blocks.map((block: any) => ({
                     id: block.id,
                     title: block.title,
                     createdAt: block.createdAt
                 }));
 
-                crates = data.folders.map(folder => ({
+                crates = data.folders.map((folder: any) => ({
                     id: folder.id,
-                    title: folder.name,
+                    name: folder.name,
                     icon: folder.icon || "blocks",
                     createdAt: folder.createdAt
                 }));
@@ -87,10 +87,10 @@ export async function loadData({ types, crateId, useSeparateQueries = false }: L
             if (types.has('crates')) {
                 const cratesData = await fetchUserFolders();
                 crates = cratesData
-                    .filter(folder => crateId ? folder.parentId === crateId : true)
-                    .map(crate => ({
+                    .filter((folder: any) => crateId ? folder.parentId === crateId : true)
+                    .map((crate: any) => ({
                         id: crate.id,
-                        title: crate.name,
+                        name: crate.name,
                         icon: crate.icon || "blocks",
                         createdAt: crate.createdAt
                     }));

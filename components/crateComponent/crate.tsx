@@ -75,7 +75,7 @@ export default function CrateComponent({ crateId }: CrateComponentProps) {
 
     const handleCreateBlock = async (title: string) => {
         try {
-            const block = await addBlock(title, crateId);
+            const block = await addBlock(title);
             setBlocks(prev => [...prev, { id: block.id, title: block.title, createdAt: block.createdAt }]);
             setBlockDialogOpen(false);
             router.push(`/onboarding/name/study-type?blockId=${block.id}&newBlock=false`);
@@ -86,10 +86,10 @@ export default function CrateComponent({ crateId }: CrateComponentProps) {
 
     const handleCreateCrate = async (title: string, icon: string) => {
         try {
-            const crate = await addCrate(title, icon, crateId);
+            const crate = await addCrate(title, icon);
             setCrates(prev => [...prev, { 
                 id: crate.id, 
-                title: crate.name, 
+                name: crate.name, 
                 icon: crate.icon || "blocks",
                 createdAt: crate.createdAt 
             }]);

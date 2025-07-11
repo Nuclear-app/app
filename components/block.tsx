@@ -34,7 +34,7 @@ export function Block({ blockId }: BlockProps) {
       const getPoints = async () => {
          if (!blockId) return;
          const pts = await fetchPoints(blockId);
-         setPoints(pts);
+         setPoints(pts || 0);
       }
       getPoints();
    }, [blockId]);

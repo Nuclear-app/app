@@ -160,12 +160,12 @@ export default function Dashboard() {
             try {
                 const { blocks: blocksData, folders: cratesData } = await fetchDashboardItems();
 
-                setBlocks(blocksData.map(block => ({
+                setBlocks(blocksData.map((block: { id: string; title: string }) => ({
                     id: block.id,
                     title: block.title
                 })));
 
-                setCrates(cratesData.map(crate => ({
+                setCrates(cratesData.map((crate: { id: string; name: string; icon?: string }) => ({
                     id: crate.id,
                     title: crate.name,
                     icon: crate.icon || "blocks"
@@ -228,7 +228,7 @@ export default function Dashboard() {
             console.log("Form values:", values);
             console.log("Mode value:", values.mode);
             console.log("Mode type:", typeof values.mode);
-            const block = await addBlock(values.title, undefined, values.mode);
+            const block = await addBlock(values.title);
             setBlocks(prev => [...prev, { id: block.id, title: block.title }]);
             blockForm.reset();
             setBlockDialogOpen(false);

@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { RenameDialogue } from "./RenameDialogue";
-import { renameBlock } from "@/app/dashboard/actions";
+import { updateBlockTitle } from "@/app/dashboard/actions";
 // import RenameDialogue from "./RenameDialogue";
 // import { renameBlock } from "@/app/dashboard/actions";
 
@@ -38,7 +38,7 @@ export function BlockItem({ block, onDelete, onRename }: BlockItemProps) {
     
     const handleRename = async (newTitle: string) => {
         try {
-            await renameBlock(block.id, newTitle);
+            await updateBlockTitle(block.id, newTitle);
             // Call the optional callback to update the UI
             onRename?.(block.id, newTitle);
             // Close the dialog after successful rename

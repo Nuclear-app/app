@@ -199,7 +199,7 @@ const FileHistory = ({ blockId }: { blockId: string }) => {
         const loadFiles = async () => {
             try {
                 const fileList = await fetchFiles(blockId);
-                setFiles(fileList);
+                setFiles(fileList || []);
             } catch (err) {
                 setError('Failed to load files');
                 console.error(err);

@@ -5,7 +5,7 @@ import Topic from "./topic";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { generateExamplesIfNeeded } from "@/app/dashboard/block/[id]/actions";
-import { getFullContext } from "@/app/dashboard/block/actions";
+import { getFullContext } from "@/lib/context";
 
 interface Topic {
   id: string;
