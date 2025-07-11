@@ -9,8 +9,9 @@ jobs:
       - image: oven/bun:1
     steps:
       - checkout
-      - node/install-packages:
-          pkg-manager: bun
+      - run:
+          name: Install dependencies with Bun
+          command: bun install
       - run:
           name: Run TypeScript check
           command: bun run type-check
