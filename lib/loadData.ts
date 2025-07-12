@@ -115,8 +115,16 @@ export async function loadData({ types, crateId, useSeparateQueries = false }: L
         }
 
         // Sort both arrays by creation date
-        blocks.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-        crates.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        blocks.sort((a, b) => {
+            const dateA = a.createdAt instanceof Date ? a.createdAt : new Date(a.createdAt);
+            const dateB = b.createdAt instanceof Date ? b.createdAt : new Date(b.createdAt);
+            return dateB.getTime() - dateA.getTime();
+        });
+        crates.sort((a, b) => {
+            const dateA = a.createdAt instanceof Date ? a.createdAt : new Date(a.createdAt);
+            const dateB = b.createdAt instanceof Date ? b.createdAt : new Date(b.createdAt);
+            return dateB.getTime() - dateA.getTime();
+        });
 
         return {
             blocks,
