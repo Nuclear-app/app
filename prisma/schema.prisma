@@ -1,8 +1,9 @@
 generator client {
-  provider      = "prisma-client-js"
-  output        = "../lib/generated/prisma"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+  engineType      = "edge"
+  // remove your custom output path unless necessary
 }
-
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
