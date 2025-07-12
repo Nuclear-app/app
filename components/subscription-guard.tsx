@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
-import { isTrialExpired, getUserSubscriptionStatus } from '@/lib/user'
 import { Loading } from '@/components/ui/loading'
 
 interface SubscriptionGuardProps {
@@ -27,26 +26,27 @@ export function SubscriptionGuard({ children, fallback }: SubscriptionGuardProps
           return
         }
 
-        // Check subscription status
-        const subscriptionStatus = await getUserSubscriptionStatus(user.id)
-        
-        // Allow access if user is PAID
-        if (subscriptionStatus === 'PAID') {
+        // Use the API endpoint instead of calling Prisma functions directly
+        const response = await fetch('/api/auth/check-subscription', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId: user.id }),
+        })
+
+        if (response.ok) {
+          const { hasValidSubscription } = await response.json()
+          setHasValidSubscription(hasValidSubscription)
+          
+          if (!hasValidSubscription) {
+            router.push('/transaction')
+            return
+          }
+        } else {
+          // If the API fails, allow access (fail open)
           setHasValidSubscription(true)
-          setIsLoading(false)
-          return
         }
-        
-        // Check if trial has expired
-        const trialExpired = await isTrialExpired(user.id)
-        
-        if (trialExpired) {
-          router.push('/transaction')
-          return
-        }
-        
-        // Trial is still valid
-        setHasValidSubscription(true)
       } catch (error) {
         console.error('Error checking subscription:', error)
         // If there's an error, allow access (fail open)
