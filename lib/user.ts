@@ -1,5 +1,5 @@
 import prisma from './prisma'
-import { User, Mode, SubscriptionStatus } from './generated/prisma'
+import { User, Mode, SubscriptionStatus } from '@prisma/client'
 
 /**
  * Custom error class for User operations

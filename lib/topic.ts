@@ -1,7 +1,7 @@
 // "use server"
 
 import prisma from './prisma'
-import { Topic, Block, Quiz } from './generated/prisma'
+import { Topic, Block, Quiz } from '@prisma/client'
 
 /**
  * Custom error class for Topic operations

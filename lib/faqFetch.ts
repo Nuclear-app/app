@@ -1,6 +1,6 @@
 "use server";
 
-import { Question } from "@/lib/generated/prisma";
+import { Question } from "@prisma/client";
 import { getQuestionsByBlockWithCache } from "@/lib/redis";
 
 export interface FAQItem {

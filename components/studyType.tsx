@@ -11,7 +11,7 @@ import { createInitialBlock } from "@/app/actions/create-initial-block"
 import { useState, Suspense } from "react"
 import { toast } from "sonner"
 // Again I don't think Mode is actually being used.
-import { Block, Mode } from "@/lib/generated/prisma";
+import { Block, Mode } from "@prisma/client";
 
 function StudyTypeContent() {
     const router = useRouter();

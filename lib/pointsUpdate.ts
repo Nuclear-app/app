@@ -1,6 +1,6 @@
 
 import prisma from './prisma'
-import { PointsUpdate, Block } from './generated/prisma'
+import { PointsUpdate, Block } from '@prisma/client'
 
 /**
  * Custom error class for PointsUpdate operations

@@ -1,6 +1,6 @@
 
 import prisma from './prisma'
-import { Question, Block } from './generated/prisma'
+import { Question, Block } from '@prisma/client'
 
 /**
  * Custom error class for Question operations

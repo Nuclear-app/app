@@ -1,6 +1,6 @@
 
 import prisma from './prisma'
-import { Quiz, Block, Topic } from './generated/prisma'
+import { Quiz, Block, Topic } from '@prisma/client'
 
 /**
  * Custom error class for Quiz operations

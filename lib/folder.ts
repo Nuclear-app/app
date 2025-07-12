@@ -1,5 +1,5 @@
 import prisma from './prisma'
-import { Folder, User, Block } from './generated/prisma'
+import { Folder, User, Block } from '@prisma/client'
 import { createClient } from '@/utils/supabase/server';
 
 const ROOT_FOLDER_ID = process.env.ROOT_FOLDER_ID ;

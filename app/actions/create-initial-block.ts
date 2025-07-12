@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
-import { Block, Mode } from "@/lib/generated/prisma";
+import { Block, Mode } from "@prisma/client";
 import { updatePoints } from "@/lib/blockFetch";
 import { createBlock } from "@/lib/block";
 

@@ -1,7 +1,7 @@
 "use server"
 
 import prisma from "@/lib/prisma";
-import { Quiz } from "@/lib/generated/prisma";
+import { Quiz } from "@prisma/client";
 import { getQuizWithTopicsCache, invalidateQuizzesCache } from "@/lib/redis";
 import { generateQuizzes } from "./quizGen";
 

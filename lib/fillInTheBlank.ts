@@ -1,5 +1,5 @@
 import prisma from './prisma'
-import { FillInTheBlank, Block } from './generated/prisma'
+import { FillInTheBlank, Block } from '@prisma/client'
 
 /**
  * Custom error class for FillInTheBlank operations

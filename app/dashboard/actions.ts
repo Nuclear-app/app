@@ -2,7 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
-import { Mode } from "@/lib/generated/prisma";
+import { Mode } from "@prisma/client";
 import { getUserById, getUserCrates, getUserName } from "@/lib/user";
 import { getUserFolders, getUserPosts } from "@/lib/user";
 import { createFolder, deleteFolder, getFolderById, getTopLevelFolders } from "@/lib/folder";

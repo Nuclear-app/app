@@ -3,7 +3,7 @@ import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { Mode } from '@/lib/generated/prisma';
+import { Mode } from '@prisma/client';
 import { createUser, getUserMode, updateUser } from "@/lib/user";
 
 
