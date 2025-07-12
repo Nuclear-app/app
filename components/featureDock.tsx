@@ -2,9 +2,6 @@ import type React from "react"
 import Link from "next/link"
 import { Dock, DockIcon } from "./ui/dock"
 import { Separator } from "./ui/separator"
-import ExIcon from "@/public/features/ex.svg"
-import NuIcon from "@/public/features/nu.svg"
-import QzIcon from "@/public/features/qz.svg"
 import Image from "next/image"
 import { Upload } from "lucide-react"
 import { useEffect } from "react"
@@ -38,21 +35,21 @@ export function FeatureDock({ blockId }: { blockId: string }) {
                 <DockIcon size={500} className="rounded-xl bg-gradient-to-b from-[#EEEEEE]/70 to-[#EEEEEE]/70 bg-[radial-gradient(70.71%_70.71%_at_50%_50%,#9000FF_0%,#E46300_100%)] ">
                     <Link href={`/dashboard/block/${blockId}/examples`}>
                         <div className="p-2">
-                            <ExIcon />
+                            <Image src="/features/ex.svg" alt="Ex Icon" width={24} height={24} />
                         </div>
                     </Link>
                 </DockIcon>
                 <DockIcon size={500} className="rounded-xl bg-gradient-to-b from-[#EEEEEE]/70 to-[#EEEEEE]/70 bg-[radial-gradient(70.71%_70.71%_at_50%_50%,#E46300_13.75%,#00D3BE_97.99%)] ">
                     <Link href={`/dashboard/block/${blockId}/faq`}>
                         <div className="p-2">
-                            <NuIcon />
+                            <Image src="/features/nu.svg" alt="Nu Icon" width={24} height={24} />
                         </div>
                     </Link>
             </DockIcon>
                 <DockIcon size={500} className="rounded-xl bg-gradient-to-b from-[#EEEEEE]/70 to-[#EEEEEE]/70 bg-[radial-gradient(70.71%_70.71%_at_50%_50%,#00D3BE_0%,#9000FF_100%)] ">
                     <Link href={`/dashboard/block/${blockId}/quizzes`}>
                         <div className="p-2">
-                            <QzIcon />
+                            <Image src="/features/qz.svg" alt="Qz Icon" width={24} height={24} />
                         </div>
                     </Link>
             </DockIcon>
