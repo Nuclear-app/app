@@ -1,15 +1,17 @@
-"use client";
-import FAQ from "@/components/faqComponent/faq";
+'use client';
+
+import Examples from "@/components/exampleComponent/examples";
 import { useEffect, useState, use } from "react";
 import { getFullContext } from "@/lib/context";
+import { generateExamplesIfNeeded } from "@/app/dashboard/block/[id]/actions";
 import { BlockViewNav } from "@/components/blockViewNav";
-import { Loading } from "@/components/ui/loading";
+import { Loading } from "../ui/loading";
 
 interface Props {
     params: Promise<{ id: string }>;
 }
 
-export default function FAQParent({ params }: Props) {
+export default function ExamplesParent({ params }: Props) {
     const { id } = use(params);
     const [context, setContext] = useState("");
     const [isLoading, setIsLoading] = useState(true);
@@ -37,6 +39,14 @@ export default function FAQParent({ params }: Props) {
         loadContext();
     }, [id]);
 
+    // Run bgFunction when examples page mounts to ensure examples are generated
+    useEffect(() => {
+        if (id) {
+            console.log('Examples page mounted, running bgFunction for block:', id);
+            generateExamplesIfNeeded(id);
+        }
+    }, [id]);
+
     // Log whenever context changes
     useEffect(() => {
         console.log('Current context state:', context);
@@ -51,11 +61,9 @@ export default function FAQParent({ params }: Props) {
     }
 
     return (
-        <div className="flex flex-col gap-4 w-full">
+        <div className="flex flex-col gap-4">
             <BlockViewNav blockId={id} />
-            <div className="w-full">
-                <FAQ blockId={id} text={context} />
-            </div>
+            <Examples blockID={id} />
         </div>
     );
 }

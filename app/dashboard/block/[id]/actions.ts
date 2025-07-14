@@ -107,6 +107,29 @@ export async function generateQuizzesIfNeeded(blockId: string) {
   }
 }
 
+export async function deleteExamples(blockId: string) {
+  if (!blockId) {
+    throw new Error("Block ID is required");
+  }
+
+  console.log("Deleting examples for block:", blockId);
+  
+  try {
+    // Delete all topics (examples) associated with this block
+    const deletedTopics = await prisma.topic.deleteMany({
+      where: {
+        blockId: blockId,
+      },
+    });
+
+    console.log(`Deleted ${deletedTopics.count} topics for block ${blockId}`);
+    return { success: true, deletedCount: deletedTopics.count };
+  } catch (error) {
+    console.error("Error deleting examples:", error);
+    throw new Error("Failed to delete examples");
+  }
+}
+
 export async function bgFunction(blockId: string) {
   const content = await getFullContext(blockId);
   console.log(content);
@@ -139,3 +162,4 @@ export async function bgFunction(blockId: string) {
     console.log(`Found ${existingQuizzes.length} existing quizzes, skipping quiz generation`);
   }
 }
+

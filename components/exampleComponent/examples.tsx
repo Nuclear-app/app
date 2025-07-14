@@ -1,11 +1,13 @@
 'use client';
 import { useState, useEffect } from "react";
 import { getExamples } from "@/lib/examplesPerplexity";
-import Topic from "./topic";
+import Topic from "../topic";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
-import { generateExamplesIfNeeded } from "@/app/dashboard/block/[id]/actions";
+import { generateExamples } from "@/lib/examplesPerplexity";
 import { getFullContext } from "@/lib/context";
+import { Loading } from "../ui/loading";
+import { deleteExamples } from "@/app/dashboard/block/[id]/actions";
 
 interface Topic {
   id: string;
@@ -47,19 +49,24 @@ export default function Examples({ blockID }: ExamplesProps) {
     
     setIsRegenerating(true);
     try {
+        await deleteExamples(blockID);
         console.log('Regenerating examples for block:', blockID);
-        await generateExamplesIfNeeded(blockID);
-        // Force a page refresh to show new examples
-        window.location.reload();
+        await generateExamples(await context, blockID);
+        
+        // Refresh the topics list instead of full page reload
+        const fetchedTopics = await getExamples(blockID);
+        setTopics(fetchedTopics);
+        
     } catch (error) {
         console.error('Error regenerating examples:', error);
+        setError(error instanceof Error ? error.message : 'Failed to regenerate examples');
     } finally {
         setIsRegenerating(false);
     }
 };
 
   if (isLoading) {
-    return <div className="text-center">Loading examples...</div>;
+    return <div className="flex justify-center items-center h-screen"><Loading /></div>;
   }
 
   return (
