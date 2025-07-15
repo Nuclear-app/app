@@ -1,4 +1,4 @@
-import Topic from "../topic";
+import Topic from "@/components/exampleComponent/topic";
 
 interface Topic {
   id: string;
