@@ -2,11 +2,11 @@
 
 import { useEffect, useState, use } from "react";
 import { getFullContext } from "@/lib/context";
-import { generateExamplesIfNeeded, deleteExamples } from "@/app/dashboard/block/[id]/actions";
+import { generateExamplesIfNeeded, deleteExamples, getExamplesData } from "@/app/dashboard/block/[id]/actions";
 import { BlockViewNav } from "@/components/blockViewNav";
 import { Loading } from "@/components/ui/loading";
 import ExamplesContainer from "@/components/exampleComponent/ExamplesContainer";
-import { getExamples, generateExamples } from "@/lib/examplesPerplexity";
+import { generateExamples } from "@/lib/examplesPerplexity";
 
 interface Topic {
   id: string;
@@ -66,7 +66,7 @@ export default function ExamplesParent({ params }: Props) {
             
             try {
                 setIsLoadingExamples(true);
-                const fetchedTopics = await getExamples(id);
+                const fetchedTopics = await getExamplesData(id);
                 setTopics(fetchedTopics);
                 setError(null);
             } catch (err) {
@@ -89,7 +89,7 @@ export default function ExamplesParent({ params }: Props) {
             await generateExamples(context, id);
             
             // Refresh the topics list
-            const fetchedTopics = await getExamples(id);
+            const fetchedTopics = await getExamplesData(id);
             setTopics(fetchedTopics);
             
         } catch (error) {
