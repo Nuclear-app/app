@@ -34,7 +34,7 @@ jobs:
           command: |
             if [ "$CIRCLE_JOB" = "build-and-test" ] && [ -n "$DISCORD_WEBHOOK_URL" ]; then
               curl -H "Content-Type: application/json" \
-                   -d "{\"embeds\":[{\"title\":\"✅ Build Successful\",\"description\":\"Your Next.js application has been built successfully!\",\"color\":3066993,\"fields\":[{\"name\":\"Repository\",\"value\":\"$CIRCLE_PROJECT_REPONAME\",\"inline\":true},{\"name\":\"Branch\",\"value\":\"$CIRCLE_BRANCH\",\"inline\":true},{\"name\":\"Commit\",\"value\":\"$(echo $CIRCLE_SHA1 | cut -c1-7)\",\"inline\":true}],\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}]}" \
+                   -d "{\"embeds\":[{\"title\":\"Build Successful\",\"description\":\"Your Next.js application has been built successfully!\",\"color\":3066993,\"fields\":[{\"name\":\"Repository\",\"value\":\"$CIRCLE_PROJECT_REPONAME\",\"inline\":true},{\"name\":\"Branch\",\"value\":\"$CIRCLE_BRANCH\",\"inline\":true},{\"name\":\"Commit\",\"value\":\"$(echo $CIRCLE_SHA1 | cut -c1-7)\",\"inline\":true}],\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}]}" \
                    $DISCORD_WEBHOOK_URL || echo "Discord notification failed, but build succeeded"
             else
               echo "Discord webhook URL not configured or not in build job"
@@ -45,7 +45,7 @@ jobs:
           command: |
             if [ "$CIRCLE_JOB" = "build-and-test" ] && [ -n "$DISCORD_WEBHOOK_URL" ]; then
               curl -H "Content-Type: application/json" \
-                   -d "{\"embeds\":[{\"title\":\"❌ Build Failed\",\"description\":\"Your Next.js application build has failed. Please check the logs.\",\"color\":15158332,\"fields\":[{\"name\":\"Repository\",\"value\":\"$CIRCLE_PROJECT_REPONAME\",\"inline\":true},{\"name\":\"Branch\",\"value\":\"$CIRCLE_BRANCH\",\"inline\":true},{\"name\":\"Commit\",\"value\":\"$(echo $CIRCLE_SHA1 | cut -c1-7)\",\"inline\":true}],\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}]}" \
+                   -d "{\"embeds\":[{\"title\":\"Build Failed\",\"description\":\"Your Next.js application build has failed. Please check the logs.\",\"color\":15158332,\"fields\":[{\"name\":\"Repository\",\"value\":\"$CIRCLE_PROJECT_REPONAME\",\"inline\":true},{\"name\":\"Branch\",\"value\":\"$CIRCLE_BRANCH\",\"inline\":true},{\"name\":\"Commit\",\"value\":\"$(echo $CIRCLE_SHA1 | cut -c1-7)\",\"inline\":true}],\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}]}" \
                    $DISCORD_WEBHOOK_URL || echo "Discord notification failed"
             else
               echo "Discord webhook URL not configured or not in build job"
