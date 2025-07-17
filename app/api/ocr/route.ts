@@ -8,8 +8,8 @@ import {
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 // Validate environment variables
-if (!process.env.AWS_REGION) {
-  throw new Error("AWS_REGION environment variable is not set");
+if (!process.env.AMAZON_REGION) {
+  throw new Error("AMAZON_REGION environment variable is not set");
 }
 if (!process.env.UPLOAD_BUCKET) {
   throw new Error("UPLOAD_BUCKET environment variable is not set");
@@ -18,8 +18,8 @@ if (!process.env.UPLOAD_BUCKET) {
 const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/tiff'];
 const SUPPORTED_PDF_TYPE = 'application/pdf';
 
-const texClient = new TextractClient({ region: process.env.AWS_REGION });
-const s3 = new S3Client({ region: process.env.AWS_REGION });
+const texClient = new TextractClient({ region: process.env.AMAZON_REGION });
+const s3 = new S3Client({ region: process.env.AMAZON_REGION });
 
 export async function POST(request: Request) {
   try {
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     }
 
     // Validate AWS configuration
-    if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
+    if (!process.env.AMAZON_ACCESS_KEY_ID || !process.env.AMAZON_SECRET_ACCESS_KEY) {
       console.error("AWS credentials not configured");
       return NextResponse.json(
         { error: "AWS configuration error" },
