@@ -44,6 +44,8 @@ import {
   getTopicById,
   getTopicsByBlock
 } from "@/lib/topic";
+import getBreadcrumb from "@/lib/blockViewNav";
+import { getExamples } from "@/lib/examplesPerplexity";
 
 export const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -70,6 +72,26 @@ export async function cacheAside<T>(key: string, ttlSeconds: number, fetcher: ()
         // If Redis fails, just call the fetcher directly
         return await fetcher()
     }
+}
+
+// ==================== BREADCRUMB CACHING ====================
+
+export async function getBreadcrumbWithCache(blockId: string, ttlSeconds = 1800) {
+    console.log(`getBreadcrumbWithCache called with blockId: ${blockId}`);
+    return cacheAside(
+        `breadcrumb:${blockId}`,
+        ttlSeconds,
+        () => getBreadcrumb(blockId)
+    );
+}
+
+export async function getExamplesWithCache(blockId: string, ttlSeconds = 600) {
+    console.log(`getExamplesWithCache called with blockId: ${blockId}`);
+    return cacheAside(
+        `examples:${blockId}`,
+        ttlSeconds,
+        () => getExamples(blockId)
+    );
 }
 
 // ==================== BLOCK CACHING ====================
@@ -443,7 +465,9 @@ export async function invalidateBlockCache(blockId: string) {
         `questions:block:${blockId}`,
         `fillintheblanks:block:${blockId}`,
         `topics:block:${blockId}`,
-        `topicids:block:${blockId}`
+        `topicids:block:${blockId}`,
+        `breadcrumb:${blockId}`,
+        `examples:${blockId}`
     ];
     await Promise.all(keys.map(key => redis.del(key)));
     console.log(`invalidateBlockCache: deleted ${keys.length} keys for blockId: ${blockId}`);
@@ -570,5 +594,17 @@ export async function invalidateTopicsCache(blockId: string) {
     console.log(`invalidateTopicsCache called with blockId: ${blockId}`);
     await redis.del(`topics:block:${blockId}`);
     console.log(`invalidateTopicsCache: deleted key for blockId: ${blockId}`);
+}
+
+export async function invalidateBreadcrumbCache(blockId: string) {
+    console.log(`invalidateBreadcrumbCache called with blockId: ${blockId}`);
+    await redis.del(`breadcrumb:${blockId}`);
+    console.log(`invalidateBreadcrumbCache: deleted key for blockId: ${blockId}`);
+}
+
+export async function invalidateExamplesCache(blockId: string) {
+    console.log(`invalidateExamplesCache called with blockId: ${blockId}`);
+    await redis.del(`examples:${blockId}`);
+    console.log(`invalidateExamplesCache: deleted key for blockId: ${blockId}`);
 }
 

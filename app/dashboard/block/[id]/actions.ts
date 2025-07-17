@@ -5,7 +5,8 @@ import { generateExamples } from "@/lib/examplesPerplexity";
 import { generateQuizzes } from "@/lib/quizGen";
 import { JSONContent } from "novel";
 import { getFullContext } from "@/lib/context";
-import { getBlockNote } from "@/lib/block";
+import { getBlockNoteWithCache } from "@/lib/redis";
+import { getBreadcrumbWithCache, getExamplesWithCache } from "@/lib/redis";
 import prisma from "@/lib/prisma";
 
 export async function getNoteContent(blockId: string) {
@@ -14,7 +15,7 @@ export async function getNoteContent(blockId: string) {
   }
 
   console.log("getNoteContent: Fetching block for ID:", blockId);
-  const block = await getBlockNote(blockId)
+  const block = await getBlockNoteWithCache(blockId)
 
   if (!block) {
     console.log("getNoteContent: Block not found for ID:", blockId);
@@ -69,6 +70,38 @@ export async function getNoteContent(blockId: string) {
   }
 }
 
+export async function getBreadcrumbData(blockId: string) {
+  if (!blockId) {
+    throw new Error("Block ID is required");
+  }
+
+  console.log("getBreadcrumbData: Fetching breadcrumb for block ID:", blockId);
+  
+  try {
+    const breadcrumb = await getBreadcrumbWithCache(blockId);
+    return breadcrumb;
+  } catch (error) {
+    console.error("Error fetching breadcrumb:", error);
+    throw new Error("Failed to fetch breadcrumb data");
+  }
+}
+
+export async function getExamplesData(blockId: string) {
+  if (!blockId) {
+    throw new Error("Block ID is required");
+  }
+
+  console.log("getExamplesData: Fetching examples for block ID:", blockId);
+  
+  try {
+    const examples = await getExamplesWithCache(blockId);
+    return examples;
+  } catch (error) {
+    console.error("Error fetching examples:", error);
+    throw new Error("Failed to fetch examples data");
+  }
+}
+
 export async function generateExamplesIfNeeded(blockId: string) {
   const content = await getFullContext(blockId);
   console.log("Checking for existing examples...");
@@ -107,6 +140,29 @@ export async function generateQuizzesIfNeeded(blockId: string) {
   }
 }
 
+export async function deleteExamples(blockId: string) {
+  if (!blockId) {
+    throw new Error("Block ID is required");
+  }
+
+  console.log("Deleting examples for block:", blockId);
+  
+  try {
+    // Delete all topics (examples) associated with this block
+    const deletedTopics = await prisma.topic.deleteMany({
+      where: {
+        blockId: blockId,
+      },
+    });
+
+    console.log(`Deleted ${deletedTopics.count} topics for block ${blockId}`);
+    return { success: true, deletedCount: deletedTopics.count };
+  } catch (error) {
+    console.error("Error deleting examples:", error);
+    throw new Error("Failed to delete examples");
+  }
+}
+
 export async function bgFunction(blockId: string) {
   const content = await getFullContext(blockId);
   console.log(content);
@@ -139,3 +195,4 @@ export async function bgFunction(blockId: string) {
     console.log(`Found ${existingQuizzes.length} existing quizzes, skipping quiz generation`);
   }
 }
+

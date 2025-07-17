@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { SubmitButton } from "./submit-button";
+import { SubmitButton } from "../submit-button";
 import * as FilePond from 'filepond';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
@@ -11,13 +11,13 @@ import FilePondPluginFileEncode from 'filepond-plugin-file-encode';
 import { createPortal } from 'react-dom';
 import { createBrowserClient } from '@supabase/ssr';
 import { addFile, removeFile } from '@/lib/fileUpload';
-import SparklesText from "./ui/sparkles-text";
-import { FunFacts } from "./ui/fun-facts";
+import SparklesText from "../ui/sparkles-text";
+import { FunFacts } from "../ui/fun-facts";
 
 // Import FilePond styles
 import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
-import { TextAnimate } from "./ui/text-animate";
+import { TextAnimate } from "../ui/text-animate";
 
 // Custom FilePond styles
 const filePondStyles = `

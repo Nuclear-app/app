@@ -2,9 +2,9 @@
 
 import prisma from "@/lib/prisma";
 import { generateHTML } from '@tiptap/html';
-import StarterKit from '@tiptap/starter-kit';
-import Link from '@tiptap/extension-link';
 import { JSONContent } from '@tiptap/react';
+import Link from '@tiptap/extension-link';
+import { StarterKit, TextStyle } from "novel";
 
 export async function getBlockContext(blockId: string) {
     try {
@@ -43,7 +43,8 @@ export async function getNoteContent(blockId: string): Promise<string> {
         }
 
         // Convert JSON note content to HTML and then to plain text
-        const html = generateHTML(block.note as JSONContent, [StarterKit, Link]);
+        // Use all extensions to ensure all content types are properly converted
+        const html = generateHTML(block.note as JSONContent, [StarterKit, Link, TextStyle]);
         const plainText = html.replace(/<[^>]*>/g, '');
         
         return plainText;

@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, ChevronsLeft, Upload } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import getBreadcrumb from "@/lib/blockViewNav"
+import { getBreadcrumbData } from "@/app/dashboard/block/[id]/actions"
 import { FeatureDock } from "./featureDock"
 import { useRealtimePoints } from "@/hooks/useRealtimePoints"
 
@@ -37,7 +37,7 @@ export function BlockViewNav({ blockId }: blockViewNavProps) {
         const fetchBreadcrumbs = async () => {
             try {
                 setIsLoading(true)
-                const data = await getBreadcrumb(blockId)
+                const data = await getBreadcrumbData(blockId)
                 setBreadcrumbs(data)
             } catch (error) {
                 console.error('Error fetching breadcrumbs:', error)

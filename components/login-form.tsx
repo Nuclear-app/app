@@ -255,11 +255,12 @@ export function LoginForm({
                   transition={{ delay: 0.3 }}
                   className="relative hidden bg-muted md:block"
                >
-                  <Image
-                     src="/notesbg.webp"
+                  {/* <Image
+                     src="/notesbg.png"
                      alt="Image"
-                     className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.5] dark:grayscale"
-                  />
+                     // className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.5] dark:grayscale"
+                     className="absolute inset-0 object-cover dark:brightness-[0.5] dark:grayscale"
+                  /> */}
                </motion.div>
             </CardContent>
          </Card>
