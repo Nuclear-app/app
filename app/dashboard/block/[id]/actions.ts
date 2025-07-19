@@ -163,6 +163,28 @@ export async function deleteExamples(blockId: string) {
   }
 }
 
+export async function regenerateExamples(blockId: string, context: string) {
+  if (!blockId) {
+    throw new Error("Block ID is required");
+  }
+
+  console.log("Regenerating examples for block:", blockId);
+  
+  try {
+    // First delete existing examples
+    await deleteExamples(blockId);
+    
+    // Then generate new examples
+    const newTopics = await generateExamples(context, blockId);
+    
+    console.log(`Generated ${newTopics.length} new topics for block ${blockId}`);
+    return { success: true, topics: newTopics };
+  } catch (error) {
+    console.error("Error regenerating examples:", error);
+    throw new Error("Failed to regenerate examples");
+  }
+}
+
 export async function bgFunction(blockId: string) {
   const content = await getFullContext(blockId);
   console.log(content);

@@ -2,11 +2,10 @@
 
 import { useEffect, useState, use } from "react";
 import { getFullContext } from "@/lib/context";
-import { generateExamplesIfNeeded, deleteExamples, getExamplesData } from "@/app/dashboard/block/[id]/actions";
+import { generateExamplesIfNeeded, deleteExamples, getExamplesData, regenerateExamples } from "@/app/dashboard/block/[id]/actions";
 import { BlockViewNav } from "@/components/blockViewNav";
 import { Loading } from "@/components/ui/loading";
 import ExamplesContainer from "@/components/exampleComponent/ExamplesContainer";
-import { generateExamples } from "@/lib/examplesPerplexity";
 
 interface Topic {
   id: string;
@@ -80,13 +79,12 @@ export default function ExamplesParent({ params }: Props) {
     }, [id]);
 
     const handleRegenerate = async () => {
-        if (!id) return;
+        if (!id || !context) return;
         
         setIsRegenerating(true);
         try {
-            await deleteExamples(id);
             console.log('Regenerating examples for block:', id);
-            await generateExamples(context, id);
+            await regenerateExamples(id, context);
             
             // Refresh the topics list
             const fetchedTopics = await getExamplesData(id);
