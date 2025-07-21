@@ -75,7 +75,6 @@
     content: "";
     position: fixed;
     inset: 0;
-    background-image: url("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F459225%2Fpexels-photo-459225.jpeg%3Fcs%3Dsrgb%26dl%3Ddaylight-environment-forest-459225.jpg%26fm%3Djpg&f=1&nofb=1&ipt=7a439d68917cb31d6c8bccd375b8347bd7aab260e6ec43bbf3e27e3d41da2e2a");
     background-repeat: repeat;
     opacity: 0.05;
     pointer-events: none;
