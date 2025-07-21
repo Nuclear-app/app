@@ -19,7 +19,8 @@ const config = {
   	},
   	extend: {
   		fontFamily: {
-  			sans: ['var(--font-bricolage)', 'var(--font-geist)'],
+  			bricolage: ['"Bricolage Grotesque"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+  			sans: ['"Bricolage Grotesque"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
   		},
   		typography: {
   			DEFAULT: {

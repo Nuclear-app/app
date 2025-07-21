@@ -1,10 +1,11 @@
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from 'sonner';
 import './globals.css';
+import "@fontsource/bricolage-grotesque";
 
 export const metadata = {
-  title: 'StudyAI',
-  description: 'AI-powered study assistant',
+  title: 'Nuclear',
+  description: 'A notetaking superpower',
 };
 
 export default function RootLayout({
