@@ -39,7 +39,22 @@ if (-not (Test-Path "node_modules")) {
 
 # git pull
 Write-Host "Pulling latest changes..." -ForegroundColor Blue
-git pull
+try {
+    git pull 2>&1 | Out-Null
+} catch {
+    # Check if the error is about no tracking information
+    $pullOutput = git pull 2>&1
+    if ($pullOutput -match "no tracking information for the current branch") {
+        Write-Host "No upstream tracking set. Setting upstream and retrying..." -ForegroundColor Blue
+        $currentBranch = git symbolic-ref --short HEAD
+        git push --set-upstream origin $currentBranch
+        Write-Host "Retrying git pull..." -ForegroundColor Blue
+        git pull
+    } else {
+        Write-Host "Git pull failed with an unknown error" -ForegroundColor Red
+        exit 1
+    }
+}
 
 # Get current branch
 $branch = git symbolic-ref --short HEAD
