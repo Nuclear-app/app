@@ -166,22 +166,22 @@ export function Quiz({ blockId }: QuizProps) {
                     <div className="space-y-4">
                         {randomizedOptions.map((option, index) => {
                             let buttonVariant: "link" | "outline" | "default" | "destructive" | "secondary" | "ghost" = "outline";
-                            let buttonClassName = "w-full p-12 justify-start rounded-xl bg-[#3C3535] text-wrap hover:bg-[#3C3535]/80";
+                            let buttonClassName = "w-full p-12 justify-start text-left rounded-xl bg-[#3C3535] text-wrap hover:bg-[#3C3535]/80";
                             
                             if (selectedAnswer) {
                                 if (option === currentQuiz.correctAns) {
                                     // Correct answer - always green
                                     buttonVariant = "default";
-                                    buttonClassName = "w-full p-12 justify-start rounded-xl bg-green-600 text-wrap hover:bg-green-600/80";
+                                    buttonClassName = "w-full p-12 justify-start text-left rounded-xl bg-green-600 text-wrap hover:bg-green-600/80";
                                 } else if (selectedAnswer === option && !isCorrect) {
                                     // Wrong selected answer - red
                                     buttonVariant = "destructive";
-                                    buttonClassName = "w-full p-12 justify-start rounded-xl bg-red-600 text-wrap hover:bg-red-600/80";
+                                    buttonClassName = "w-full p-12 justify-start text-left rounded-xl bg-red-600 text-wrap hover:bg-red-600/80";
                                 }
                             } else if (selectedAnswer === option) {
                                 // User's selection before checking
                                 buttonVariant = isCorrect ? "default" : "destructive";
-                                buttonClassName = "w-full p-12 justify-start rounded-xl bg-[#3C3535] text-wrap hover:bg-[#3C3535]/80";
+                                buttonClassName = "w-full p-12 justify-start text-left rounded-xl bg-[#3C3535] text-wrap hover:bg-[#3C3535]/80";
                             }
                             
                             return (

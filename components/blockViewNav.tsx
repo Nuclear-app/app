@@ -14,6 +14,7 @@ import { useEffect, useState } from "react"
 import { getBreadcrumbData } from "@/app/dashboard/block/[id]/actions"
 import { FeatureDock } from "./featureDock"
 import { useRealtimePoints } from "@/hooks/useRealtimePoints"
+import { TooltipWrapper } from "./ui/TooltipWrapper"
 
 interface blockViewNavProps {
     blockId: string
@@ -51,12 +52,14 @@ export function BlockViewNav({ blockId }: blockViewNavProps) {
     return (
         <div className="flex items-center justify-between w-full py-2 pl-4 pr-2 border rounded-3xl bg-[#221D1D]">
             <div className="flex items-center gap-4">
-                <Button
-                    className="bg-[#3C3535] text-white hover:opacity-50 rounded-xl aspect-square p-0"
-                    onClick={() => router.back()}
-                >
-                    <ChevronsLeft  />
-                </Button>
+                <TooltipWrapper text="Back" side="bottom">
+                    <Button
+                        className="bg-[#3C3535] text-white hover:bg-[#3C3535]/70 rounded-xl aspect-square p-0"
+                        onClick={() => router.back()}
+                    >
+                        <ChevronsLeft  />
+                    </Button>
+                </TooltipWrapper>
                 <Breadcrumb>
                     <BreadcrumbList>
                         <BreadcrumbItem>
@@ -97,14 +100,15 @@ export function BlockViewNav({ blockId }: blockViewNavProps) {
             </div>
 
             <div className="flex flex-col md:flex-row items-center gap-1">
-                <Button
-                    className="bg-custom-gradient rounded-xl text-lg font-semibold hover:opacity-90 px-4 py-4 h-10"
-                    disabled={isPointsLoading}
-                >
-                    {isPointsLoading ? 'Loading...' : `${points} Points`}
-                </Button>
+                <TooltipWrapper text="Points" side="bottom">
+                    <Button
+                        className="bg-custom-gradient rounded-xl text-lg font-semibold hover:opacity-90 px-4 py-4 h-10"
+                        disabled={isPointsLoading}
+                    >
+                        {isPointsLoading ? 'Loading...' : `${points} Points`}
+                    </Button>
+                </TooltipWrapper>
                 <FeatureDock blockId={blockId} />
-
             </div>
         </div>
     )
