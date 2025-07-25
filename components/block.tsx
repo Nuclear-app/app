@@ -14,6 +14,7 @@ export default function Block({ block, onUpdate }: BlockProps) {
   const router = useRouter();
 
   const handleClick = () => {
+    console.log('clicked');
     router.push(`/dashboard/block/${block.id}`);
   };
 
