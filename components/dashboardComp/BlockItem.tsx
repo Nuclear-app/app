@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import { Block } from "@/lib/types";
 import Image from "next/image";
@@ -94,11 +95,17 @@ export function BlockItem({ block, onDelete, onRename }: BlockItemProps) {
             <div className="absolute top-2 right-2 z-10">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <TooltipWrapper text="Block Options" side="bottom">
-                            <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-[#333333]">
-                                <MoreVertical className="h-4 w-4" />
-                            </Button>
-                        </TooltipWrapper>
+                        <div 
+                            onMouseEnter={(e) => e.stopPropagation()}
+                            onMouseLeave={(e) => e.stopPropagation()}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <TooltipWrapper text="Block Options" side="bottom">
+                                <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-[#333333]">
+                                    <MoreVertical className="h-4 w-4" />
+                                </Button>
+                            </TooltipWrapper>
+                        </div>
                     </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-48 bg-[#292929] border border-[#333333]">
                                 <DropdownMenuItem className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]">

@@ -26,7 +26,14 @@ export async function createInitialBlock(mode?: Mode): Promise<BlockResponse> {
     const block = await createBlock({
       title: 'Untitled Note',
       authorId: user.id,
-      note: {},
+      note: {
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+          },
+        ],
+      },
       folderId: ROOT_FOLDER_ID,
       points: 0
     });
