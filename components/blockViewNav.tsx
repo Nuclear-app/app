@@ -8,16 +8,18 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, ChevronsLeft, Upload } from "lucide-react"
+import { ChevronLeft, ChevronRight, ChevronsLeft, Menu } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { getBreadcrumbData } from "@/app/dashboard/block/[id]/actions"
 import { FeatureDock } from "./featureDock"
 import { useRealtimePoints } from "@/hooks/useRealtimePoints"
 import { TooltipWrapper } from "./ui/TooltipWrapper"
+import { Sidebar } from "./ui/sidebar"
 
 interface blockViewNavProps {
     blockId: string
+    children?: React.ReactNode
 }
 
 interface BreadcrumbItem {
@@ -26,10 +28,11 @@ interface BreadcrumbItem {
     type: 'folder' | 'block'
 }
 
-export function BlockViewNav({ blockId }: blockViewNavProps) {
+export function BlockViewNav({ blockId, children }: blockViewNavProps) {
     const router = useRouter()
     const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([])
     const [isLoading, setIsLoading] = useState(true)
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false)
     
     // Use real-time points hook
     const { points, isLoading: isPointsLoading } = useRealtimePoints(blockId)
@@ -50,65 +53,93 @@ export function BlockViewNav({ blockId }: blockViewNavProps) {
     }, [blockId])
 
     return (
-        <div className="flex items-center justify-between w-full py-2 pl-4 pr-2 border rounded-3xl bg-[#221D1D]">
-            <div className="flex items-center gap-4">
-                <TooltipWrapper text="Back" side="bottom">
-                    <Button
-                        className="bg-[#3C3535] text-white hover:bg-[#3C3535]/70 rounded-xl aspect-square p-0"
-                        onClick={() => router.back()}
-                    >
-                        <ChevronsLeft  />
-                    </Button>
-                </TooltipWrapper>
-                <Breadcrumb>
-                    <BreadcrumbList>
-                        <BreadcrumbItem>
-                            <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
-                        </BreadcrumbItem>
-                        {!isLoading && breadcrumbs.length > 0 && (
-                            <>
-                                {breadcrumbs.slice(1, -1).map((item) => (
-                                    <BreadcrumbItem key={item.id}>
+        <div className="flex h-full">
+            {/* Sidebar - Full Height */}
+            <Sidebar 
+                isOpen={isSidebarOpen} 
+                onClose={() => setIsSidebarOpen(false)} 
+                blockId={blockId} 
+            />
+            
+            {/* Main Content Area */}
+            <div className="flex flex-col flex-1 min-w-0">
+                {/* Navigation Bar */}
+                <div className="flex items-center justify-between w-full py-2 pl-4 pr-2 border rounded-3xl bg-[#221D1D] mb-4">
+                    <div className="flex items-center gap-4">
+                        <TooltipWrapper text="Back" side="bottom">
+                            <Button
+                                className="bg-[#3C3535] text-white hover:bg-[#3C3535]/70 rounded-xl aspect-square p-0"
+                                onClick={() => router.back()}
+                            >
+                                <ChevronsLeft  />
+                            </Button>
+                        </TooltipWrapper>
+                        
+                        <TooltipWrapper text="Menu" side="bottom">
+                            <Button
+                                className="bg-[#3C3535] text-white hover:bg-[#3C3535]/70 rounded-xl aspect-square p-0"
+                                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                            >
+                                <Menu />
+                            </Button>
+                        </TooltipWrapper>
+                        
+                        <Breadcrumb>
+                            <BreadcrumbList>
+                                <BreadcrumbItem>
+                                    <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+                                </BreadcrumbItem>
+                                {!isLoading && breadcrumbs.length > 0 && (
+                                    <>
+                                        {breadcrumbs.slice(1, -1).map((item) => (
+                                            <BreadcrumbItem key={item.id}>
+                                                <BreadcrumbSeparator>
+                                                    <ChevronRight className="h-4 w-4" />
+                                                </BreadcrumbSeparator>
+                                                <BreadcrumbLink href={`/dashboard/crate/${item.id}`}>
+                                                    {item.name}
+                                                </BreadcrumbLink>
+                                            </BreadcrumbItem>
+                                        ))}
+                                        <BreadcrumbItem>
+                                            <BreadcrumbSeparator>
+                                                <ChevronRight className="h-4 w-4" />
+                                            </BreadcrumbSeparator>
+                                            <BreadcrumbPage>
+                                                {breadcrumbs[breadcrumbs.length - 1]?.name || 'Loading...'}
+                                            </BreadcrumbPage>
+                                        </BreadcrumbItem>
+                                    </>
+                                )}
+                                {isLoading && (
+                                    <BreadcrumbItem>
                                         <BreadcrumbSeparator>
                                             <ChevronRight className="h-4 w-4" />
                                         </BreadcrumbSeparator>
-                                        <BreadcrumbLink href={`/dashboard/crate/${item.id}`}>
-                                            {item.name}
-                                        </BreadcrumbLink>
+                                        <BreadcrumbPage>Loading...</BreadcrumbPage>
                                     </BreadcrumbItem>
-                                ))}
-                                <BreadcrumbItem>
-                                    <BreadcrumbSeparator>
-                                        <ChevronRight className="h-4 w-4" />
-                                    </BreadcrumbSeparator>
-                                    <BreadcrumbPage>
-                                        {breadcrumbs[breadcrumbs.length - 1]?.name || 'Loading...'}
-                                    </BreadcrumbPage>
-                                </BreadcrumbItem>
-                            </>
-                        )}
-                        {isLoading && (
-                            <BreadcrumbItem>
-                                <BreadcrumbSeparator>
-                                    <ChevronRight className="h-4 w-4" />
-                                </BreadcrumbSeparator>
-                                <BreadcrumbPage>Loading...</BreadcrumbPage>
-                            </BreadcrumbItem>
-                        )}
-                    </BreadcrumbList>
-                </Breadcrumb>
-            </div>
+                                )}
+                            </BreadcrumbList>
+                        </Breadcrumb>
+                    </div>
 
-            <div className="flex flex-col md:flex-row items-center gap-1">
-                <TooltipWrapper text="Points" side="bottom">
-                    <Button
-                        className="bg-custom-gradient rounded-xl text-lg font-semibold hover:opacity-90 px-4 py-4 h-10"
-                        disabled={isPointsLoading}
-                    >
-                        {isPointsLoading ? 'Loading...' : `${points} Points`}
-                    </Button>
-                </TooltipWrapper>
-                <FeatureDock blockId={blockId} />
+                    <div className="flex flex-col md:flex-row items-center gap-1">
+                        <TooltipWrapper text="Points" side="bottom">
+                            <Button
+                                className="bg-custom-gradient rounded-xl text-lg font-semibold hover:opacity-90 px-4 py-4 h-10"
+                                disabled={isPointsLoading}
+                            >
+                                {isPointsLoading ? 'Loading...' : `${points} Points`}
+                            </Button>
+                        </TooltipWrapper>
+                        <FeatureDock blockId={blockId} />
+                    </div>
+                </div>
+                
+                {/* Main Content */}
+                <div className="flex-1">
+                    {children}
+                </div>
             </div>
         </div>
     )
