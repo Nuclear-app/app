@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react";
 import { ny } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -272,6 +273,8 @@ export function SignUpForm({
                >
                   <Image
                      src="/notesbg.webp"
+                     width={1000}
+                     height={1000}
                      alt="Image"
                      className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.5] dark:grayscale"
                   />

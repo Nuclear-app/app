@@ -1,5 +1,5 @@
 "use client"
-
+import React, { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ControllerRenderProps } from "react-hook-form"
-import Link from "next/link"
+import { ArrowRight, Loader2 } from "lucide-react"
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -29,6 +29,8 @@ interface UpdateNameFormProps {
 }
 
 export function UpdateNameForm({ onSubmit, defaultName }: UpdateNameFormProps) {
+    const [isLoading, setIsLoading] = useState(false)
+    
     const form = useForm<FormSchema>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -36,9 +38,30 @@ export function UpdateNameForm({ onSubmit, defaultName }: UpdateNameFormProps) {
         },
     })
 
+    const handleSubmit = async (data: FormSchema) => {
+        setIsLoading(true)
+        try {
+            await onSubmit(data)
+        } catch (error) {
+            console.error('Error submitting form:', error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const handleArrowClick = async () => {
+        const isValid = await form.trigger()
+        if (!isValid) {
+            return
+        }
+
+        const formData = form.getValues()
+        await handleSubmit(formData)
+    }
+
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                 <FormField
                     control={form.control}
                     name="name"
@@ -46,10 +69,25 @@ export function UpdateNameForm({ onSubmit, defaultName }: UpdateNameFormProps) {
                         <FormItem>
                             <FormControl>
                                 <div className="flex items-center space-x-2">
-                                    <Input className="bg-foreground/80 text-background" {...field} type="text" placeholder="Name" />
-                                    <Link href="/onboarding/name/study-type">
-                                        <Button className="bg-background/80 text-foreground hover:bg-background/60" type="button">{"->"}</Button>
-                                    </Link>
+                                    <Input 
+                                        className="bg-foreground/80 text-background" 
+                                        {...field} 
+                                        type="text" 
+                                        placeholder="Name"
+                                        disabled={isLoading}
+                                    />
+                                    <Button 
+                                        className="bg-background/80 text-foreground hover:bg-background/60" 
+                                        type="button"
+                                        onClick={handleArrowClick}
+                                        disabled={isLoading}
+                                    >
+                                        {isLoading ? (
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                        ) : (
+                                            <ArrowRight className="h-4 w-4" />
+                                        )}
+                                    </Button>
                                 </div>
                             </FormControl>
                             <FormMessage />
