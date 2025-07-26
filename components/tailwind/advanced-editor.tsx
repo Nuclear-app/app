@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { defaultEditorContent } from "@/lib/content";
 import {
   EditorCommand,
