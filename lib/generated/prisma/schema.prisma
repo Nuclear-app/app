@@ -1,0 +1,114 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../lib/generated/prisma"
+  binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                 String             @id @default(uuid())
+  email              String             @unique
+  name               String?
+  mode               Mode?
+  createdAt          DateTime           @default(now())
+  subscriptionStatus SubscriptionStatus @default(TRIAL)
+  posts              Block[]
+  folders            Folder[]
+}
+
+model Block {
+  id              String           @id @default(uuid())
+  createdAt       DateTime         @default(now())
+  title           String
+  authorId        String
+  folderId        String?
+  context         String?
+  points          Int?             @default(0)
+  files           String[]
+  note            Json?
+  author          User             @relation(fields: [authorId], references: [id])
+  folder          Folder?          @relation(fields: [folderId], references: [id])
+  fillInTheBlanks FillInTheBlank[]
+  pointsUpdates   PointsUpdate[]
+  questions       Question[]
+  quizzes         Quiz[]
+  topics          Topic[]
+}
+
+model Quiz {
+  id         String   @id @default(uuid())
+  question   String
+  correctAns String
+  mistake    String?
+  blockId    String
+  options    String[]
+  topicId    String
+  used       Boolean  @default(false)
+  block      Block    @relation(fields: [blockId], references: [id])
+  topic      Topic    @relation(fields: [topicId], references: [id])
+}
+
+model Question {
+  id       String @id @default(uuid())
+  question String
+  answer   String
+  blockId  String
+  block    Block  @relation(fields: [blockId], references: [id])
+}
+
+model Folder {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  parentId  String?
+  icon      String?
+  authorId  String?
+  blocks    Block[]
+  author    User?    @relation(fields: [authorId], references: [id])
+  parent    Folder?  @relation("FolderToFolder", fields: [parentId], references: [id])
+  children  Folder[] @relation("FolderToFolder")
+}
+
+model FillInTheBlank {
+  id       String  @id @default(uuid())
+  sentence String
+  answer   String
+  hint     String?
+  blockId  String
+  block    Block   @relation(fields: [blockId], references: [id])
+}
+
+model Topic {
+  id       String   @id @default(uuid())
+  name     String
+  blockId  String
+  examples String[]
+  quizzes  Quiz[]
+  block    Block    @relation(fields: [blockId], references: [id])
+}
+
+model PointsUpdate {
+  id        String   @id @default(uuid())
+  blockId   String
+  points    Int      @default(0)
+  createdAt DateTime @default(now())
+  block     Block    @relation(fields: [blockId], references: [id], onDelete: Cascade)
+}
+
+enum Mode {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  PAID
+  EXPIRED
+}

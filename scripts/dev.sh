@@ -53,7 +53,19 @@ fi
 
 # git pull
 echo -e "${BLUE}🔄 Pulling latest changes...${NC}"
-git pull
+if ! git pull 2>&1; then
+    # Check if the error is about no tracking information
+    if git pull 2>&1 | grep -q "no tracking information for the current branch"; then
+        echo -e "${BLUE}📡 No upstream tracking set. Setting upstream and retrying...${NC}"
+        current_branch=$(git symbolic-ref --short HEAD)
+        git push --set-upstream origin "$current_branch"
+        echo -e "${BLUE}🔄 Retrying git pull...${NC}"
+        git pull
+    else
+        echo -e "${RED}❌ Git pull failed with an unknown error${NC}"
+        exit 1
+    fi
+fi
 
 # Get current branch
 branch=$(git symbolic-ref --short HEAD)
