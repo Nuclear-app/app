@@ -19,8 +19,8 @@ export default function Topic({ topicName, examples }: TopicProps) {
     >
       <div className="">
         <CollapsibleTrigger asChild>
-          <Button variant="ghost" className="w-full flex justify-between items-center">
-            <h3 className="font-Bold text-[16px] break-words whitespace-normal overflow-wrap-anywhere max-w-full">{topicName}</h3>
+          <Button variant="ghost" className="w-full flex justify-between items-center text-left">
+            <h3 className="font-Bold text-[16px] break-words whitespace-normal overflow-wrap-anywhere max-w-full text-left flex-1">{topicName}</h3>
             {isOpen ? (
               <ChevronUp className="h-4 w-4" />
             ) : (

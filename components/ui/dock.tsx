@@ -98,10 +98,12 @@ function DockIcon({
    const ref = useRef<HTMLDivElement>(null)
 
    const distanceCalc = useTransform(mouseX, (val: number) => {
-      const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 }
-
-      return val - bounds.x - bounds.width / 2
-   })
+      if (!ref.current) return 0
+      const bounds = ref.current.getBoundingClientRect()
+      // Use left for compatibility, fallback to x if left is undefined
+      const x = bounds.left ?? bounds.x ?? 0
+      return val - x - bounds.width / 2
+   }) || 0
 
    const widthSync = useTransform(
       distanceCalc,

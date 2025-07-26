@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { updatePoints } from "@/lib/blockFetch";
+import { TooltipWrapper } from "../ui/TooltipWrapper";
 
 // Define the form schema
 const formSchema = z.object({
@@ -133,13 +134,15 @@ export default function FAQ({ blockId, text }: { blockId: string; text: string }
                                             placeholder="Ask away..."
                                             className="flex-1 text-xl h-12"
                                         />
-                                        <Button 
-                                            type="submit" 
-                                            disabled={isLoading}
-                                            className="shrink-0 text-xl w-12 h-12"
-                                        >
-                                            {isLoading ? "○" : "->"}
-                                        </Button>
+                                        <TooltipWrapper text="Ask" side="right">
+                                            <Button 
+                                                type="submit" 
+                                                disabled={isLoading}
+                                                className="shrink-0 text-xl w-12 h-12"
+                                            >
+                                                {isLoading ? "○" : "->"}
+                                            </Button>
+                                        </TooltipWrapper>
                                     </div>
                                 </FormControl>
                                 <FormMessage />

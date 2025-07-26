@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
+import { TooltipWrapper } from "@/components/ui/TooltipWrapper";
 
 interface ExamplesHeaderProps {
   isRegenerating: boolean;
@@ -15,15 +16,17 @@ export default function ExamplesHeader({ isRegenerating, onRegenerate }: Example
           Here are some examples to help you understand the concepts better.
         </p>
       </div>
-      <Button 
-        variant="ghost" 
-        size="icon"
-        onClick={onRegenerate}
-        disabled={isRegenerating}
-        className="h-10 w-10"
-      >
-        <RefreshCw className={`h-5 w-5 ${isRegenerating ? 'animate-spin' : ''}`} />
-      </Button>
+      <TooltipWrapper text="Regenerate examples" side="bottom">
+        <Button 
+          variant="ghost" 
+          size="icon"
+          onClick={onRegenerate}
+          disabled={isRegenerating}
+          className="h-10 w-10"
+        >
+          <RefreshCw className={`h-5 w-5 ${isRegenerating ? 'animate-spin' : ''}`} />
+        </Button>
+      </TooltipWrapper>
     </div>
   );
 } 

@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Crate } from "@/lib/types";
 // import RenameDialogue from "./RenameDialogue";
 // import { renameCrate } from "@/app/dashboard/actions";
+import { TooltipWrapper } from "@/components/ui/TooltipWrapper";
 
 interface CrateItemProps {
     crate: Crate;
@@ -40,29 +41,33 @@ export function CrateItem({ crate, onDelete }: CrateItemProps) {
         <ContextMenu>
             <ContextMenuTrigger className="w-full">
                 <div className="relative w-full">
-                    <Link
-                        href={`/dashboard/crate/${crate.id}`}
-                        className="block w-full"
-                    >
-                        <Card className="bg-[#292929] hover:bg-[#333333] border-2 aspect-square">
-                            <CardContent className="p-6 h-full flex flex-col items-start justify-between">
-                                <div className="w-full flex flex-col">
-                                    <div className="w-3/12 h-3/12 relative flex items-center justify-center">
-                                        <span className="text-7xl">{crate.icon}</span>
+                    <TooltipWrapper text="Crate" side="bottom">
+                        <Link
+                            href={`/dashboard/crate/${crate.id}`}
+                            className="block w-full"
+                        >
+                            <Card className="bg-[#292929] hover:bg-[#333333] border-2 aspect-square">
+                                <CardContent className="p-6 h-full flex flex-col items-start justify-between">
+                                    <div className="w-full flex flex-col">
+                                        <div className="w-3/12 h-3/12 relative flex items-center justify-center">
+                                            <span className="text-7xl">{crate.icon}</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <p className="text-sm text-muted-foreground">
-                                    {new Date(crate.createdAt).toLocaleDateString()}
-                                </p>
-                            </CardContent>
-                        </Card>
-                    </Link>
+                                    <p className="text-sm text-muted-foreground">
+                                        {new Date(crate.createdAt).toLocaleDateString()}
+                                    </p>
+                                </CardContent>
+                            </Card>
+                        </Link>
+                    </TooltipWrapper>
                     <div className="absolute top-2 right-2 z-10">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-[#333333]">
-                                    <MoreVertical className="h-4 w-4" />
-                                </Button>
+                                <TooltipWrapper text="Crate Options" side="bottom">
+                                    <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-[#333333]">
+                                        <MoreVertical className="h-4 w-4" />
+                                    </Button>
+                                </TooltipWrapper>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-48 bg-[#292929] border border-[#333333]">
                                 <DropdownMenuItem className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]">
