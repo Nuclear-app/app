@@ -1,5 +1,7 @@
+
 import prisma from './prisma'
 import { User, Mode, SubscriptionStatus } from '@prisma/client'
+import { createClient } from '@/utils/supabase/server'
 
 /**
  * Custom error class for User operations
@@ -17,6 +19,30 @@ export class UserError extends Error {
  */
 
 // ==================== GETTERS ====================
+
+/**
+ * Get the current user from Supabase auth and fetch from database
+ * @returns Promise<User | null> - The current user object or null if not found
+ */
+export async function getCurrentUser(): Promise<User | null> {
+  try {
+    // Get the current user from Supabase auth
+    const supabase = await createClient()
+    const { data: { user }, error } = await supabase.auth.getUser()
+    
+    if (error || !user) {
+      console.log('No authenticated user found')
+      return null
+    }
+
+    // Fetch the user data from our database using the Supabase user ID
+    const dbUser = await getUserById(user.id)
+    return dbUser
+  } catch (error) {
+    console.error('Error getting current user:', error)
+    return null
+  }
+}
 
 /**
  * Get a user by their ID

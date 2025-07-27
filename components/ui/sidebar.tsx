@@ -1,11 +1,28 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Settings, FileText, Star, Share2, X, Home, Zap, Flag } from "lucide-react"
+import { Settings, FileText, Star, Share2, X, Home, Zap, Flag, User, LogOut, ArrowLeftToLine, MoreVertical, Trash2, Pencil, ChevronRight, ChevronDown } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Tree, Folder, File } from "@/components/magicui/file-tree"
 import { useEffect, useState } from "react"
 import { getUserFileStructureAction } from "@/lib/folderActions"
+import { Loading } from "./loading"
+import {
+    ContextMenu,
+    ContextMenuContent,
+    ContextMenuItem,
+    ContextMenuTrigger,
+} from "@/components/ui/context-menu"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { updateBlockTitle, deleteBlock, deleteCrate, renameFolderAction } from "@/app/dashboard/actions"
+import { RenameDialogue } from "@/components/dashboardComp/RenameDialogue"
+import { useRouter } from "next/navigation"
+import { createClient } from "@/utils/supabase/client"
 
 interface SidebarProps {
     isOpen: boolean
@@ -14,28 +31,172 @@ interface SidebarProps {
     userId?: string
 }
 
-// Helper function to render tree structure
-const renderTreeStructure = (structure: any[]) => {
-    return structure.map((item) => {
-        if (item.type === 'folder') {
-            return (
-                <Folder key={item.value} element={item.element} value={item.value}>
-                    {item.children && item.children.length > 0 && renderTreeStructure(item.children)}
-                </Folder>
-            )
-        } else {
-            return (
-                <File key={item.value} value={item.value}>
-                    {item.element}
-                </File>
-            )
+// Enhanced Folder component with context menu and dropdown
+const EnhancedFolder = ({ element, value, children, onRename, onDelete }: {
+    element: string
+    value: string
+    children: React.ReactNode
+    onRename?: (id: string, newName: string) => Promise<void>
+    onDelete?: (id: string) => Promise<void>
+}) => {
+    const [renameDialogOpen, setRenameDialogOpen] = useState(false)
+
+    const handleRename = async (newName: string) => {
+        try {
+            await onRename?.(value, newName)
+            setRenameDialogOpen(false)
+        } catch (error) {
+            console.error("Failed to rename folder:", error)
         }
-    })
+    }
+
+    const handleDelete = async () => {
+        try {
+            await onDelete?.(value)
+        } catch (error) {
+            console.error("Failed to delete folder:", error)
+        }
+    }
+
+    return (
+        <ContextMenu>
+            <ContextMenuTrigger className="w-full">
+                <div className="relative group">
+                    <Folder element={element} value={value}>
+                        {children}
+                    </Folder>
+                    <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-6 w-6 p-0 hover:bg-gray-700">
+                                    <MoreVertical className="h-3 w-3" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48 bg-[#292929] border border-[#333333]">
+                                <DropdownMenuItem 
+                                    className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]"
+                                    onClick={() => setRenameDialogOpen(true)}
+                                >
+                                    <Pencil className="h-4 w-4" />
+                                    <span>Rename Folder</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    className="flex items-center gap-2 cursor-pointer text-red-500 hover:bg-[#333333]"
+                                    onClick={handleDelete}
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                    <span>Delete Folder</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                </div>
+            </ContextMenuTrigger>
+            <ContextMenuContent className="w-48 bg-[#292929] border border-[#333333]">
+                <ContextMenuItem 
+                    className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]"
+                    onClick={() => setRenameDialogOpen(true)}
+                >
+                    <Pencil className="h-4 w-4" />
+                    <span>Rename Folder</span>
+                </ContextMenuItem>
+                <ContextMenuItem 
+                    className="flex items-center gap-2 cursor-pointer text-red-500 hover:bg-[#333333]"
+                    onClick={handleDelete}
+                >
+                    <Trash2 className="h-4 w-4" />
+                    <span>Delete Folder</span>
+                </ContextMenuItem>
+            </ContextMenuContent>
+        </ContextMenu>
+    )
+}
+
+// Enhanced File component with context menu and dropdown
+const EnhancedFile = ({ element, value, onRename, onDelete, isCurrentBlock }: {
+    element: string
+    value: string
+    onRename?: (id: string, newName: string) => Promise<void>
+    onDelete?: (id: string) => Promise<void>
+    isCurrentBlock?: boolean
+}) => {
+    const [renameDialogOpen, setRenameDialogOpen] = useState(false)
+
+    const handleRename = async (newName: string) => {
+        try {
+            await onRename?.(value, newName)
+            setRenameDialogOpen(false)
+        } catch (error) {
+            console.error("Failed to rename block:", error)
+        }
+    }
+
+    const handleDelete = async () => {
+        try {
+            await onDelete?.(value)
+        } catch (error) {
+            console.error("Failed to delete block:", error)
+        }
+    }
+
+    return (
+        <ContextMenu>
+            <ContextMenuTrigger className="w-full">
+                <div className="relative group">
+                    <File value={value}>
+                        {element}
+                    </File>
+                    <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-6 w-6 p-0 hover:bg-gray-700">
+                                    <MoreVertical className="h-3 w-3" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48 bg-[#292929] border border-[#333333]">
+                                <DropdownMenuItem 
+                                    className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]"
+                                    onClick={() => setRenameDialogOpen(true)}
+                                >
+                                    <Pencil className="h-4 w-4" />
+                                    <span>Rename Block</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    className={`flex items-center gap-2 cursor-pointer hover:bg-[#333333] ${isCurrentBlock ? 'text-gray-500 cursor-not-allowed' : 'text-red-500'}`}
+                                    onClick={isCurrentBlock ? undefined : handleDelete}
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                    <span>{isCurrentBlock ? 'Current Block (Cannot Delete)' : 'Delete Block'}</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                </div>
+            </ContextMenuTrigger>
+            <ContextMenuContent className="w-48 bg-[#292929] border border-[#333333]">
+                <ContextMenuItem 
+                    className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]"
+                    onClick={() => setRenameDialogOpen(true)}
+                >
+                    <Pencil className="h-4 w-4" />
+                    <span>Rename Block</span>
+                </ContextMenuItem>
+                <ContextMenuItem 
+                    className={`flex items-center gap-2 cursor-pointer hover:bg-[#333333] ${isCurrentBlock ? 'text-gray-500 cursor-not-allowed' : 'text-red-500'}`}
+                    onClick={isCurrentBlock ? undefined : handleDelete}
+                >
+                    <Trash2 className="h-4 w-4" />
+                    <span>{isCurrentBlock ? 'Current Block (Cannot Delete)' : 'Delete Block'}</span>
+                </ContextMenuItem>
+            </ContextMenuContent>
+        </ContextMenu>
+    )
 }
 
 export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
     const [fileStructure, setFileStructure] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
+    const router = useRouter()
 
     useEffect(() => {
         const loadFileStructure = async () => {
@@ -63,6 +224,96 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
         loadFileStructure()
     }, [userId])
 
+    // Handlers for tree operations
+    const handleRenameBlock = async (blockIdToRename: string, newTitle: string) => {
+        try {
+            await updateBlockTitle(blockIdToRename, newTitle)
+            // Refresh the file structure after rename
+            const result = await getUserFileStructureAction(userId || "")
+            if (result.success) {
+                setFileStructure(result.data)
+            }
+        } catch (error) {
+            console.error("Failed to rename block:", error)
+        }
+    }
+
+    const handleDeleteBlock = async (blockIdToDelete: string) => {
+        try {
+            // Check if this is the current block
+            if (blockIdToDelete === blockId) {
+                // Redirect to dashboard instead of deleting
+                router.push('/dashboard')
+                return
+            }
+            
+            await deleteBlock(blockIdToDelete)
+            // Refresh the file structure after delete
+            const result = await getUserFileStructureAction(userId || "")
+            if (result.success) {
+                setFileStructure(result.data)
+            }
+        } catch (error) {
+            console.error("Failed to delete block:", error)
+        }
+    }
+
+    const handleRenameFolder = async (folderId: string, newName: string) => {
+        try {
+            await renameFolderAction(folderId, newName)
+            // Refresh the file structure after rename
+            const result = await getUserFileStructureAction(userId || "")
+            if (result.success) {
+                setFileStructure(result.data)
+            }
+        } catch (error) {
+            console.error("Failed to rename folder:", error)
+        }
+    }
+
+    const handleDeleteFolder = async (folderId: string) => {
+        try {
+            await deleteCrate(folderId)
+            // Refresh the file structure after delete
+            const result = await getUserFileStructureAction(userId || "")
+            if (result.success) {
+                setFileStructure(result.data)
+            }
+        } catch (error) {
+            console.error("Failed to delete folder:", error)
+        }
+    }
+
+    // Helper function to render tree structure with enhanced components
+    const renderTreeStructure = (structure: any[], onRenameBlock?: (id: string, newName: string) => Promise<void>, onDeleteBlock?: (id: string) => Promise<void>, onRenameFolder?: (id: string, newName: string) => Promise<void>, onDeleteFolder?: (id: string) => Promise<void>) => {
+        return structure.map((item) => {
+            if (item.type === 'folder') {
+                return (
+                    <EnhancedFolder 
+                        key={item.value} 
+                        element={item.element} 
+                        value={item.value}
+                        onRename={onRenameFolder}
+                        onDelete={onDeleteFolder}
+                    >
+                        {item.children && item.children.length > 0 && renderTreeStructure(item.children, onRenameBlock, onDeleteBlock, onRenameFolder, onDeleteFolder)}
+                    </EnhancedFolder>
+                )
+            } else {
+                return (
+                    <EnhancedFile 
+                        key={item.value} 
+                        element={item.element} 
+                        value={item.value}
+                        onRename={onRenameBlock}
+                        onDelete={onDeleteBlock}
+                        isCurrentBlock={item.value === blockId}
+                    />
+                )
+            }
+        })
+    }
+
     return (
         <AnimatePresence>
             {isOpen && (
@@ -76,7 +327,10 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                     <div className="flex flex-col h-full w-90 p-4">
                         {/* Header */}
                         <div className="flex items-center justify-between p-2 gap-2">
-                            <Button className="text-lg font-semibold w-4/5 rounded-xl justify-start h-10">
+                            <Button 
+                                className="text-lg font-semibold w-4/5 rounded-xl justify-start h-10"
+                                onClick={() => router.push('/dashboard')}
+                            >
                                 <Home className="mr-2 h-4 w-4" />
                                 Home
                             </Button>
@@ -86,7 +340,7 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                                 onClick={onClose}
                                 className="hover:bg-[#3C373588] bg-[#3C3735] rounded-xl w-1/5 h-10"
                             >
-                                <X className="h-5 w-5" />
+                                <ArrowLeftToLine className="h-5 w-5" />
                             </Button>
                         </div>
                         
@@ -95,6 +349,7 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                             <Button
                                 variant="ghost"
                                 className="w-full justify-start font-bold text-lg text-[#77D0E0] hover:bg-gray-800"
+                                onClick={() => router.push(`/dashboard/block/${blockId}/quiz`)}
                             >
                                 <Flag className="mr-3 h-4 w-4" />
                                 Quizzes
@@ -103,6 +358,7 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                             <Button
                                 variant="ghost"
                                 className="w-full justify-start font-bold text-lg text-[#E9A877] hover:text-white hover:bg-gray-800"
+                                onClick={() => router.push(`/dashboard/block/${blockId}/flashcard`)}
                             >
                                 <Zap className="mr-3 h-4 w-4" />
                                 Flashcards
@@ -111,23 +367,48 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                         
                         {/* Folder Tree */}
                         <div className="flex-1 overflow-y-auto p-4 py-8">
-                            <div className="font-semibold mb-4">File Structure</div>
                             {loading ? (
-                                <div className="text-gray-400 text-sm">Loading...</div>
+                                <Loading></Loading>
                             ) : fileStructure.length > 0 ? (
-                                <Tree>
-                                    {renderTreeStructure(fileStructure)}
+                                <Tree
+                                    openIcon={<ChevronDown className="size-4" />}
+                                    closeIcon={<ChevronRight className="size-4" />}
+                                >
+                                    {renderTreeStructure(
+                                        fileStructure, 
+                                        handleRenameBlock, 
+                                        handleDeleteBlock, 
+                                        handleRenameFolder, 
+                                        handleDeleteFolder
+                                    )}
                                 </Tree>
                             ) : (
-                                <div className="text-gray-400 text-sm">No files found</div>
+                                <div className="">No files found {":("} </div>
                             )}
                         </div>
                         
                         {/* Footer */}
-                        <div className="p-4 ">
-                            <div className="text-sm text-gray-400">
-                                Block ID: {blockId}
-                            </div>
+                        <div className="flex items-center justify-between p-2 gap-2">
+                            <Button 
+                                className=" text-lg font-semibold w-4/5 rounded-xl justify-start h-10 bg-[#3C3735] text-white"
+                                onClick={async () => {
+                                    const supabase = createClient()
+                                    await supabase.auth.signOut()
+                                    router.push('/')
+                                }}
+                            >
+                                <LogOut className="mr-2 h-4 w-4" />
+                                Sign Out
+                            </Button>
+                            <Button
+                                size="icon"
+                                className="hover:bg-[#3C373588] bg-[#3C3735] rounded-xl w-1/5 h-10 text-white"
+                            >
+                                <User className="h-5 w-5" />
+                            </Button>
+                        </div>
+                        <div className="flex items-center justify-between text-xs px-4 text-gray-400">
+                            Nuclear's made by penguins on mars 🪐
                         </div>
                     </div>
                 </motion.div>
