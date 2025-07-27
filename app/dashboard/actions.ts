@@ -186,7 +186,15 @@ export const addBlock = async (title: string) => {
 
         const block = await createBlock({
             title,
-            authorId: userId
+            authorId: userId,
+            note: {
+                type: "doc",
+                content: [
+                    {
+                        type: "paragraph",
+                    },
+                ],
+            }
         });
         
         // Invalidate relevant caches

@@ -1,4 +1,5 @@
 'use client'
+import React from "react";
 import TailwindAdvancedEditor from "@/components/tailwind/advanced-editor";
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { getNoteContent } from '@/app/dashboard/block/[id]/actions';
