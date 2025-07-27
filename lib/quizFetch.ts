@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { Quiz } from "@prisma/client";
 import { getQuizWithTopicsCache, invalidateQuizzesCache } from "@/lib/redis";
 import { generateQuizzes } from "./quizGen";
+import { incrementBlockPoints } from "./block";
 
 export const removeMistake = async (quizId: string) => {
   await prisma.quiz.update({
@@ -73,13 +74,8 @@ export const updateMistake = async (quizId: string, mistake: string) => {
 };
     
 export const updatePoints = async (blockID: string, points: number) => {
-  try {
-    await prisma.block.update({
-      where: { id: blockID },
-      data: { points: { increment: points } }
-    });
-  } catch (error) {
-    console.error("Failed to update points:", error);
-    throw new Error("Failed to update points in database");
+  const result = await incrementBlockPoints(blockID, points);
+  if (!result.success) {
+    throw new Error(result.error || "Failed to update points in database");
   }
 };
