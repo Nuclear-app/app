@@ -754,3 +754,75 @@ export async function moveFolder(id: string, newParentId: string | null): Promis
     throw new FolderError(`Failed to move folder: ${error instanceof Error ? error.message : 'Unknown error'}`, 'UPDATE_ERROR')
   }
 } 
+
+/**
+ * Get complete file structure for a user
+ * @param userId - The user's unique identifier
+ * @returns Promise<Array> - Array of folder structure objects for Magic UI Tree
+ */
+export async function getUserFileStructure(userId: string): Promise<any[]> {
+  try {
+    if (!userId || typeof userId !== 'string') {
+      throw new FolderError('Invalid user ID provided', 'INVALID_USER_ID')
+    }
+
+    // Get all folders for the user
+    const folders = await prisma.folder.findMany({
+      where: { authorId: userId },
+      include: {
+        children: true,
+        blocks: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+
+    // Build the tree structure
+    const buildTree = (parentId: string | null = null): any[] => {
+      const children = folders.filter(folder => folder.parentId === parentId)
+      
+      return children.map(folder => {
+        const folderChildren = buildTree(folder.id)
+        const blockFiles = folder.blocks.map(block => ({
+          element: block.title || 'Untitled Block',
+          value: block.id,
+          type: 'file'
+        }))
+
+        return {
+          element: folder.name,
+          value: folder.id,
+          type: 'folder',
+          children: [...folderChildren, ...blockFiles]
+        }
+      })
+    }
+
+    // Start building from root folders (those with parentId = ROOT_FOLDER_ID or null)
+    const rootFolders = folders.filter(folder => 
+      folder.parentId === ROOT_FOLDER_ID || folder.parentId === null
+    )
+
+    const treeStructure = rootFolders.map(folder => {
+      const folderChildren = buildTree(folder.id)
+      const blockFiles = folder.blocks.map(block => ({
+        element: block.title || 'Untitled Block',
+        value: block.id,
+        type: 'file'
+      }))
+
+      return {
+        element: folder.name,
+        value: folder.id,
+        type: 'folder',
+        children: [...folderChildren, ...blockFiles]
+      }
+    })
+
+    return treeStructure
+  } catch (error) {
+    if (error instanceof FolderError) throw error
+    throw new FolderError(`Failed to get user file structure: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
+  }
+} 
