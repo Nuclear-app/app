@@ -58,6 +58,32 @@ export default function QuizParent({ params }: Props) {
         return <div>Loading context...</div>;
     }
 
+    // Check if context is empty and show a nice message
+    if (!context || context.trim() === "") {
+        return (
+            <div className="flex flex-col min-h-screen">
+                <BlockViewNav blockId={id} />
+                <div className="flex flex-1 items-center justify-center p-8">
+                    <div className="text-center max-w-md">
+                        <div className="text-6xl mb-4">📝</div>
+                        <h2 className="text-2xl font-bold mb-3">
+                            Let's try that again with some more info in your block!
+                        </h2>
+                        <p className="mb-6">
+                            Add some content to your block first, then come back to generate quizzes.
+                        </p>
+                        <a 
+                            href={`/dashboard/block/${id}`}
+                            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                            ← Back to Block
+                        </a>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="flex flex-col min-h-screen">
             <BlockViewNav blockId={id} />
