@@ -55,7 +55,84 @@
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --chart-5: 340 75% 55%; 
+    
+    /* new ones from here */
+
+    --background-primary: 0 17% 6%;
+    --background-secondary: 0 8% 12%;
+    --background-tertiary: 15 6% 22%;
+    --foreground-primary:  0 0% 93%;
+    --foreground-secondary: 0 0% 87%;
+    --foreground-tertiary: 0 0% 80%;
+    --corect: 103 100% 28%;
+    --wrong: 0 100% 43%;
+  }
+
+  .nurple {
+    --nurple-primary: 274 100% 50%;
+    --nurple-hue-90: 274 98% 54%;
+    --nurple-hue-80: 274 97% 59%;
+    --nurple-hue-70: 274 95% 63%;
+    --nurple-hue-60: 274 92% 67%;
+    --nurple-hue-50: 274 89% 72%;
+    --nurple-hue-40: 274 84% 76%;
+    --nurple-hue-30: 274 76% 80%;
+    --nurple-hue-20: 274 65% 85%;
+    --nurple-hue-10: 275 46% 89%;
+    --nurple-shade-90: 274 99% 45%;
+    --nurple-shade-80: 274 98% 41%;
+    --nurple-shade-70: 274 96% 36%;
+    --nurple-shade-60: 275 94% 32%;
+    --nurple-shade-50: 275 91% 27%;
+    --nurple-shade-40: 276 88% 23%;
+    --nurple-shade-30: 277 83% 18%;
+    --nurple-shade-20: 278 72% 14%;
+    --nurple-shade-10: 286 53% 9%;
+  }
+  
+  .nurange {
+    --nurange-primary: 26 100% 45%;
+    --nurange-hue-90: 26 81% 50%;
+    --nurange-hue-80: 26 78% 55%;
+    --nurange-hue-70: 26 77% 59%;
+    --nurange-hue-60: 26 75% 64%;
+    --nurange-hue-50: 26 72% 69%;
+    --nurange-hue-40: 26 68% 74%;
+    --nurange-hue-30: 26 63% 79%;
+    --nurange-hue-20: 26 55% 84%;
+    --nurange-hue-10: 26 39% 88%;
+    --nurange-shade-90: 26 99% 41%;
+    --nurange-shade-80: 26 98% 37%;
+    --nurange-shade-70: 26 95% 33%;
+    --nurange-shade-60: 25 93% 29%;
+    --nurange-shade-50: 25 91% 25%;
+    --nurange-shade-40: 26 87% 21%;
+    --nurange-shade-30: 25 82% 17%;
+    --nurange-shade-20: 23 71% 14%;
+    --nurange-shade-10: 22 55% 10%;
+  }
+
+  .nugreen {
+    --nugreen-primary: 174 100% 41%;
+    --nugreen-hue-90: 174 80% 47%;
+    --nugreen-hue-80: 174 68% 52%;
+    --nugreen-hue-70: 174 67% 57%;
+    --nugreen-hue-60: 174 66% 62%;
+    --nugreen-hue-50: 174 63% 67%;
+    --nugreen-hue-40: 174 60% 73%;
+    --nugreen-hue-30: 174 56% 78%;
+    --nugreen-hue-20: 173 49% 83%;
+    --nugreen-hue-10: 174 34% 88%;
+    --nugreen-shade-90: 174 98% 38%;
+    --nugreen-shade-80: 174 97% 34%;
+    --nugreen-shade-70: 174 94% 31%;
+    --nugreen-shade-60: 174 90% 27%;
+    --nugreen-shade-50: 174 85% 24%;
+    --nugreen-shade-40: 174 80% 20%;
+    --nugreen-shade-30: 173 71% 16%;
+    --nugreen-shade-20: 174 58% 13%;
+    --nugreen-shade-10: 173 36% 9%;
   }
 
   * {
