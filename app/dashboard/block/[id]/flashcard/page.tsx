@@ -1,5 +1,5 @@
-import FlashcardsComponent from "@/components/flashcardComponent/flashcardComponent";
+import FlashcardParent from "@/components/flashcardComponent/parent";
 
 export default function FlashcardsPage({ params }: { params: Promise<{ id: string }> }) {
-    return <FlashcardsComponent/>;
+    return <FlashcardParent params={params} />;
 }

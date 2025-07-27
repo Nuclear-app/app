@@ -1,6 +1,6 @@
 
 import { Redis } from "@upstash/redis";
-import { 
+import {
   getBlockById,
   getBlockWithRelations,
   getBlockContext,
@@ -44,8 +44,13 @@ import {
   getTopicById,
   getTopicsByBlock
 } from "@/lib/topic";
+import {
+  getFlashcardById,
+  getFlashcardsByBlock
+} from "@/lib/flashcard";
 import getBreadcrumb from "@/lib/blockViewNav";
 import { getExamples } from "@/lib/examplesPerplexity";
+import { getFlashcards } from "@/lib/flashcardGen";
 
 export const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -61,7 +66,7 @@ export async function cacheAside<T>(key: string, ttlSeconds: number, fetcher: ()
         if (cached !== null) {
           console.log(`cacheAside: cache hit for key: ${key}`);
           return cached
-        }  
+        }
         console.log(`cacheAside: cache miss for key: ${key}, calling fetcher`);
         const data = await fetcher()
         await redis.set(key, data, { ex: ttlSeconds })
@@ -91,6 +96,15 @@ export async function getExamplesWithCache(blockId: string, ttlSeconds = 600) {
         `examples:${blockId}`,
         ttlSeconds,
         () => getExamples(blockId)
+    );
+}
+
+export async function getFlashcardsWithCache(blockId: string, ttlSeconds = 600) {
+    console.log(`getFlashcardsWithCache called with blockId: ${blockId}`);
+    return cacheAside(
+        `flashcards:${blockId}`,
+        ttlSeconds,
+        () => getFlashcards(blockId)
     );
 }
 
@@ -325,9 +339,9 @@ export async function getQuizWithTopicsCache(blockId: string, ttlSeconds = 600) 
             if (!topics.length) {
                 return { unusedQuizzes: [], mistakeQuizzes: [] };
             }
-            
+
             const topicIds = topics.map(t => t.id);
-            
+
             // Get unused quizzes for all topics
             const allUnusedQuizzes = await Promise.all(
                 topicIds.map(topicId => getQuizzesByTopic(topicId))
@@ -336,7 +350,7 @@ export async function getQuizWithTopicsCache(blockId: string, ttlSeconds = 600) 
                 .flat()
                 .filter(quiz => !quiz.used)
                 .slice(0, 10);
-            
+
             // Get quizzes with mistakes for all topics
             const allQuizzes = await Promise.all(
                 topicIds.map(topicId => getQuizzesByTopic(topicId))
@@ -344,7 +358,7 @@ export async function getQuizWithTopicsCache(blockId: string, ttlSeconds = 600) 
             const mistakeQuizzes = allQuizzes
                 .flat()
                 .filter(quiz => quiz.mistake !== null);
-            
+
             return { unusedQuizzes, mistakeQuizzes };
         }
     );
@@ -467,7 +481,8 @@ export async function invalidateBlockCache(blockId: string) {
         `topics:block:${blockId}`,
         `topicids:block:${blockId}`,
         `breadcrumb:${blockId}`,
-        `examples:${blockId}`
+        `examples:${blockId}`,
+        `flashcards:${blockId}`
     ];
     await Promise.all(keys.map(key => redis.del(key)));
     console.log(`invalidateBlockCache: deleted ${keys.length} keys for blockId: ${blockId}`);
@@ -521,6 +536,12 @@ export async function invalidateTopicCache(topicId: string) {
     console.log(`invalidateTopicCache called with topicId: ${topicId}`);
     await redis.del(`topic:${topicId}`);
     console.log(`invalidateTopicCache: deleted key for topicId: ${topicId}`);
+}
+
+export async function invalidateFlashcardsCache(blockId: string) {
+    console.log(`invalidateFlashcardsCache called with blockId: ${blockId}`);
+    await redis.del(`flashcards:${blockId}`);
+    console.log(`invalidateFlashcardsCache: deleted key for blockId: ${blockId}`);
 }
 
 // Legacy functions for backward compatibility
