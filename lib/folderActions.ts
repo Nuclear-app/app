@@ -8,6 +8,7 @@ import { getUserFileStructure } from './folder'
  * @returns Promise<{success: boolean, data: any[], error: string | null}>
  */
 export async function getUserFileStructureAction(userId: string): Promise<{success: boolean, data: any[], error: string | null}> {
+  console.log("userId", userId);
   try {
     if (!userId) {
       return { success: false, data: [], error: 'User ID is required' }

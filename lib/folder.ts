@@ -762,6 +762,7 @@ export async function moveFolder(id: string, newParentId: string | null): Promis
  */
 export async function getUserFileStructure(userId: string): Promise<any[]> {
   try {
+    console.log("userId", userId);
     if (!userId || typeof userId !== 'string') {
       throw new FolderError('Invalid user ID provided', 'INVALID_USER_ID')
     }
@@ -777,6 +778,23 @@ export async function getUserFileStructure(userId: string): Promise<any[]> {
         createdAt: 'desc'
       }
     })
+
+    // Get all blocks for the user (including those not in folders)
+    const allBlocks = await prisma.block.findMany({
+      where: { authorId: userId },
+      select: {
+        id: true,
+        title: true,
+        folderId: true,
+        createdAt: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+
+    console.log("folders", folders);
+    console.log("allBlocks", allBlocks);
 
     // Build the tree structure
     const buildTree = (parentId: string | null = null): any[] => {
@@ -820,7 +838,19 @@ export async function getUserFileStructure(userId: string): Promise<any[]> {
       }
     })
 
-    return treeStructure
+    // Add root-level blocks (blocks not in any folder)
+    const rootLevelBlocks = allBlocks.filter(block => 
+      !block.folderId || block.folderId === ROOT_FOLDER_ID
+    )
+
+    const rootBlockFiles = rootLevelBlocks.map(block => ({
+      element: block.title || 'Untitled Block',
+      value: block.id,
+      type: 'file'
+    }))
+
+    // Combine folders and root-level blocks
+    return [...treeStructure, ...rootBlockFiles]
   } catch (error) {
     if (error instanceof FolderError) throw error
     throw new FolderError(`Failed to get user file structure: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')

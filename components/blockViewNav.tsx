@@ -8,7 +8,7 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, ChevronsLeft, Menu } from "lucide-react"
+import { ArrowRightToLine, ChevronLeft, ChevronRight, ChevronsLeft, Menu } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { getBreadcrumbData } from "@/app/dashboard/block/[id]/actions"
@@ -16,6 +16,8 @@ import { FeatureDock } from "./featureDock"
 import { useRealtimePoints } from "@/hooks/useRealtimePoints"
 import { TooltipWrapper } from "./ui/TooltipWrapper"
 import { Sidebar } from "./ui/sidebar"
+import { getCurrentUserAction } from "@/app/dashboard/actions"
+import { User } from "@prisma/client"
 
 interface blockViewNavProps {
     blockId: string
@@ -33,11 +35,18 @@ export function BlockViewNav({ blockId, children }: blockViewNavProps) {
     const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+    const [user, setUser] = useState<User | null>(null)
 
     // Use real-time points hook
     const { points, isLoading: isPointsLoading } = useRealtimePoints(blockId)
 
     useEffect(() => {
+        const fetchUser = async () => {
+            const user = await getCurrentUserAction()
+            setUser(user)
+        }
+        fetchUser()
+
         const fetchBreadcrumbs = async () => {
             try {
                 setIsLoading(true)
@@ -59,22 +68,25 @@ export function BlockViewNav({ blockId, children }: blockViewNavProps) {
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
                 blockId={blockId}
+                userId={user?.id || undefined}
             />
 
             {/* Main Content Area */}
-            <div className="flex flex-col flex-1 min-w-0">
+            <div className="flex flex-col flex-1 min-w-0 p-4">
                 {/* Navigation Bar */}
                 <div className="flex items-center justify-between w-full py-2 pl-4 pr-2 rounded-3xl mb-4">
                     <div className="flex items-center gap-4">
 
-                        <TooltipWrapper text="Menu" side="bottom">
-                            <Button
-                                className="bg-[#221D1D] text-white hover:bg-[#3C3535]/70 rounded-xl aspect-square p-0"
-                                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                            >
-                                <Menu />
-                            </Button>
-                        </TooltipWrapper>
+                        {!isSidebarOpen && (
+                            <TooltipWrapper text="Menu" side="bottom">
+                                <Button
+                                    className="bg-[#221D1D] text-white hover:bg-[#3C3535]/70 rounded-xl aspect-square p-0"
+                                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                                >
+                                    <ArrowRightToLine className="h-5 w-5" />
+                                </Button>
+                            </TooltipWrapper>
+                        )}
 
                         <TooltipWrapper text="Back" side="bottom">
                             <Button

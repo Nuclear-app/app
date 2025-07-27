@@ -751,7 +751,7 @@ export async function deleteBlock(id: string, userId?: string): Promise<{ succes
     ]);
 
     // Clean up any uploaded files in Supabase storage
-    const supabase = await createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
+    const supabase = await createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
     const { data: files } = await supabase
       .storage
       .from('blocks')
