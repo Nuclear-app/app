@@ -29,7 +29,7 @@ Text: {text}
 
 IMPORTANT RULES:
 
-1. Generate 8-12 flashcards that cover the most important content from the text.
+1. Generate 10 flashcards that cover the most important content from the text.
 
 2. Each flashcard should have:
    - FRONT: A clear question, concept, or prompt that tests understanding

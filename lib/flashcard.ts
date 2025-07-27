@@ -16,7 +16,7 @@ export async function getFlashcardById(flashcardId: string) {
 
 export async function getFlashcardsByBlock(blockId: string) {
   try {
-    const flashcards = await prisma.flashcard.findMany({
+        const flashcards = await prisma.flashcard.findMany({
       where: {
         blockId: blockId,
       },

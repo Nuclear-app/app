@@ -7,7 +7,7 @@ import { BlockViewNav } from "@/components/blockViewNav";
 import { Loading } from "@/components/ui/loading";
 import FlashcardComponent from "@/components/flashcardComponent/flashcardComponent";
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, CheckCircle } from "lucide-react";
 
 interface Flashcard {
   id: string;
@@ -28,6 +28,8 @@ export default function FlashcardParent({ params }: Props) {
     const [error, setError] = useState<string | null>(null);
     const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
     const [isRegenerating, setIsRegenerating] = useState(false);
+    const [completedCards, setCompletedCards] = useState<Set<number>>(new Set());
+    const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
     useEffect(() => {
         const loadContext = async () => {
@@ -100,6 +102,34 @@ export default function FlashcardParent({ params }: Props) {
         }
     };
 
+    const handleCardComplete = (cardId: number) => {
+        setCompletedCards(prev => new Set([...Array.from(prev), cardId]));
+    };
+
+    const handleCardIncomplete = (cardId: number) => {
+        setCompletedCards(prev => {
+            const newSet = new Set(Array.from(prev));
+            newSet.delete(cardId);
+            return newSet;
+        });
+    };
+
+    const handleCardViewed = (cardId: number) => {
+        setCompletedCards(prev => new Set([...Array.from(prev), cardId]));
+    };
+
+    const handleCardNotViewed = (cardId: number) => {
+        setCompletedCards(prev => {
+            const newSet = new Set(Array.from(prev));
+            newSet.delete(cardId);
+            return newSet;
+        });
+    };
+
+    const handleCurrentCardChange = (cardIndex: number) => {
+        setCurrentCardIndex(cardIndex);
+    };
+
     // Log whenever context changes
     useEffect(() => {
         console.log('Current context state:', context);
@@ -120,13 +150,17 @@ export default function FlashcardParent({ params }: Props) {
         back: flashcard.back,
     }));
 
+    const totalCards = 10;
+    const completedCount = completedCards.size;
+    // Calculate progress based on completed cards and current position
+    const progressPercentage = totalCards > 0 ? ((completedCount + (completedCards.has(deck[currentCardIndex]?.id) ? 0 : 1)) / totalCards) * 100 : 0;
+
     return (
         <div className="flex flex-col gap-4">
             <BlockViewNav blockId={id} />
 
             {/* Header with regenerate button */}
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold">Flashcards</h1>
                 <Button
                     onClick={handleRegenerate}
                     disabled={isRegenerating}
@@ -138,6 +172,19 @@ export default function FlashcardParent({ params }: Props) {
                     {isRegenerating ? 'Regenerating...' : 'Regenerate'}
                 </Button>
             </div>
+
+            {/* Progress Section */}
+             {totalCards > 0 && (
+                 <div>
+                     <div
+                         className="h-3 rounded-full transition-all duration-300 ease-out"
+                         style={{
+                             width: `${progressPercentage}%`,
+                             backgroundColor: '#bf77f7'
+                         }}
+                     />
+                 </div>
+             )}
 
             {/* Error state */}
             {error && (
@@ -157,8 +204,11 @@ export default function FlashcardParent({ params }: Props) {
             {!isLoadingFlashcards && !error && flashcards.length > 0 && (
                 <FlashcardComponent
                     deck={deck}
-                    title="Study Flashcards"
                     className="mt-4"
+                    onCardViewed={handleCardViewed}
+                    onCardNotViewed={handleCardNotViewed}
+                    onCurrentCardChange={handleCurrentCardChange}
+                    completedCards={completedCards}
                 />
             )}
 
