@@ -33,7 +33,7 @@ export function BlockViewNav({ blockId, children }: blockViewNavProps) {
     const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-    
+
     // Use real-time points hook
     const { points, isLoading: isPointsLoading } = useRealtimePoints(blockId)
 
@@ -55,35 +55,38 @@ export function BlockViewNav({ blockId, children }: blockViewNavProps) {
     return (
         <div className="flex h-full">
             {/* Sidebar - Full Height */}
-            <Sidebar 
-                isOpen={isSidebarOpen} 
-                onClose={() => setIsSidebarOpen(false)} 
-                blockId={blockId} 
+            <Sidebar
+                isOpen={isSidebarOpen}
+                onClose={() => setIsSidebarOpen(false)}
+                blockId={blockId}
             />
-            
+
             {/* Main Content Area */}
             <div className="flex flex-col flex-1 min-w-0">
                 {/* Navigation Bar */}
-                <div className="flex items-center justify-between w-full py-2 pl-4 pr-2 border rounded-3xl bg-[#221D1D] mb-4">
+                <div className="flex items-center justify-between w-full py-2 pl-4 pr-2 rounded-3xl mb-4">
                     <div className="flex items-center gap-4">
-                        <TooltipWrapper text="Back" side="bottom">
-                            <Button
-                                className="bg-[#3C3535] text-white hover:bg-[#3C3535]/70 rounded-xl aspect-square p-0"
-                                onClick={() => router.back()}
-                            >
-                                <ChevronsLeft  />
-                            </Button>
-                        </TooltipWrapper>
-                        
+
                         <TooltipWrapper text="Menu" side="bottom">
                             <Button
-                                className="bg-[#3C3535] text-white hover:bg-[#3C3535]/70 rounded-xl aspect-square p-0"
+                                className="bg-[#221D1D] text-white hover:bg-[#3C3535]/70 rounded-xl aspect-square p-0"
                                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                             >
                                 <Menu />
                             </Button>
                         </TooltipWrapper>
-                        
+
+                        <TooltipWrapper text="Back" side="bottom">
+                            <Button
+                                className="bg-[#221D1D] text-white hover:bg-[#3C3535]/70 rounded-xl aspect-square p-0"
+                                onClick={() => router.back()}
+                            >
+                                <ChevronsLeft />
+                            </Button>
+                        </TooltipWrapper>
+
+
+
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem>
@@ -126,16 +129,16 @@ export function BlockViewNav({ blockId, children }: blockViewNavProps) {
                     <div className="flex flex-col md:flex-row items-center gap-1">
                         <TooltipWrapper text="Points" side="bottom">
                             <Button
-                                className="bg-custom-gradient rounded-xl text-lg font-semibold hover:opacity-90 px-4 py-4 h-10"
+                                className="bg-[#9000ff88] rounded-xl text-lg font-semibold hover:opacity-90 px-4 py-4 h-10"
                                 disabled={isPointsLoading}
                             >
                                 {isPointsLoading ? 'Loading...' : `${points} Points`}
                             </Button>
                         </TooltipWrapper>
-                        <FeatureDock blockId={blockId} />
+                        {/* <FeatureDock blockId={blockId} /> */}
                     </div>
                 </div>
-                
+
                 {/* Main Content */}
                 <div className="flex-1">
                     {children}
