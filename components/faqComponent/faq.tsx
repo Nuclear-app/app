@@ -89,8 +89,8 @@ export default function FAQ({ blockId, text }: { blockId: string; text: string }
         <div className="w-3/5 max-w-full mx-auto flex flex-col gap-4 h-[calc(100vh-2rem)]">
             <div className="space-y-6 overflow-y-auto flex-1 bg-[#221D1D] border-[#3C3535] border-8 px-4 py-4 rounded-3xl">
                 <div className="leading-none">
-                    <h2 className="text-2xl font-bold">FAQ</h2>
-                    <p className="text-sm text-muted-foreground"> These are some things to remember personalized for you. </p>
+                    <h2 className="text-2xl font-bold">Ask Nuclear</h2>
+                    <p className="text-sm text-muted-foreground"> For all of those lingering questions. </p>
                 </div>
                 {isInitialLoading ? (
                     <div className="space-y-4">
