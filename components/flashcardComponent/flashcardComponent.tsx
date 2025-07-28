@@ -45,6 +45,36 @@ export default function FlashcardComponent({
     }
   }, [currentIndex, onCurrentCardChange]);
 
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Prevent default behavior for these keys to avoid page scrolling
+      if (['Space', 'ArrowLeft', 'ArrowRight'].includes(event.code)) {
+        event.preventDefault();
+      }
+
+      switch (event.code) {
+        case 'Space':
+          handleFlip();
+          break;
+        case 'ArrowRight':
+          handleNext();
+          break;
+        case 'ArrowLeft':
+          handlePrevious();
+          break;
+      }
+    };
+
+    // Add event listener
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [currentIndex, isFlipped]); // Dependencies for the effect
+
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
   };
@@ -72,86 +102,79 @@ export default function FlashcardComponent({
   };
 
   return (
-    <div className={`w-full max-w-2xl mx-auto p-6`}>
-      <div className="text-center mb-6">
-        <p className="text-gray-600">
-          Flashcard {currentIndex + 1} / {deck.length}
-        </p>
-      </div>
-
-      {/* Flashcard with side navigation */}
-      <div className="mb-6 flex items-center justify-between w-full">
-        {/* Previous button */}
-        <motion.button
-          onClick={handlePrevious}
-          disabled={currentIndex === 0}
-          whileHover={{ scale: currentIndex === 0 ? 1 : 1.05 }}
-          whileTap={{ scale: currentIndex === 0 ? 1 : 0.95 }}
-          className={`
-            px-4 py-2 rounded-lg font-medium transition-colors
-          `}
-        >
-          <ArrowLeftIcon className="w-4 h-4" />
-        </motion.button>
-
-        {/* Flashcard */}
-        <div className="relative flex-1 mx-2">
-          <div
-            onClick={handleFlip}
-            className="relative w-full h-96 cursor-pointer"
-          >
-            <AnimatePresence mode="wait">
-              {!isFlipped ? (
-                <motion.div
-                  key="front"
-                  initial={{ rotateY: 0 }}
-                  animate={{ rotateY: 0 }}
-                  exit={{ rotateY: -180 }}
-                  transition={{ duration: 0.6, ease: "easeInOut" }}
-                  className="absolute inset-0 bg-[#221d1d] rounded-lg shadow-lg p-6 flex items-center justify-center text-center"
-                  style={{ transformStyle: "preserve-3d" }}
-                >
-                  <div>
-                    <h3 className="text-xl font-semibold text-white">
-                      {currentCard.front}
-                    </h3>
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="back"
-                  initial={{ rotateY: 0 }}
-                  animate={{ rotateY: 0 }}
-                  exit={{ rotateY: 180 }}
-                  transition={{ duration: 0.6, ease: "easeInOut" }}
-                  className="absolute inset-0 bg-[#221d1d] rounded-lg shadow-lg p-6 flex items-center justify-center text-center"
-                  style={{ transformStyle: "preserve-3d" }}
-                >
-                  <div>
-                    <h3 className="text-xl text-white text-left">
-                      {currentCard.back}
-                    </h3>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-
-        {/* Next button */}
-        <motion.button
-          onClick={handleNext}
-          disabled={currentIndex === deck.length - 1}
-          whileHover={{ scale: currentIndex === deck.length - 1 ? 1 : 1.05 }}
-          whileTap={{ scale: currentIndex === deck.length - 1 ? 1 : 0.95 }}
-          className={`
-            px-4 py-2 rounded-lg font-medium transition-colors
-          `}
-        >
-          <ArrowRightIcon className="w-4 h-4" />
-        </motion.button>
-      </div>
-
+  <div className="w-full mx-auto">
+    {/* Progress Display */}
+    <div className="text-center my-6">
+      <p className="text-gray-600 mb-2">
+        Flashcard {currentIndex + 1} / {deck.length}
+      </p>
     </div>
+
+    {/* Flashcard + Navigation Container */}
+    <div className="flex w-full h-96">
+      {/* Left Navigation Zone */}
+      <motion.div
+        onClick={currentIndex === 0 ? undefined : handlePrevious}
+        whileHover={{ scale: currentIndex === 0 ? 1 : 1.01 }}
+        whileTap={{ scale: currentIndex === 0 ? 1 : 0.98 }}
+        className={`flex-[2.5] h-full`}
+        aria-disabled={currentIndex === 0}
+      />
+
+      {/* Flashcard */}
+      <div className="flex-[5] h-full relative flex items-center justify-center">
+        <div
+          onClick={handleFlip}
+          className="w-full h-[90%] cursor-pointer relative"
+        >
+          <AnimatePresence mode="wait">
+            {!isFlipped ? (
+              <motion.div
+                key="front"
+                initial={{ rotateY: 0 }}
+                animate={{ rotateY: 0 }}
+                exit={{ rotateY: -180 }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+                className="absolute inset-0 bg-[#221d1d] rounded-lg shadow-lg p-6 flex items-center justify-center text-center"
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                <div>
+                  <h3 className="text-xl font-semibold text-white">
+                    {currentCard.front}
+                  </h3>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="back"
+                initial={{ rotateY: 0 }}
+                animate={{ rotateY: 0 }}
+                exit={{ rotateY: 180 }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+                className="absolute inset-0 bg-[#221d1d] rounded-lg shadow-lg p-6 flex items-center justify-center text-center"
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                <div>
+                  <h3 className="text-xl text-white text-left">
+                    {currentCard.back}
+                  </h3>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Right Navigation Zone */}
+      <motion.div
+        onClick={currentIndex === deck.length - 1 ? undefined : handleNext}
+        whileHover={{ scale: currentIndex === deck.length - 1 ? 1 : 1.01 }}
+        whileTap={{ scale: currentIndex === deck.length - 1 ? 1 : 0.98 }}
+        className={`flex-[2.5] h-full`}
+        aria-disabled={currentIndex === deck.length - 1}
+      />
+    </div>
+  </div>
+
   );
 }

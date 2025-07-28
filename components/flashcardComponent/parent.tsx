@@ -150,17 +150,17 @@ export default function FlashcardParent({ params }: Props) {
         back: flashcard.back,
     }));
 
-    const totalCards = 10;
+    const totalCards = flashcards.length; //change to 10 if limit needed
     const completedCount = completedCards.size;
     // Calculate progress based on completed cards and current position
     const progressPercentage = totalCards > 0 ? ((completedCount + (completedCards.has(deck[currentCardIndex]?.id) ? 0 : 1)) / totalCards) * 100 : 0;
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col min-h-screen">
             <BlockViewNav blockId={id} />
 
             {/* Header with regenerate button */}
-            <div className="flex justify-between items-center">
+            {/*<div className="flex justify-between items-center">
                 <Button
                     onClick={handleRegenerate}
                     disabled={isRegenerating}
@@ -171,13 +171,13 @@ export default function FlashcardParent({ params }: Props) {
                     <RefreshCw className={`h-4 w-4 ${isRegenerating ? 'animate-spin' : ''}`} />
                     {isRegenerating ? 'Regenerating...' : 'Regenerate'}
                 </Button>
-            </div>
+            </div>*/}
 
             {/* Progress Section */}
              {totalCards > 0 && (
                  <div>
                      <div
-                         className="h-3 rounded-full transition-all duration-300 ease-out"
+                         className="h-3 rounded-full transition-all duration-300 ease-out my-6"
                          style={{
                              width: `${progressPercentage}%`,
                              backgroundColor: '#bf77f7'
