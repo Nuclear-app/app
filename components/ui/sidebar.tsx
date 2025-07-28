@@ -389,7 +389,7 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                         
                         {/* Footer */}
                         <div className="flex items-center justify-between p-2 gap-2">
-                            <Button 
+                            <Button
                                 className=" text-lg font-semibold w-4/5 rounded-xl justify-start h-10 bg-[#3C3735] text-white"
                                 onClick={async () => {
                                     const supabase = createClient()

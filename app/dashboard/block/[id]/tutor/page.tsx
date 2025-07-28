@@ -1,7 +1,7 @@
 import TutorMain from "@/components/tutor/main";
 
-export default function TutorPage({ params }: { params: { id: string } }) {
-    const { id } = params
+export default async function TutorPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params
     return (
         <TutorMain blockId={id} />
     )
