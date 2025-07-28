@@ -110,7 +110,7 @@ export default function Dashboard() {
 
     const handleCreateBlock = async (title: string) => {
         try {
-            const block = await addBlock(title);
+            const block = await addBlock(title, undefined); // Root level block
             setBlocks(prev => [...prev, { id: block.id, title: block.title, createdAt: block.createdAt }]);
             setBlockDialogOpen(false);
             router.push(`/onboarding/name/study-type?blockId=${block.id}&newBlock=false`);
@@ -121,7 +121,7 @@ export default function Dashboard() {
 
     const handleCreateCrate = async (title: string, icon: string) => {
         try {
-            const crate = await addCrate(title, icon);
+            const crate = await addCrate(title, icon, undefined); // Root level crate
             setCrates(prev => [...prev, { 
                 id: crate.id, 
                 name: crate.name, 
@@ -181,7 +181,7 @@ export default function Dashboard() {
     return (
         <div className="container h-5/6 w-full px-[12%] pt-[10%] pb-[4%]">
             <DashboardHeader
-                customTitle={`Welcome, ${userName || "User"}!`}
+                customTitle={userName ? `Welcome, ${userName}!` : "Googling your name..."}
                 selectedTypes={selectedTypes}
                 onCreateNew={handleCreateNew}
                 onToggleSelection={toggleSelection}

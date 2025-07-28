@@ -138,19 +138,18 @@ function BlockContent() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <BlockViewNav blockId={blockId} />
+    <BlockViewNav blockId={blockId}>
       <div 
         onFocus={handleEditorFocus}
         onBlur={handleEditorBlur}
-        className="w-full"
+        className="w-full h-full"
       >
         <TailwindAdvancedEditor 
           blockId={blockId} 
           initialContent={initialContent}
         />
       </div>
-    </div>
+    </BlockViewNav>
   );
 }
 

@@ -179,14 +179,15 @@ export const fetchCratePath = async (crateId: string) => {
 
 // ==================== CREATE OPERATIONS ====================
 
-export const addBlock = async (title: string) => {
+export const addBlock = async (title: string, parentId?: string) => {
     try {
         const userId = await getUser();
         if (!userId) throw new Error("User not authenticated");
 
         const block = await createBlock({
             title,
-            authorId: userId
+            authorId: userId,
+            folderId: parentId
         });
         
         // Invalidate relevant caches
@@ -199,7 +200,7 @@ export const addBlock = async (title: string) => {
     }
 };
 
-export const addCrate = async (title: string, icon: string) => {
+export const addCrate = async (title: string, icon: string, parentId?: string) => {
     try {
         const userId = await getUser();
         if (!userId) throw new Error("User not authenticated");
@@ -207,6 +208,7 @@ export const addCrate = async (title: string, icon: string) => {
         const crate = await createFolder({
             name: title,
             authorId: userId,
+            parentId: parentId,
             icon
         });
         
@@ -271,5 +273,38 @@ export const updateBlockTitle = async (blockId: string, newTitle: string) => {
     } catch (error) {
         console.error("Failed to update block title:", error);
         throw error;
+    }
+};
+
+export const renameFolderAction = async (folderId: string, newName: string) => {
+    try {
+        const userId = await getUser();
+        if (!userId) throw new Error("User not authenticated");
+
+        // Import the setFolderName function
+        const { setFolderName } = await import('@/lib/folder');
+        await setFolderName(folderId, newName);
+        
+        // Invalidate relevant caches
+        await invalidateFolderCache(folderId);
+        await invalidateUserCache(userId);
+        
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to rename folder:", error);
+        throw error;
+    }
+};
+
+// ==================== USER OPERATIONS ====================
+
+export const getCurrentUserAction = async () => {
+    try {
+        const { getCurrentUser } = await import('@/lib/user');
+        const user = await getCurrentUser();
+        return user;
+    } catch (error) {
+        console.error("Failed to get current user:", error);
+        return null;
     }
 }; 
