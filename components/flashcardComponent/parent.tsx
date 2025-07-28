@@ -175,9 +175,9 @@ export default function FlashcardParent({ params }: Props) {
 
             {/* Progress Section */}
              {totalCards > 0 && (
-                 <div>
+                 <div className="bg-[#221d1d] rounded-full my-6">
                      <div
-                         className="h-3 rounded-full transition-all duration-300 ease-out my-6"
+                         className="h-3 rounded-full transition-all duration-300 ease-out"
                          style={{
                              width: `${progressPercentage}%`,
                              backgroundColor: '#bf77f7'

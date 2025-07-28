@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
+import { TooltipWrapper } from "@/components/ui/TooltipWrapper";
 
 // Define the flashcard interface
 interface FlashcardData {
@@ -49,7 +50,7 @@ export default function FlashcardComponent({
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Prevent default behavior for these keys to avoid page scrolling
-      if (['Space', 'ArrowLeft', 'ArrowRight'].includes(event.code)) {
+      if (['Space', 'ArrowLeft', 'ArrowRight', 'KeyA', 'KeyD'].includes(event.code)) {
         event.preventDefault();
       }
 
@@ -58,9 +59,11 @@ export default function FlashcardComponent({
           handleFlip();
           break;
         case 'ArrowRight':
+        case 'KeyD':
           handleNext();
           break;
         case 'ArrowLeft':
+        case 'KeyA':
           handlePrevious();
           break;
       }
@@ -117,52 +120,60 @@ export default function FlashcardComponent({
         onClick={currentIndex === 0 ? undefined : handlePrevious}
         whileHover={{ scale: currentIndex === 0 ? 1 : 1.01 }}
         whileTap={{ scale: currentIndex === 0 ? 1 : 0.98 }}
-        className={`flex-[2.5] h-full`}
+        className={`flex-[2.5] h-full flex items-center justify-center ${currentIndex === 0 ? '' : 'cursor-pointer'}`}
         aria-disabled={currentIndex === 0}
-      />
+      >
+        {currentIndex > 0 && (
+          <TooltipWrapper text="Press left arrow key / A" side="bottom">
+            <ArrowLeftIcon className="w-8 h-8 text-gray-400" />
+          </TooltipWrapper>
+        )}
+      </motion.div>
 
       {/* Flashcard */}
       <div className="flex-[5] h-full relative flex items-center justify-center">
-        <div
-          onClick={handleFlip}
-          className="w-full h-[90%] cursor-pointer relative"
-        >
-          <AnimatePresence mode="wait">
-            {!isFlipped ? (
-              <motion.div
-                key="front"
-                initial={{ rotateY: 0 }}
-                animate={{ rotateY: 0 }}
-                exit={{ rotateY: -180 }}
-                transition={{ duration: 0.6, ease: "easeInOut" }}
-                className="absolute inset-0 bg-[#221d1d] rounded-lg shadow-lg p-6 flex items-center justify-center text-center"
-                style={{ transformStyle: "preserve-3d" }}
-              >
-                <div>
-                  <h3 className="text-xl font-semibold text-white">
-                    {currentCard.front}
-                  </h3>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="back"
-                initial={{ rotateY: 0 }}
-                animate={{ rotateY: 0 }}
-                exit={{ rotateY: 180 }}
-                transition={{ duration: 0.6, ease: "easeInOut" }}
-                className="absolute inset-0 bg-[#221d1d] rounded-lg shadow-lg p-6 flex items-center justify-center text-center"
-                style={{ transformStyle: "preserve-3d" }}
-              >
-                <div>
-                  <h3 className="text-xl text-white text-left">
-                    {currentCard.back}
-                  </h3>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+        <TooltipWrapper text="Press Space to flip" side="bottom">
+          <div
+            onClick={handleFlip}
+            className="w-full h-[90%] cursor-pointer relative"
+          >
+            <AnimatePresence mode="wait">
+              {!isFlipped ? (
+                <motion.div
+                  key="front"
+                  initial={{ rotateY: 0 }}
+                  animate={{ rotateY: 0 }}
+                  exit={{ rotateY: -180 }}
+                  transition={{ duration: 0.6, ease: "easeInOut" }}
+                  className="absolute inset-0 bg-[#221d1d] rounded-lg shadow-lg p-6 flex items-center justify-center text-center"
+                  style={{ transformStyle: "preserve-3d" }}
+                >
+                  <div>
+                    <h3 className="text-xl font-semibold text-white">
+                      {currentCard.front}
+                    </h3>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="back"
+                  initial={{ rotateY: 0 }}
+                  animate={{ rotateY: 0 }}
+                  exit={{ rotateY: 180 }}
+                  transition={{ duration: 0.6, ease: "easeInOut" }}
+                  className="absolute inset-0 bg-[#221d1d] rounded-lg shadow-lg p-6 flex items-center justify-center text-center"
+                  style={{ transformStyle: "preserve-3d" }}
+                >
+                  <div>
+                    <h3 className="text-xl text-white text-left">
+                      {currentCard.back}
+                    </h3>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </TooltipWrapper>
       </div>
 
       {/* Right Navigation Zone */}
@@ -170,9 +181,15 @@ export default function FlashcardComponent({
         onClick={currentIndex === deck.length - 1 ? undefined : handleNext}
         whileHover={{ scale: currentIndex === deck.length - 1 ? 1 : 1.01 }}
         whileTap={{ scale: currentIndex === deck.length - 1 ? 1 : 0.98 }}
-        className={`flex-[2.5] h-full`}
+        className={`flex-[2.5] h-full flex items-center justify-center ${currentIndex === deck.length - 1 ? '' : 'cursor-pointer'}`}
         aria-disabled={currentIndex === deck.length - 1}
-      />
+      >
+        {currentIndex < deck.length - 1 && (
+          <TooltipWrapper text="Press right arrow key / D" side="bottom">
+            <ArrowRightIcon className="w-8 h-8 text-gray-400" />
+          </TooltipWrapper>
+        )}
+      </motion.div>
     </div>
   </div>
 
