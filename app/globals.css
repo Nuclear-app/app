@@ -61,11 +61,11 @@
   * {
     @apply border-border;
   }
-  
+
   html {
     @apply bg-background;
   }
-  
+
   body {
     @apply bg-background text-foreground min-h-screen;
     background-color: hsl(var(--background));

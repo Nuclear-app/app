@@ -6,58 +6,29 @@ import StarterKit from '@tiptap/starter-kit'
 import { JSONContent } from '@tiptap/react'
 import { createInitialBlock } from "@/app/actions/create-initial-block";
 import { getBlockPointsWithCache, getBlockWithCache, invalidateBlockCache } from "@/lib/redis";
+import { incrementBlockPoints } from "@/lib/block";
 
 export const fetchPoints = async (blockId: string) => {
   const points = await getBlockPointsWithCache(blockId);
   return points;
 };
 
+// Server action for client components to fetch points
+export async function getPointsAction(blockId: string): Promise<number> {
+  try {
+    const points = await getBlockPointsWithCache(blockId);
+    return points || 0;
+  } catch (error) {
+    console.error('Error fetching points:', error);
+    return 0;
+  }
+}
+
 export const updatePoints = async (
   blockId: string, 
   points: number
 ): Promise<{ success: boolean; newPoints: number | null; error?: string }> => {
-  try {
-    // Get current points
-    const currentBlock = await prisma.block.findUnique({
-      where: { id: blockId },
-      select: { points: true }
-    });
-
-    if (!currentBlock) {
-      return { success: false, newPoints: null, error: 'Block not found' };
-    }
-
-    // Update points in database
-    const updatedBlock = await prisma.block.update({
-      where: { id: blockId },
-      data: { 
-        points: {
-          increment: points
-        }
-      },
-      select: { points: true }
-    });
-
-    // Create a PointsUpdate record for real-time tracking
-    await prisma.pointsUpdate.create({
-      data: {
-        blockId,
-        points,
-      }
-    });
-
-    return { 
-      success: true, 
-      newPoints: updatedBlock.points 
-    };
-  } catch (error: unknown) {
-    console.error('Error updating points:', error);
-    return { 
-      success: false, 
-      newPoints: null, 
-      error: error instanceof Error ? error.message : 'Failed to update points' 
-    };
-  }
+  return await incrementBlockPoints(blockId, points);
 };
 
 export const fetchNotes = async (blockId: string) => {

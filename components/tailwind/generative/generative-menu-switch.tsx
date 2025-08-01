@@ -1,3 +1,4 @@
+import React from "react";
 import { EditorBubble, removeAIHighlight, useEditor } from "novel";
 import { Fragment, type ReactNode, useEffect, useState, Dispatch, SetStateAction } from "react";
 import { Button } from "../ui/button";
@@ -45,13 +46,13 @@ const GenerativeMenuSwitch = ({ children, open, onOpenChange }: GenerativeMenuSw
       {!open && (
         <Fragment>
           <Button
-            className="gap-1 rounded-none text-purple-500"
+            className="gap-1 rounded-none"
             variant="ghost"
             onClick={() => onOpenChange(true)}
             size="sm"
           >
-            <Magic className="h-4 w-4" />
-            Ask AI
+            {/* <Magic className="h-4 w-4" />
+            Ask AI */}
           </Button>
           {children}
         </Fragment>

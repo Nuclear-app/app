@@ -754,3 +754,105 @@ export async function moveFolder(id: string, newParentId: string | null): Promis
     throw new FolderError(`Failed to move folder: ${error instanceof Error ? error.message : 'Unknown error'}`, 'UPDATE_ERROR')
   }
 } 
+
+/**
+ * Get complete file structure for a user
+ * @param userId - The user's unique identifier
+ * @returns Promise<Array> - Array of folder structure objects for Magic UI Tree
+ */
+export async function getUserFileStructure(userId: string): Promise<any[]> {
+  try {
+    console.log("userId", userId);
+    if (!userId || typeof userId !== 'string') {
+      throw new FolderError('Invalid user ID provided', 'INVALID_USER_ID')
+    }
+
+    // Get all folders for the user
+    const folders = await prisma.folder.findMany({
+      where: { authorId: userId },
+      include: {
+        children: true,
+        blocks: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+
+    // Get all blocks for the user (including those not in folders)
+    const allBlocks = await prisma.block.findMany({
+      where: { authorId: userId },
+      select: {
+        id: true,
+        title: true,
+        folderId: true,
+        createdAt: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+
+    console.log("folders", folders);
+    console.log("allBlocks", allBlocks);
+
+    // Build the tree structure
+    const buildTree = (parentId: string | null = null): any[] => {
+      const children = folders.filter(folder => folder.parentId === parentId)
+      
+      return children.map(folder => {
+        const folderChildren = buildTree(folder.id)
+        const blockFiles = folder.blocks.map(block => ({
+          element: block.title || 'Untitled Block',
+          value: block.id,
+          type: 'file'
+        }))
+
+        return {
+          element: folder.name,
+          value: folder.id,
+          type: 'folder',
+          children: [...folderChildren, ...blockFiles]
+        }
+      })
+    }
+
+    // Start building from root folders (those with parentId = ROOT_FOLDER_ID or null)
+    const rootFolders = folders.filter(folder => 
+      folder.parentId === ROOT_FOLDER_ID || folder.parentId === null
+    )
+
+    const treeStructure = rootFolders.map(folder => {
+      const folderChildren = buildTree(folder.id)
+      const blockFiles = folder.blocks.map(block => ({
+        element: block.title || 'Untitled Block',
+        value: block.id,
+        type: 'file'
+      }))
+
+      return {
+        element: folder.name,
+        value: folder.id,
+        type: 'folder',
+        children: [...folderChildren, ...blockFiles]
+      }
+    })
+
+    // Add root-level blocks (blocks not in any folder)
+    const rootLevelBlocks = allBlocks.filter(block => 
+      !block.folderId || block.folderId === ROOT_FOLDER_ID
+    )
+
+    const rootBlockFiles = rootLevelBlocks.map(block => ({
+      element: block.title || 'Untitled Block',
+      value: block.id,
+      type: 'file'
+    }))
+
+    // Combine folders and root-level blocks
+    return [...treeStructure, ...rootBlockFiles]
+  } catch (error) {
+    if (error instanceof FolderError) throw error
+    throw new FolderError(`Failed to get user file structure: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
+  }
+} 

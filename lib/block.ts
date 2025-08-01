@@ -1,6 +1,7 @@
 import prisma from './prisma'
 import { Block, User, Folder } from '@prisma/client'
 import { createClient } from '@supabase/supabase-js';
+import { invalidateBlockCache } from './redis';
 
 const ROOT_FOLDER_ID = process.env.ROOT_FOLDER_ID ;
 
@@ -751,7 +752,7 @@ export async function deleteBlock(id: string, userId?: string): Promise<{ succes
     ]);
 
     // Clean up any uploaded files in Supabase storage
-    const supabase = await createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
+    const supabase = await createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
     const { data: files } = await supabase
       .storage
       .from('blocks')
@@ -877,5 +878,70 @@ export async function getBlocksByDateRange(startDate: Date, endDate: Date): Prom
   } catch (error) {
     if (error instanceof BlockError) throw error
     throw new BlockError(`Failed to get blocks by date range: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
+  }
+} 
+
+/**
+ * Increment block's points and create a PointsUpdate record for real-time tracking
+ * @param id - The block's unique identifier
+ * @param points - The points to increment (can be negative)
+ * @returns Promise<{ success: boolean; newPoints: number | null; error?: string }> - Result of the operation
+ */
+export async function incrementBlockPoints(
+  id: string, 
+  points: number
+): Promise<{ success: boolean; newPoints: number | null; error?: string }> {
+  try {
+    if (!id || typeof id !== 'string') {
+      return { success: false, newPoints: null, error: 'Invalid block ID provided' }
+    }
+
+    if (typeof points !== 'number') {
+      return { success: false, newPoints: null, error: 'Points must be a number' }
+    }
+
+    // Get current points
+    const currentBlock = await prisma.block.findUnique({
+      where: { id },
+      select: { points: true }
+    });
+
+    if (!currentBlock) {
+      return { success: false, newPoints: null, error: 'Block not found' };
+    }
+
+    // Update points in database
+    const updatedBlock = await prisma.block.update({
+      where: { id },
+      data: { 
+        points: {
+          increment: points
+        }
+      },
+      select: { points: true }
+    });
+
+    // Create a PointsUpdate record for real-time tracking
+    await prisma.pointsUpdate.create({
+      data: {
+        blockId: id,
+        points,
+      }
+    });
+
+    // Invalidate Redis cache to ensure fresh data
+    await invalidateBlockCache(id);
+
+    return { 
+      success: true, 
+      newPoints: updatedBlock.points 
+    };
+  } catch (error: unknown) {
+    console.error('Error incrementing block points:', error);
+    return { 
+      success: false, 
+      newPoints: null, 
+      error: error instanceof Error ? error.message : 'Failed to increment block points' 
+    };
   }
 } 

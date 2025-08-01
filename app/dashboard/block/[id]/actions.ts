@@ -3,10 +3,11 @@
 import { fetchContext } from "@/app/modeSpecific/fileInput/actions";
 import { generateExamples } from "@/lib/examplesPerplexity";
 import { generateQuizzes } from "@/lib/quizGen";
+import { generateFlashcards } from "@/lib/flashcardGen";
 import { JSONContent } from "novel";
 import { getFullContext } from "@/lib/context";
 import { getBlockNoteWithCache } from "@/lib/redis";
-import { getBreadcrumbWithCache, getExamplesWithCache } from "@/lib/redis";
+import { getBreadcrumbWithCache, getExamplesWithCache, getFlashcardsWithCache } from "@/lib/redis";
 import prisma from "@/lib/prisma";
 
 export async function getNoteContent(blockId: string) {
@@ -41,8 +42,8 @@ export async function getNoteContent(blockId: string) {
   // Ensure the note is properly formatted as JSONContent
   try {
     // If note is already a string, parse it to ensure it's valid JSON
-    const noteContent = typeof block.note === 'string' 
-      ? JSON.parse(block.note) 
+    const noteContent = typeof block.note === 'string'
+      ? JSON.parse(block.note)
       : block.note;
 
     console.log("getNoteContent: Parsed note content:", noteContent);
@@ -76,7 +77,7 @@ export async function getBreadcrumbData(blockId: string) {
   }
 
   console.log("getBreadcrumbData: Fetching breadcrumb for block ID:", blockId);
-  
+
   try {
     const breadcrumb = await getBreadcrumbWithCache(blockId);
     return breadcrumb;
@@ -92,7 +93,7 @@ export async function getExamplesData(blockId: string) {
   }
 
   console.log("getExamplesData: Fetching examples for block ID:", blockId);
-  
+
   try {
     const examples = await getExamplesWithCache(blockId);
     return examples;
@@ -105,13 +106,13 @@ export async function getExamplesData(blockId: string) {
 export async function generateExamplesIfNeeded(blockId: string) {
   const content = await getFullContext(blockId);
   console.log("Checking for existing examples...");
-  
+
   // Check if examples (topics) already exist
   const existingTopics = await prisma.topic.findMany({
     where: { blockId },
     select: { id: true }
   });
-  
+
   // Only generate examples if none exist
   if (existingTopics.length === 0) {
     console.log("No topics found, generating examples...");
@@ -124,13 +125,13 @@ export async function generateExamplesIfNeeded(blockId: string) {
 export async function generateQuizzesIfNeeded(blockId: string) {
   const content = await getFullContext(blockId);
   console.log("Checking for existing quizzes...");
-  
+
   // Check if quizzes already exist
   const existingQuizzes = await prisma.quiz.findMany({
     where: { blockId },
     select: { id: true }
   });
-  
+
   // Only generate quizzes if none exist
   if (existingQuizzes.length === 0) {
     console.log("No quizzes found, generating quizzes...");
@@ -146,7 +147,7 @@ export async function deleteExamples(blockId: string) {
   }
 
   console.log("Deleting examples for block:", blockId);
-  
+
   try {
     // Delete all topics (examples) associated with this block
     const deletedTopics = await prisma.topic.deleteMany({
@@ -169,14 +170,14 @@ export async function regenerateExamples(blockId: string, context: string) {
   }
 
   console.log("Regenerating examples for block:", blockId);
-  
+
   try {
     // First delete existing examples
     await deleteExamples(blockId);
-    
+
     // Then generate new examples
     const newTopics = await generateExamples(context, blockId);
-    
+
     console.log(`Generated ${newTopics.length} new topics for block ${blockId}`);
     return { success: true, topics: newTopics };
   } catch (error) {
@@ -185,22 +186,108 @@ export async function regenerateExamples(blockId: string, context: string) {
   }
 }
 
+export async function getFlashcardsData(blockId: string) {
+  if (!blockId) {
+    throw new Error("Block ID is required");
+  }
+
+  console.log("getFlashcardsData: Fetching flashcards for block ID:", blockId);
+
+  try {
+    const flashcards = await getFlashcardsWithCache(blockId);
+    return flashcards;
+  } catch (error) {
+    console.error("Error fetching flashcards:", error);
+    throw new Error("Failed to fetch flashcards data");
+  }
+}
+
+export async function generateFlashcardsIfNeeded(blockId: string) {
+  const content = await getFullContext(blockId);
+  console.log("Checking for existing flashcards...");
+
+  // Check if flashcards already exist
+  const existingFlashcards = await prisma.flashcard.findMany({
+    where: { blockId },
+    select: { id: true }
+  });
+
+  // Only generate flashcards if none exist
+  if (existingFlashcards.length === 0) {
+    console.log("No flashcards found, generating flashcards...");
+    await generateFlashcards(content, blockId);
+  } else {
+    console.log(`Found ${existingFlashcards.length} existing flashcards, skipping flashcard generation`);
+  }
+}
+
+export async function deleteFlashcards(blockId: string) {
+  if (!blockId) {
+    throw new Error("Block ID is required");
+  }
+
+  console.log("Deleting flashcards for block:", blockId);
+
+  try {
+    // Delete all flashcards associated with this block
+    const deletedFlashcards = await prisma.flashcard.deleteMany({
+      where: {
+        blockId: blockId,
+      },
+    });
+
+    console.log(`Deleted ${deletedFlashcards.count} flashcards for block ${blockId}`);
+    return { success: true, deletedCount: deletedFlashcards.count };
+  } catch (error) {
+    console.error("Error deleting flashcards:", error);
+    throw new Error("Failed to delete flashcards");
+  }
+}
+
+export async function regenerateFlashcards(blockId: string, context: string) {
+  if (!blockId) {
+    throw new Error("Block ID is required");
+  }
+
+  console.log("Regenerating flashcards for block:", blockId);
+
+  try {
+    // First delete existing flashcards
+    await deleteFlashcards(blockId);
+
+    // Then generate new flashcards
+    const newFlashcards = await generateFlashcards(context, blockId);
+
+    console.log(`Generated ${newFlashcards.length} new flashcards for block ${blockId}`);
+    return { success: true, flashcards: newFlashcards };
+  } catch (error) {
+    console.error("Error regenerating flashcards:", error);
+    throw new Error("Failed to regenerate flashcards");
+  }
+}
+
 export async function bgFunction(blockId: string) {
   const content = await getFullContext(blockId);
   console.log(content);
-  
+
   // Check if examples (topics) already exist
   const existingTopics = await prisma.topic.findMany({
     where: { blockId },
     select: { id: true }
   });
-  
+
   // Check if quizzes already exist
   const existingQuizzes = await prisma.quiz.findMany({
     where: { blockId },
     select: { id: true }
   });
-  
+
+  // Check if flashcards already exist
+  const existingFlashcards = await prisma.flashcard.findMany({
+    where: { blockId },
+    select: { id: true }
+  });
+
   // Only generate examples if none exist
   if (existingTopics.length === 0) {
     console.log("No topics found, generating examples...");
@@ -208,13 +295,21 @@ export async function bgFunction(blockId: string) {
   } else {
     console.log(`Found ${existingTopics.length} existing topics, skipping example generation`);
   }
-  
+
   // Only generate quizzes if none exist
   if (existingQuizzes.length === 0) {
     console.log("No quizzes found, generating quizzes...");
     await generateQuizzes(content, blockId);
   } else {
     console.log(`Found ${existingQuizzes.length} existing quizzes, skipping quiz generation`);
+  }
+
+  // Only generate flashcards if none exist
+  if (existingFlashcards.length === 0) {
+    console.log("No flashcards found, generating flashcards...");
+    await generateFlashcards(content, blockId);
+  } else {
+    console.log(`Found ${existingFlashcards.length} existing flashcards, skipping flashcard generation`);
   }
 }
 

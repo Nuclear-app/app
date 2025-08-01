@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Command, CommandInput } from "@/components/tailwind/ui/command";
 import { useCompletion } from "ai/react";
 import { useEditor } from "novel";

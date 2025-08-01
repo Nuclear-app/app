@@ -1,10 +1,11 @@
 "use server"
 
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { UpdateNameForm } from "@/components/update-name-form"
-import prisma from "@/lib/prisma"
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
+import { getUserByEmail } from "@/lib/user"
 import { updateNameAction } from "./actions"
 
 export default async function UpdateNamePage() {
@@ -15,10 +16,8 @@ export default async function UpdateNamePage() {
     redirect("/sign-in")
   }
 
-  const dbUser = await prisma.user.findUnique({
-    where: { id: user.id },
-    select: { name: true }
-  })
+  // Use Prisma abstraction function
+  const dbUser = await getUserByEmail(user.email!)
 
   return (
     <div className="
