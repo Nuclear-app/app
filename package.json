@@ -14,7 +14,10 @@
     "type-check": "tsc --noEmit",
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.816.0",
