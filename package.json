@@ -12,7 +12,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "type-check": "tsc --noEmit",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "test": "jest"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.816.0",
@@ -96,6 +97,10 @@
   "devDependencies": {
     "@eslint/js": "^9.30.1",
     "@next/eslint-plugin-next": "^15.3.5",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.15.17",
     "@types/react": "^19.0.2",
     "@types/react-dom": "19.0.2",
@@ -106,10 +111,16 @@
     "eslint-config-next": "15.3.5",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
+    "jest": "^30.0.5",
+    "jest-environment-jsdom": "^30.0.5",
     "postcss": "8.4.49",
     "tailwind-merge": "^2.6.0",
     "tailwindcss": "3.4.17",
     "tailwindcss-animate": "^1.0.7",
-    "typescript": "^5.8.3"
-  }
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "@types/bun": "latest"
+  },
+  "name": "app",
+  "module": "index.ts"
 }
