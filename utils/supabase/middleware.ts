@@ -135,11 +135,7 @@ export const updateSession = async (request: NextRequest) => {
     // Check if this is a new sign up by looking at the created_at timestamp
     // If the user was created within the last minute, they are considered new
     const isNewUser = user && (
-      new Date().getTime() - new Date(user.created_at).getTime() < 60000 || // within last minute
-      user.user_metadata?.is_new_signup || // has new signup flag
-      user.app_metadata?.provider === 'google' || // is a Google sign-in
-      user.app_metadata?.provider === 'github' || // is a GitHub sign-in
-      user.app_metadata?.provider === 'discord' // is a Discord sign-in
+      new Date().getTime() - new Date(user.created_at).getTime() < 60000
     );
 
     // Define protected routes that require authentication
