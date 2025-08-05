@@ -10,6 +10,7 @@ export default function ImageOCR() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [ocrResult, setOcrResult] = useState<OCRResult | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [blockId, setBlockId] = useState<string>("");
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
@@ -20,13 +21,40 @@ export default function ImageOCR() {
 
     const processFile = async () => {
         if (!selectedFile) return;
-        const result = await ocr(selectedFile);
-        setOcrResult(result);
+        if (!blockId.trim()) {
+            alert("Please enter a Block ID");
+            return;
+        }
+        setIsProcessing(true);
+        try {
+            const result = await ocr(selectedFile, blockId);
+            setOcrResult(result);
+        } catch (error) {
+            console.error("OCR processing error:", error);
+            setOcrResult({
+                text: '',
+                status: 'error',
+                error: error instanceof Error ? error.message : 'Unknown error'
+            });
+        } finally {
+            setIsProcessing(false);
+        }
     };
 
     return (
         <Card className="w-full max-w-2xl mx-auto p-6">
             <CardContent className="space-y-4">
+                <div>
+                    <label className="block text-sm font-medium mb-2">Block ID:</label>
+                    <Input
+                        className="h-12"
+                        type="text"
+                        placeholder="Enter Block ID"
+                        value={blockId}
+                        onChange={(e) => setBlockId(e.target.value)}
+                    />
+                </div>
+
                 <Input
                     className="h-12"
                     multiple={false}
@@ -34,7 +62,6 @@ export default function ImageOCR() {
                     accept="image/*,application/pdf"
                     onChange={handleFileChange}
                 />
-
 
                 {selectedFile && (
                     <div className="mt-4">
@@ -52,7 +79,7 @@ export default function ImageOCR() {
                         onClick={processFile}
                         variant="default"
                         className="w-full sm:w-auto"
-                        disabled={!selectedFile || isProcessing}
+                        disabled={!selectedFile || isProcessing || !blockId.trim()}
                     >
                         {isProcessing ? 'Processing...' : 'Extract Text'}
                     </Button>

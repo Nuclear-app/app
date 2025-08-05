@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Settings, FileText, Star, Share2, X, Home, Zap, Flag, User, LogOut, ArrowLeftToLine, MoreVertical, Trash2, Pencil, ChevronRight, ChevronDown } from "lucide-react"
+import { Settings, FileText, Star, Share2, X, Home, Zap, Flag, User, LogOut, ArrowLeftToLine, MoreVertical, Trash2, Pencil, ChevronRight, ChevronDown, Upload } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Tree, Folder, File } from "@/components/magicui/file-tree"
 import { useEffect, useState } from "react"
@@ -23,6 +23,11 @@ import { updateBlockTitle, deleteBlock, deleteCrate, renameFolderAction } from "
 import { RenameDialogue } from "@/components/dashboardComp/RenameDialogue"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./dialog"
+import FileUpload, { FileState } from "@/components/fileInputComponent/fileUpload"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { fetchFiles } from "@/lib/fileUpload"
+import { Skeleton } from "./skeleton"
 
 interface SidebarProps {
     isOpen: boolean
@@ -30,6 +35,62 @@ interface SidebarProps {
     blockId: string
     userId?: string
 }
+
+// FileHistory component (exact copy from featureDock.tsx)
+const FileHistory = ({ blockId }: { blockId: string }) => {
+    const [files, setFiles] = useState<string[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const loadFiles = async () => {
+            try {
+                const fileList = await fetchFiles(blockId);
+                setFiles(fileList || []);
+            } catch (err) {
+                setError('Failed to load files');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadFiles();
+    }, [blockId]);
+
+    if (loading) {
+        return (
+            <div className="space-y-2">
+                {[...Array(3)].map((_, index) => (
+                    <div key={index} className="flex items-center space-x-4 p-2">
+                        <Skeleton className="h-4 w-[250px]" />
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
+    if (error) {
+        return <div className="text-red-500 p-4">{error}</div>;
+    }
+
+    if (files.length === 0) {
+        return <div className="text-muted-foreground p-4">No files uploaded yet</div>;
+    }
+
+    return (
+        <div className="space-y-2">
+            {files.map((fileName, index) => (
+                <div 
+                    key={index}
+                    className="flex items-center justify-between p-2 rounded-md bg-muted/50"
+                >
+                    <span className="text-sm">{fileName}</span>
+                </div>
+            ))}
+        </div>
+    );
+};
 
 // Enhanced Folder component with context menu and dropdown
 const EnhancedFolder = ({ element, value, children, onRename, onDelete }: {
@@ -196,7 +257,14 @@ const EnhancedFile = ({ element, value, onRename, onDelete, isCurrentBlock }: {
 export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
     const [fileStructure, setFileStructure] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
+    const [isFileDialogOpen, setIsFileDialogOpen] = useState(false)
+    const [mounted, setMounted] = useState(false)
     const router = useRouter()
+
+    useEffect(() => {
+        setMounted(true)
+        return () => setMounted(false)
+    }, [])
 
     useEffect(() => {
         const loadFileStructure = async () => {
@@ -223,6 +291,11 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
 
         loadFileStructure()
     }, [userId])
+
+    const handleFileUpload = (files: FileState[]) => {
+        console.log('Uploaded files:', files);
+        // Handle the uploaded files here
+    };
 
     // Handlers for tree operations
     const handleRenameBlock = async (blockIdToRename: string, newTitle: string) => {
@@ -363,6 +436,16 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                                 <Zap className="mr-3 h-4 w-4" />
                                 Flashcards
                             </Button>
+
+                            {/* File Management Button */}
+                            <Button
+                                variant="ghost"
+                                className="w-full justify-start font-bold text-lg text-[#90EE90] hover:text-white hover:bg-gray-800"
+                                onClick={() => setIsFileDialogOpen(true)}
+                            >
+                                <Upload className="mr-3 h-4 w-4" />
+                                File Management
+                            </Button>
                         </div>
                         
                         {/* Folder Tree */}
@@ -411,6 +494,32 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                             Nuclear's made by penguins on mars 🪐
                         </div>
                     </div>
+
+                    {/* File Management Dialog */}
+                    {mounted && (
+                        <Dialog open={isFileDialogOpen} onOpenChange={setIsFileDialogOpen}>
+                            <DialogContent className="sm:max-w-1/2">
+                                <DialogHeader>
+                                    <DialogTitle>File Management</DialogTitle>
+                                    <DialogDescription>
+                                        Upload new files or view your existing files.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <Tabs defaultValue="upload" className="w-full">
+                                    <TabsList className="grid w-full grid-cols-2">
+                                        <TabsTrigger value="upload">Upload Files</TabsTrigger>
+                                        <TabsTrigger value="history">File History</TabsTrigger>
+                                    </TabsList>
+                                    <TabsContent value="upload" className="mt-4">
+                                        <FileUpload returnFiles={handleFileUpload} mode="upload" blockId={blockId} newBlock={false} />
+                                    </TabsContent>
+                                    <TabsContent value="history" className="mt-4">
+                                        <FileHistory blockId={blockId} />
+                                    </TabsContent>
+                                </Tabs>
+                            </DialogContent>
+                        </Dialog>
+                    )}
                 </motion.div>
             )}
         </AnimatePresence>

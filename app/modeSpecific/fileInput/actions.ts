@@ -6,9 +6,15 @@ import { generateHTML } from '@tiptap/html'
 import { StarterKit } from "@tiptap/starter-kit"
 import { generateNotes } from "@/lib/generateNotes"
 import { getBlockContext, getBlockNote, setBlockNote, updateBlock } from "@/lib/block"
+import { createFileContext, getFileContextsByBlockId } from "@/lib/filecontext"
 
 export async function updateContext(data: { blockId: string, context: string }) {  
-  await updateBlock(data.blockId, { context: data.context })
+  // Create a new file context instead of updating the old context field
+  await createFileContext({
+    fileName: 'generated-context.txt',
+    text: data.context,
+    blockId: data.blockId
+  });
 } 
 
 export async function fetchContext(blockId: string): Promise<string> {
@@ -33,9 +39,15 @@ export async function fetchNotes(blockId: string): Promise<string> {
       content += html.replace(/<[^>]*>/g, '') + '\n\n';
     }
 
-    // Add context if it exists
-    if (block.context) {
-      content += block.context;
+    // Get file contexts and add them to content
+    const fileContexts = await getFileContextsByBlockId(blockId);
+    const contextText = fileContexts
+      .map(fc => fc.text)
+      .filter(text => text && text.trim().length > 0)
+      .join('\n\n');
+    
+    if (contextText) {
+      content += contextText;
     }
 
     return content.trim();
