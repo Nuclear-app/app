@@ -7,6 +7,7 @@ import { JSONContent } from '@tiptap/react'
 import { createInitialBlock } from "@/app/actions/create-initial-block";
 import { getBlockPointsWithCache, getBlockWithCache, invalidateBlockCache } from "@/lib/redis";
 import { incrementBlockPoints } from "@/lib/block";
+import { getFileContextsByBlockId } from "@/lib/filecontext";
 
 export const fetchPoints = async (blockId: string) => {
   const points = await getBlockPointsWithCache(blockId);
@@ -38,9 +39,19 @@ export const fetchNotes = async (blockId: string) => {
   
   let content = '';
   
-  // Add context if it exists
-  if (block.context) {
-    content += block.context;
+  // Get file contexts and add them to content
+  try {
+    const fileContexts = await getFileContextsByBlockId(blockId);
+    const contextText = fileContexts
+      .map(fc => fc.text)
+      .filter(text => text && text.trim().length > 0)
+      .join('\n\n');
+    
+    if (contextText) {
+      content += contextText;
+    }
+  } catch (error) {
+    console.error('Error fetching file contexts:', error);
   }
   
   // Add note content if it exists and is valid JSONContent

@@ -1,30 +1,24 @@
-'use server'; // Temporarily commented out for testing
+'use server';
 
 import prisma from "@/lib/prisma";
 import { generateHTML } from '@tiptap/html';
 import { JSONContent } from '@tiptap/react';
 import Link from '@tiptap/extension-link';
 import { StarterKit, TextStyle } from "novel";
+import { getFileContextsByBlockId } from './filecontext';
 
 export async function getBlockContext(blockId: string) {
     try {
-        const block = await prisma.block.findUnique({
-            where: { id: blockId },
-            select: {
-                context: true
-            }
-        });
-
-        if (!block) return null;
-
-        let content = '';
- 
-        // Add context if it exists
-        if (block.context) {
-            content += block.context;
-        }
-
-        return content;
+        // Get all file contexts for this block
+        const fileContexts = await getFileContextsByBlockId(blockId);
+        
+        // Combine all file contexts into one string
+        const contextText = fileContexts
+            .map(fc => fc.text)
+            .filter(text => text && text.trim().length > 0)
+            .join('\n\n');
+        
+        return contextText || null;
     } catch (error) {
         console.error('Error fetching block context:', error);
         throw new Error('Failed to fetch block context');
@@ -57,26 +51,40 @@ export async function getNoteContent(blockId: string): Promise<string> {
 export async function getFullContext(blockId: string) {
     const context = await getBlockContext(blockId);
     const note = await getNoteContent(blockId);
-    return context + note;
+    return (context || '') + (note || '');
 }
 
-// // Test function - you can call this from a client component or API route
-// async function testGetFullContext(blockId: string) {
-//     try {
-//         const result = await getFullContext(blockId);
-//         console.log('Context:', await getBlockContext(blockId));
-//         console.log('Note:', await getNoteContent(blockId));
-//         console.log('Full result:', result);
-//         return result;
-//     } catch (error) {
-//         console.error('Test failed:', error);
-//         throw error;
-//     }
-// }
+/**
+ * Get context for a specific file within a block
+ * @param blockId - The block ID
+ * @param fileName - The file name
+ * @returns Promise<string | null> - The context for the specific file
+ */
+export async function getFileSpecificContext(blockId: string, fileName: string): Promise<string | null> {
+    try {
+        const fileContexts = await getFileContextsByBlockId(blockId);
+        const fileContext = fileContexts.find(fc => fc.fileName === fileName);
+        return fileContext?.text || null;
+    } catch (error) {
+        console.error('Error fetching file-specific context:', error);
+        return null;
+    }
+}
 
-// // Simple test call
-// testGetFullContext("4ef58849-f01e-4651-acae-53042d9c26e0").then(result => {
-//     console.log("Test completed successfully:", result);
-// }).catch(error => {
-//     console.log("Test failed:", error);
-// });
+/**
+ * Get all file contexts with their file names for a block
+ * @param blockId - The block ID
+ * @returns Promise<Array<{fileName: string, text: string}>> - Array of file contexts with names
+ */
+export async function getFileContextsWithNames(blockId: string): Promise<Array<{fileName: string, text: string}>> {
+    try {
+        const fileContexts = await getFileContextsByBlockId(blockId);
+        return fileContexts.map(fc => ({
+            fileName: fc.fileName,
+            text: fc.text
+        }));
+    } catch (error) {
+        console.error('Error fetching file contexts with names:', error);
+        return [];
+    }
+}

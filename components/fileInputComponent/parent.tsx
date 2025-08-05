@@ -95,7 +95,8 @@ function FileInputContent() {
 
               const file = new File([blob], 'temp', { type: fileType });
               
-              const ocrResult = await ocr(file);
+              // Ensure blockId is a string before passing to ocr
+              const ocrResult = await ocr(file, blockId ?? '');
               return ocrResult?.text || '';
             }
 

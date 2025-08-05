@@ -169,13 +169,17 @@ export async function regenerateExamples(blockId: string, context: string) {
     throw new Error("Block ID is required");
   }
 
+  if (!context || context.trim().length === 0) {
+    throw new Error("Context is required for regenerating examples");
+  }
+
   console.log("Regenerating examples for block:", blockId);
 
   try {
     // First delete existing examples
     await deleteExamples(blockId);
 
-    // Then generate new examples
+    // Then generate new examples using the provided context
     const newTopics = await generateExamples(context, blockId);
 
     console.log(`Generated ${newTopics.length} new topics for block ${blockId}`);
@@ -249,13 +253,17 @@ export async function regenerateFlashcards(blockId: string, context: string) {
     throw new Error("Block ID is required");
   }
 
+  if (!context || context.trim().length === 0) {
+    throw new Error("Context is required for regenerating flashcards");
+  }
+
   console.log("Regenerating flashcards for block:", blockId);
 
   try {
     // First delete existing flashcards
     await deleteFlashcards(blockId);
 
-    // Then generate new flashcards
+    // Then generate new flashcards using the provided context
     const newFlashcards = await generateFlashcards(context, blockId);
 
     console.log(`Generated ${newFlashcards.length} new flashcards for block ${blockId}`);

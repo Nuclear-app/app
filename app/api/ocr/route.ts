@@ -6,6 +6,7 @@ import {
   GetDocumentTextDetectionCommand
 } from "@aws-sdk/client-textract";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { createFileContext } from "@/lib/filecontext";
 
 // Validate environment variables
 if (!process.env.AWS_REGION) {
@@ -23,7 +24,7 @@ const s3 = new S3Client({ region: process.env.AMAZON_REGION });
 
 export async function POST(request: Request) {
   try {
-    const { imageBase64, fileName, fileType } = await request.json();
+    const { imageBase64, fileName, fileType, blockId } = await request.json();
     
     if (!imageBase64) {
       return NextResponse.json(
@@ -42,6 +43,13 @@ export async function POST(request: Request) {
     if (!fileType) {
       return NextResponse.json(
         { error: "Missing fileType in request body" },
+        { status: 400 }
+      );
+    }
+
+    if (!blockId) {
+      return NextResponse.json(
+        { error: "Missing blockId in request body" },
         { status: 400 }
       );
     }
@@ -72,6 +80,8 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+
+    let extractedText = "";
 
     if (fileType === SUPPORTED_PDF_TYPE) {
       try {
@@ -112,11 +122,10 @@ export async function POST(request: Request) {
           throw new Error("Text detection job timed out");
         }
 
-        const text = allBlocks
+        extractedText = allBlocks
           .filter(b => b.BlockType === "LINE")
           .map(b => b.Text)
           .join("\n");
-        return NextResponse.json({ text });
       } catch (error: any) {
         console.error("PDF processing error:", error);
         return NextResponse.json(
@@ -135,8 +144,7 @@ export async function POST(request: Request) {
           throw new Error("No text blocks detected in the image");
         }
 
-        const text = Blocks.filter(b => b.BlockType === "LINE").map(b => b.Text).join("\n") || "";
-        return NextResponse.json({ text });
+        extractedText = Blocks.filter(b => b.BlockType === "LINE").map(b => b.Text).join("\n") || "";
       } catch (error: any) {
         console.error("Image processing error:", error);
         return NextResponse.json(
@@ -145,6 +153,21 @@ export async function POST(request: Request) {
         );
       }
     }
+
+    // Store the extracted text in FileContext table
+    try {
+      await createFileContext({
+        fileName: fileName,
+        text: extractedText,
+        blockId: blockId
+      });
+      console.log(`Successfully stored OCR text for file ${fileName} in block ${blockId}`);
+    } catch (error) {
+      console.error("Error storing OCR text in FileContext:", error);
+      // Don't fail the entire request if storage fails, just log it
+    }
+
+    return NextResponse.json({ text: extractedText });
   } catch (error: any) {
     console.error("General error:", error);
     return NextResponse.json(

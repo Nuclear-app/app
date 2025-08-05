@@ -146,6 +146,16 @@ export async function getBlockContextWithCache(blockId: string, ttlSeconds = 360
     );
 }
 
+export async function getFileContextsWithCache(blockId: string, ttlSeconds = 3600) {
+    console.log(`getFileContextsWithCache called with blockId: ${blockId}`);
+    const { getFileContextsByBlockId } = await import('./filecontext');
+    return cacheAside(
+        `block:filecontexts:${blockId}`,
+        ttlSeconds,
+        () => getFileContextsByBlockId(blockId)
+    );
+}
+
 export async function getBlockPointsWithCache(blockId: string, ttlSeconds = 1800) {
     console.log(`getBlockPointsWithCache called with blockId: ${blockId}`);
     return cacheAside(
@@ -555,6 +565,12 @@ export async function invalidateBlockContextCache(blockId: string) {
     console.log(`invalidateBlockContextCache called with blockId: ${blockId}`);
     await redis.del(`block:context:${blockId}`);
     console.log(`invalidateBlockContextCache: deleted key for blockId: ${blockId}`);
+}
+
+export async function invalidateFileContextsCache(blockId: string) {
+    console.log(`invalidateFileContextsCache called with blockId: ${blockId}`);
+    await redis.del(`block:filecontexts:${blockId}`);
+    console.log(`invalidateFileContextsCache: deleted key for blockId: ${blockId}`);
 }
 
 export async function invalidateUserBlocksCache(userId: string) {

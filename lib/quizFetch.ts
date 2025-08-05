@@ -5,6 +5,7 @@ import { Quiz } from "@prisma/client";
 import { getQuizWithTopicsCache, invalidateQuizzesCache } from "@/lib/redis";
 import { generateQuizzes } from "./quizGen";
 import { incrementBlockPoints } from "./block";
+import { getFileContextsByBlockId } from "./filecontext";
 
 export const removeMistake = async (quizId: string) => {
   await prisma.quiz.update({
@@ -24,15 +25,18 @@ export const fetchQuiz = async (blockId: string): Promise<Quiz[]> => {
 
     // If no quizzes, generate more
     if (unusedQuizzes.length === 0 && mistakeQuizzes.length === 0) {
-      // Get block context
-      const block = await prisma.block.findUnique({
-        where: { id: blockId },
-        select: { context: true }
-      });
-      if (!block || !block.context) {
+      // Get block context from file contexts
+      const fileContexts = await getFileContextsByBlockId(blockId);
+      const contextText = fileContexts
+        .map(fc => fc.text)
+        .filter(text => text && text.trim().length > 0)
+        .join('\n\n');
+      
+      if (!contextText) {
         throw new Error("Block context not found for quiz generation");
       }
-      await generateQuizzes(block.context, blockId);
+      
+      await generateQuizzes(contextText, blockId);
       
       // Fetch quizzes again using cache
       const result = await getQuizWithTopicsCache(blockId);

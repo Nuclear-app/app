@@ -8,10 +8,14 @@ export type OCRResult = {
 const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/tiff'];
 const SUPPORTED_PDF_TYPE = 'application/pdf';
 
-export const ocr = async (selectedFile: File): Promise<OCRResult | null> => {
+export const ocr = async (selectedFile: File, blockId: string): Promise<OCRResult | null> => {
     let ocrResult: OCRResult | null = {text: '', status: 'processing'};
 
     if (!selectedFile) return null;
+    if (!blockId) {
+        throw new Error('Block ID is required for OCR processing');
+    }
+    
     ocrResult = ({ text: '', status: 'processing' });
 
     try {
@@ -52,7 +56,8 @@ export const ocr = async (selectedFile: File): Promise<OCRResult | null> => {
         console.log('Sending OCR request for file:', {
             name: selectedFile.name,
             type: selectedFile.type,
-            size: selectedFile.size
+            size: selectedFile.size,
+            blockId: blockId
         });
 
         const response = await fetch("/api/ocr", {
@@ -61,7 +66,8 @@ export const ocr = async (selectedFile: File): Promise<OCRResult | null> => {
             body: JSON.stringify({ 
                 imageBase64: base64,
                 fileName: selectedFile.name,
-                fileType: selectedFile.type
+                fileType: selectedFile.type,
+                blockId: blockId
             }),
         });
 
