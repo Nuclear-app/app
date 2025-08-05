@@ -37,6 +37,7 @@ model Block {
   quizzes         Quiz[]
   topics          Topic[]
   flashcards      Flashcard[]
+  fileContexts    FileContext[]
 }
 
 model Quiz {
@@ -106,6 +107,16 @@ model Flashcard {
   back     String
   blockId  String
   block    Block  @relation(fields: [blockId], references: [id], onDelete: Cascade)
+}
+
+model FileContext {
+  id        String   @id @default(uuid())
+  fileName  String
+  text      String
+  blockId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  block     Block    @relation(fields: [blockId], references: [id], onDelete: Cascade)
 }
 
 enum Mode {
