@@ -104,7 +104,7 @@ function FileInputContent() {
               if (!fileUrl) {
                 throw new Error('No audio URL provided');
               }
-              const transcript = await transcribeAudio(fileUrl);
+              const transcript = await transcribeAudio(fileUrl, fileData.name, blockId || '');
               return transcript || '';
             }
 

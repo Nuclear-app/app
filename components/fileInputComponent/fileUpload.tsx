@@ -123,7 +123,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
         if (!fileUrl) {
           throw new Error('No audio URL provided');
         }
-        const transcript = await transcribeAudio(fileUrl);
+        const transcript = await transcribeAudio(fileUrl, fileData.name, blockId ?? '');
         return transcript || '';
       }
 
@@ -319,6 +319,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
           } catch (err) {
             console.error('Error updating Block files:', err);
           }
+
         },
         onprocessfile: (error, file) => {
           if (error) return;
