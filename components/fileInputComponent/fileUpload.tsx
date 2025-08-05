@@ -18,6 +18,8 @@ import { FunFacts } from "../ui/fun-facts";
 import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import { TextAnimate } from "../ui/text-animate";
+import { transcribeAudio } from "@/lib/assemblyai";
+import { ocr } from "@/lib/ocr";
 
 // Custom FilePond styles
 const filePondStyles = `
@@ -75,6 +77,64 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
     return () => setMounted(false);
   }, []);
 
+  const getFileContent = async (file: FileState) => {
+    if (!file || !file.file) return '';
+
+    try {
+      // Get the file data from FilePond's responseF
+      const fileData = file.file;
+      if (!fileData || !fileData.name) {
+        throw new Error('Invalid file data');
+      }
+
+      // The file data is stored in the name property as a JSON string
+      console.log(fileData.name);
+      const parsedData = JSON.parse(fileData.name);
+      if (!parsedData || !parsedData.url) {
+        throw new Error('Invalid file data structure');
+      }
+
+      const fileUrl = parsedData.url;
+      const fileType = fileData.type;
+
+      // Validate file type
+      if (!fileType) {
+        console.error('No file type provided');
+        return '';
+      }
+
+      if (fileType.startsWith('image/') || fileType === 'application/pdf') {
+        const response = await fetch(fileUrl);
+        if (!response.ok) throw new Error(`Failed to fetch file: ${response.statusText}`);
+
+        const blob = await response.blob();
+        if (blob.size === 0) {
+          throw new Error('Empty file received');
+        }
+
+        const file = new File([blob], 'temp', { type: fileType });
+
+        // Ensure blockId is a string before passing to ocr
+        const ocrResult = await ocr(file, blockId ?? '');
+        return ocrResult?.text || '';
+      }
+
+      if (fileType.startsWith('audio/')) {
+        if (!fileUrl) {
+          throw new Error('No audio URL provided');
+        }
+        const transcript = await transcribeAudio(fileUrl);
+        return transcript || '';
+      }
+
+      console.warn(`Unsupported file type: ${fileType}`);
+      return '';
+    } catch (error) {
+      console.error(`Error processing file:`, error);
+      return ''; // Return empty string for failed files
+    }
+  }
+
   useEffect(() => {
     if (!mounted) return;
 
@@ -99,7 +159,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
             try {
               // Check if user is authenticated
               const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-              
+
               if (sessionError) {
                 console.error('Session error:', sessionError);
                 error('Authentication error. Please try signing in again.');
@@ -152,16 +212,33 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
                 publicUrl,
                 bucket: 'files'
               });
-              
+
               // Store the file path in the file object
               const fileData = {
                 url: publicUrl,
                 path: filePath
               };
               console.log('Upload response:', fileData);
-              
-              // Pass the file data as a string
-              load(JSON.stringify(fileData));
+
+              // Create a temporary FileState object to pass to getFileContent
+              const tempFileState: FileState = {
+                file: new File([file], JSON.stringify(fileData), { type: file.type })
+              };
+
+              // Extract and print the file content - this must complete before loading finishes
+              console.log('Extracting content from file:', file.name);
+              const extractedContent = await getFileContent(tempFileState);
+              console.log('Extracted content:', extractedContent);
+
+              // Only complete the upload if content extraction was successful
+              if (extractedContent !== '') {
+                console.log('Content extraction successful, completing upload');
+                // Pass the file data as a string
+                load(JSON.stringify(fileData));
+              } else {
+                console.error('Content extraction failed for file:', file.name);
+                error('Failed to extract content from file. Please try again.');
+              }
             } catch (err) {
               console.error('Upload error:', err);
               error('Upload failed. Please try again.');
@@ -182,7 +259,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
 
               // Check if user is authenticated
               const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-              
+
               if (sessionError) {
                 console.error('Session error:', sessionError);
                 error('Authentication error. Please try signing in again.');
@@ -299,8 +376,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
               <FunFacts />
             </div>
           ) : (
-            <SubmitButton 
-              className="w-full" 
+            <SubmitButton
+              className="w-full"
               onClick={handleUploadClick}
               disabled={uploadedFiles.length === 0}
             >

@@ -9,7 +9,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { createFileContext } from "@/lib/filecontext";
 
 // Validate environment variables
-if (!process.env.AWS_REGION) {
+if (!process.env.AMAZON_REGION) {
   throw new Error("AWS_REGION environment variable is not set");
 }
 if (!process.env.UPLOAD_BUCKET) {
