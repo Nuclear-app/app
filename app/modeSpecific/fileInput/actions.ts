@@ -18,8 +18,12 @@ export async function updateContext(data: { blockId: string, context: string }) 
 } 
 
 export async function fetchContext(blockId: string): Promise<string> {
-  const context = await getBlockContext(blockId)
-  return context || '';
+  const fileContexts = await getFileContextsByBlockId(blockId);
+    const contextText = fileContexts
+      .map(fc => fc.text)
+      .filter(text => text && text.trim().length > 0)
+      .join('\n\n');
+  return contextText || '';
 }
 
 export async function fetchNotes(blockId: string): Promise<string> {
