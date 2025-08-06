@@ -767,31 +767,17 @@ export async function getUserFileStructure(userId: string): Promise<any[]> {
       throw new FolderError('Invalid user ID provided', 'INVALID_USER_ID')
     }
 
-    // Get all folders for the user
-    const folders = await prisma.folder.findMany({
-      where: { authorId: userId },
-      include: {
-        children: true,
-        blocks: true
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
-    })
+    // Import Redis functions
+    const { 
+      getFoldersWithRelationsWithCache, 
+      getUserBlocksWithCache 
+    } = await import('./redis');
 
-    // Get all blocks for the user (including those not in folders)
-    const allBlocks = await prisma.block.findMany({
-      where: { authorId: userId },
-      select: {
-        id: true,
-        title: true,
-        folderId: true,
-        createdAt: true
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
-    })
+    // Get all folders for the user with relations using Redis cache
+    const folders = await getFoldersWithRelationsWithCache(userId);
+
+    // Get all blocks for the user using Redis cache
+    const allBlocks = await getUserBlocksWithCache(userId);
 
     console.log("folders", folders);
     console.log("allBlocks", allBlocks);

@@ -310,6 +310,31 @@ export async function getFolderBlocksWithCache(folderId: string, ttlSeconds = 60
     );
 }
 
+export async function getFoldersWithRelationsWithCache(userId: string, ttlSeconds = 600) {
+    console.log(`getFoldersWithRelationsWithCache called with userId: ${userId}`);
+    return cacheAside(
+        `folders:relations:${userId}`,
+        ttlSeconds,
+        async () => {
+            // Import prisma to avoid circular dependencies
+            const prisma = (await import('./prisma')).default;
+            
+            const folders = await prisma.folder.findMany({
+                where: { authorId: userId },
+                include: {
+                    children: true,
+                    blocks: true
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                }
+            });
+            
+            return folders;
+        }
+    );
+}
+
 // ==================== QUIZ CACHING ====================
 
 export async function getQuizWithCache(quizId: string, ttlSeconds = 3600) {
@@ -507,7 +532,8 @@ export async function invalidateUserCache(userId: string) {
         `user:folders:${userId}`,
         `user:name:${userId}`,
         `user:dashboard:${userId}`,
-        `filesystem:${userId}`
+        `filesystem:${userId}`,
+        `folders:relations:${userId}`
     ];
     await Promise.all(keys.map(key => redis.del(key)));
     console.log(`invalidateUserCache: deleted ${keys.length} keys for userId: ${userId}`);

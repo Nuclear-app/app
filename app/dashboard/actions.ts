@@ -15,6 +15,7 @@ import {
   getDashboardItemsWithCache,
   getFileSystemStructureWithCache,
   getUserNameWithCache,
+  getFolderWithCache,
   invalidateUserCache,
   invalidateBlockCache,
   invalidateFolderCache
@@ -161,7 +162,7 @@ export const fetchCratePath = async (crateId: string) => {
         let currentId = crateId;
 
         while (currentId && currentId !== ROOT_FOLDER_ID) {
-            const folder = await getFolderById(currentId);
+            const folder = await getFolderWithCache(currentId);
             if (folder) {
                 path.unshift({ id: folder.id, name: folder.name });
                 currentId = folder.parentId || "";
