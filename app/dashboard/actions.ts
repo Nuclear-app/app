@@ -296,6 +296,46 @@ export const renameFolderAction = async (folderId: string, newName: string) => {
     }
 };
 
+export const renameCrate = async (crateId: string, newName: string) => {
+    try {
+        const userId = await getUser();
+        if (!userId) throw new Error("User not authenticated");
+
+        // Import the setFolderName function (crates are stored as folders)
+        const { setFolderName } = await import('@/lib/folder');
+        await setFolderName(crateId, newName);
+        
+        // Invalidate relevant caches
+        await invalidateFolderCache(crateId);
+        await invalidateUserCache(userId);
+        
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to rename crate:", error);
+        throw error;
+    }
+};
+
+export const changeCrateIcon = async (crateId: string, newIcon: string) => {
+    try {
+        const userId = await getUser();
+        if (!userId) throw new Error("User not authenticated");
+
+        // Import the setFolderIcon function
+        const { setFolderIcon } = await import('@/lib/folder');
+        await setFolderIcon(crateId, newIcon);
+        
+        // Invalidate relevant caches
+        await invalidateFolderCache(crateId);
+        await invalidateUserCache(userId);
+        
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to change crate icon:", error);
+        throw error;
+    }
+};
+
 // ==================== USER OPERATIONS ====================
 
 export const getCurrentUserAction = async () => {

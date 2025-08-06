@@ -112,6 +112,7 @@
 //   );
 // }
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -133,11 +134,10 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import React from "react";
+import { Loader2 } from "lucide-react";
 
-interface RenameDialogueProps {
-    type: 'block' | 'crate';
+interface RenameBlockDialogueProps {
     currentName: string;
-    id: string;
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onRename: (newTitle: string) => Promise<void>;
@@ -151,7 +151,9 @@ const blockFormSchema = z.object({
     }),
 });
 
-export function RenameDialogue({ open, onOpenChange, onRename, currentName }: RenameDialogueProps) {
+export function RenameBlockDialogue({ open, onOpenChange, onRename, currentName }: RenameBlockDialogueProps) {
+    const [isLoading, setIsLoading] = useState(false);
+    
     const form = useForm<z.infer<typeof blockFormSchema>>({
         resolver: zodResolver(blockFormSchema),
         defaultValues: {
@@ -163,17 +165,21 @@ export function RenameDialogue({ open, onOpenChange, onRename, currentName }: Re
     React.useEffect(() => {
         if (open) {
             form.reset({ title: currentName });
+            setIsLoading(false);
         }
     }, [open, currentName, form]);
 
     const handleSubmit = async (values: z.infer<typeof blockFormSchema>) => {
         try {
+            setIsLoading(true);
             await onRename(values.title);
             onOpenChange(false); // Close the dialog after successful rename
             form.reset();
         } catch (error) {
             console.error("Failed to rename:", error);
             // Keep dialog open if there's an error
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -211,7 +217,16 @@ export function RenameDialogue({ open, onOpenChange, onRename, currentName }: Re
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit">Rename Block</Button>
+                        <Button type="submit" disabled={isLoading}>
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Rename Block
+                                </>
+                            ) : (
+                                "Rename Block"
+                            )}
+                        </Button>
                     </form>
                 </Form>
             </DialogContent>

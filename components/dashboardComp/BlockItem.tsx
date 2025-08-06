@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { RenameDialogue } from "./RenameDialogue";
+import { RenameBlockDialogue } from "./RenameBlockDialogue";
 import { updateBlockTitle } from "@/app/dashboard/actions";
 import { TooltipWrapper } from "@/components/ui/TooltipWrapper";
 // import RenameDialogue from "./RenameDialogue";
@@ -149,13 +149,11 @@ export function BlockItem({ block, onDelete, onRename }: BlockItemProps) {
             </ContextMenuContent>
         </ContextMenu>
             
-            <RenameDialogue
-                type="block"
+            <RenameBlockDialogue
                 currentName={block.title}
-                id={block.id}
-                onRename={handleRename}
                 open={renameDialogueOpen}
                 onOpenChange={setRenameDialogueOpen}
+                onRename={handleRename}
             />
         </>
     );

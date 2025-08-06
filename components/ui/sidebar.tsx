@@ -20,7 +20,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { updateBlockTitle, deleteBlock, deleteCrate, renameFolderAction } from "@/app/dashboard/actions"
-import { RenameDialogue } from "@/components/dashboardComp/RenameDialogue"
+import { RenameBlockDialogue } from "@/components/dashboardComp/RenameBlockDialogue"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./dialog"

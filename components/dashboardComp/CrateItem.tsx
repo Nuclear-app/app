@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { MoreVertical, Trash2, Eye } from "lucide-react";
+import { MoreVertical, Trash2, Eye, Pencil } from "lucide-react";
 import {
     ContextMenu,
     ContextMenuContent,
@@ -15,29 +15,49 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Crate } from "@/lib/types";
-// import RenameDialogue from "./RenameDialogue";
-// import { renameCrate } from "@/app/dashboard/actions";
+import { RenameCrateDialogue } from "./RenameCrateDialogue";
 import { TooltipWrapper } from "@/components/ui/TooltipWrapper";
+import { useState } from "react";
+import { renameCrate, changeCrateIcon } from "@/app/dashboard/actions";
 
 interface CrateItemProps {
     crate: Crate;
     onDelete: (id: string) => void;
-    // onRename?: (id: string, newName: string) => void;
+    onRename?: (id: string, newName: string) => Promise<void>;
+    onIconChange?: (id: string, newIcon: string) => Promise<void>;
 }
 
-export function CrateItem({ crate, onDelete }: CrateItemProps) {
-    // const handleRename = async (id: string, newName: string) => {
-    //     try {
-    //         // await renameCrate(id, newName);
-    //         // Call the optional callback to update the UI
-    //         onRename?.(id, newName);
-    //     } catch (error) {
-    //         console.error("Failed to rename crate:", error);
-    //         throw error;
-    //     }
-    // };
+export function CrateItem({ crate, onDelete, onRename, onIconChange }: CrateItemProps) {
+    const [renameDialogueOpen, setRenameDialogueOpen] = useState(false);
+
+    const handleRenameAndIconChange = async (newName: string, newIcon: string) => {
+        try {
+            // Call the backend functions
+            await renameCrate(crate.id, newName);
+            await changeCrateIcon(crate.id, newIcon);
+            
+            // Call the optional callbacks to update the UI
+            onRename?.(crate.id, newName);
+            onIconChange?.(crate.id, newIcon);
+            
+            // Close the dialog after successful update
+            setRenameDialogueOpen(false);
+        } catch (error) {
+            console.error("Failed to update crate:", error);
+            // Don't close the dialog if there's an error
+            throw error;
+        }
+    };
+
+    const openRenameDialogue = () => {
+        // Use setTimeout to prevent recursion issues with menu state
+        setTimeout(() => {
+            setRenameDialogueOpen(true);
+        }, 0);
+    };
 
     return (
+        <>
         <ContextMenu>
             <ContextMenuTrigger className="w-full">
                 <div className="relative w-full">
@@ -74,16 +94,13 @@ export function CrateItem({ crate, onDelete }: CrateItemProps) {
                                     <Eye className="h-4 w-4" />
                                     <span>View Crate</span>
                                 </DropdownMenuItem>
-                                {/* <RenameDialogue
-                                    type="crate"
-                                    currentName={crate.name}
-                                    id={crate.id}
-                                    trigger={
-                                        <DropdownMenuItem className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]">
-                                            <span>Rename Crate</span>
-                                        </DropdownMenuItem>
-                                    }
-                                /> */}
+                                <DropdownMenuItem 
+                                    className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]"
+                                    onClick={openRenameDialogue}
+                                >
+                                    <Pencil className="h-4 w-4" />
+                                    <span>Edit Crate</span>
+                                </DropdownMenuItem>
                                 <DropdownMenuItem 
                                     className="flex items-center gap-2 cursor-pointer text-red-500 hover:bg-[#333333]"
                                     onClick={() => onDelete(crate.id)}
@@ -101,16 +118,13 @@ export function CrateItem({ crate, onDelete }: CrateItemProps) {
                     <Eye className="h-4 w-4" />
                     <span>View Crate</span>
                 </ContextMenuItem>
-                {/* <RenameDialogue
-                    type="crate"
-                    currentName={crate.name}
-                    id={crate.id}
-                    trigger={
-                        <ContextMenuItem className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]">
-                            <span>Rename Crate</span>
-                        </ContextMenuItem>
-                    }
-                /> */}
+                <ContextMenuItem
+                    className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]"
+                    onClick={openRenameDialogue}
+                >
+                    <Pencil className="h-4 w-4" />
+                    <span>Edit Crate</span>
+                </ContextMenuItem>
                 <ContextMenuItem 
                     className="flex items-center gap-2 cursor-pointer text-red-500 hover:bg-[#333333]"
                     onClick={() => onDelete(crate.id)}
@@ -120,5 +134,14 @@ export function CrateItem({ crate, onDelete }: CrateItemProps) {
                 </ContextMenuItem>
             </ContextMenuContent>
         </ContextMenu>
+            
+        <RenameCrateDialogue
+            currentName={crate.name}
+            currentIcon={crate.icon || "📚"}
+            open={renameDialogueOpen}
+            onOpenChange={setRenameDialogueOpen}
+            onRename={handleRenameAndIconChange}
+        />
+    </>
     );
 } 

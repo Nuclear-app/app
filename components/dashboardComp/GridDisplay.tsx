@@ -11,7 +11,8 @@ interface GridDisplayProps {
     onDeleteBlock: (blockId: string) => Promise<void>;
     onDeleteCrate: (crateId: string) => Promise<void>;
     onRenameBlock?: (blockId: string, newTitle: string) => Promise<void>;
-    // onRenameCrate?: (crateId: string, newName: string) => Promise<void>;
+    onRenameCrate?: (crateId: string, newName: string) => Promise<void>;
+    onChangeCrateIcon?: (crateId: string, newIcon: string) => Promise<void>;
     isLoading: boolean;
 }
 
@@ -48,7 +49,8 @@ export function GridDisplay({
     onDeleteBlock, 
     onDeleteCrate, 
     onRenameBlock,
-    // onRenameCrate,
+    onRenameCrate,
+    onChangeCrateIcon,
     isLoading 
 }: GridDisplayProps) {
     if (selectedTypes.size === 0) {
@@ -127,7 +129,8 @@ export function GridDisplay({
                                         <CrateItem
                                             crate={item}
                                             onDelete={() => onDeleteCrate(item.id)}
-                                            // onRename={onRenameCrate}
+                                            onRename={onRenameCrate}
+                                            onIconChange={onChangeCrateIcon}
                                         />
                                         <AnimatePresence>
                                             {createParticles(8).map((particle, i) => (
@@ -228,7 +231,8 @@ export function GridDisplay({
                                     <CrateItem
                                         crate={crate}
                                         onDelete={() => onDeleteCrate(crate.id)}
-                                        // onRename={onRenameCrate}
+                                        onRename={onRenameCrate}
+                                        onIconChange={onChangeCrateIcon}
                                     />
                                     <AnimatePresence>
                                         {createParticles(8).map((particle, i) => (
