@@ -141,7 +141,7 @@ export function BlockViewNav({ blockId, children }: blockViewNavProps) {
                     <div className="flex flex-col md:flex-row items-center gap-1">
                         <TooltipWrapper text="Points" side="bottom">
                             <Button
-                                className="bg-[#9000ff88] rounded-xl text-lg font-semibold hover:opacity-90 px-4 py-4 h-10"
+                                className="bg-[#bf77f7] rounded-xl text-lg font-semibold hover:opacity-90 px-4 py-4 h-10"
                                 disabled={isPointsLoading}
                             >
                                 {isPointsLoading ? 'Loading...' : `${points} Points`}
