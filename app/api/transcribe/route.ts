@@ -15,6 +15,9 @@ export async function POST(request: Request) {
   try {
     const { audioUrl, fileName, blockId } = await request.json();
     
+    console.log('Transcribe API - Received filename:', fileName);
+    console.log('Transcribe API - Received blockId:', blockId);
+    
     if (!audioUrl) {
       return NextResponse.json(
         { error: "Missing audioUrl in request body" },

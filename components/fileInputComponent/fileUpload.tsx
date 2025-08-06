@@ -81,15 +81,16 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
     if (!file || !file.file) return '';
 
     try {
-      // Get the file data from FilePond's responseF
+      // Get the file data from FilePond's response
       const fileData = file.file;
       if (!fileData || !fileData.name) {
         throw new Error('Invalid file data');
       }
 
       // The file data is stored in the name property as a JSON string
-      console.log(fileData.name);
+      console.log('File data name:', fileData.name);
       const parsedData = JSON.parse(fileData.name);
+      console.log('Parsed data:', parsedData);
       if (!parsedData || !parsedData.url) {
         throw new Error('Invalid file data structure');
       }
@@ -112,9 +113,15 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
           throw new Error('Empty file received');
         }
 
-        // Extract original filename from the parsed data
-        const originalFileName = parsedData.path ? parsedData.path.split('/').pop() : 'unknown';
-        const file = new File([blob], originalFileName, { type: fileType });
+        // Use the original filename stored in the JSON data
+        const fileName = parsedData.originalName || 
+          (parsedData.path ? parsedData.path.split('/').pop() : 'unknown');
+        
+        console.log('OCR - Using filename:', fileName);
+        console.log('OCR - Original name from parsed data:', parsedData.originalName);
+        console.log('OCR - Path from parsed data:', parsedData.path);
+        
+        const file = new File([blob], fileName, { type: fileType });
 
         // Ensure blockId is a string before passing to ocr
         const ocrResult = await ocr(file, blockId ?? '');
@@ -125,9 +132,16 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
         if (!fileUrl) {
           throw new Error('No audio URL provided');
         }
-        // Extract original filename from the parsed data
-        const originalFileName = parsedData.path ? parsedData.path.split('/').pop() : 'unknown';
-        const transcript = await transcribeAudio(fileUrl, originalFileName, blockId ?? '');
+        
+        // Use the original filename stored in the JSON data
+        const fileName = parsedData.originalName || 
+          (parsedData.path ? parsedData.path.split('/').pop() : 'unknown');
+        
+        console.log('Transcription - Using filename:', fileName);
+        console.log('Transcription - Original name from parsed data:', parsedData.originalName);
+        console.log('Transcription - Path from parsed data:', parsedData.path);
+        
+        const transcript = await transcribeAudio(fileUrl, fileName, blockId ?? '');
         return transcript || '';
       }
 
@@ -226,7 +240,10 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
 
               // Create a temporary FileState object to pass to getFileContent
               const tempFileState: FileState = {
-                file: new File([file], JSON.stringify(fileData), { type: file.type })
+                file: new File([file], JSON.stringify({
+                  ...fileData,
+                  originalName: file.name // Store the original filename here
+                }), { type: file.type })
               };
 
               // Extract and print the file content - this must complete before loading finishes
@@ -309,17 +326,23 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
         },
         onaddfile: async (error, file) => {
           if (error) return;
+          
+          // Store the original filename - this is the filename from the user's computer
+          const originalFilename = file.filename;
+          console.log('Original filename captured:', originalFilename);
+          
           // Create a new file with the server response data
           const newFile = new File([file.file], JSON.stringify({
-            url: file.serverId ? JSON.parse(file.serverId).url : null,
-            path: file.serverId ? JSON.parse(file.serverId).path : null
+            url: null, // Will be set after upload
+            path: null, // Will be set after upload
+            originalName: originalFilename // Store the original filename in the JSON data
           }), { type: file.fileType });
           setFiles(prev => [...prev, { file: newFile }]);
 
-          // Add file name to Block's files array
+          // Add file name to Block's files array - use the original filename
           try {
-            await addFile(blockId, file.filename);
-            console.log('Added file to Block:', file.filename);
+            await addFile(blockId, originalFilename);
+            console.log('Added file to Block:', originalFilename);
           } catch (err) {
             console.error('Error updating Block files:', err);
           }
@@ -327,10 +350,19 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
         },
         onprocessfile: (error, file) => {
           if (error) return;
+          
+          // Get the original filename from the file object
+          const originalFilename = file.filename;
+          console.log('Processing file with original name:', originalFilename);
+          
+          // Parse the server response to get URL and path
+          const serverData = file.serverId ? JSON.parse(file.serverId) : {};
+          
           // When file is fully processed (uploaded), add it to uploadedFiles
           const processedFile = new File([file.file], JSON.stringify({
-            url: file.serverId ? JSON.parse(file.serverId).url : null,
-            path: file.serverId ? JSON.parse(file.serverId).path : null
+            url: serverData.url || null,
+            path: serverData.path || null,
+            originalName: originalFilename // Store the original filename
           }), { type: file.fileType });
           setUploadedFiles(prev => [...prev, { file: processedFile }]);
         },

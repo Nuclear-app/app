@@ -26,6 +26,9 @@ export async function POST(request: Request) {
   try {
     const { imageBase64, fileName, fileType, blockId } = await request.json();
     
+    console.log('OCR API - Received filename:', fileName);
+    console.log('OCR API - Received blockId:', blockId);
+    
     if (!imageBase64) {
       return NextResponse.json(
         { error: "Missing imageBase64 in request body" },
