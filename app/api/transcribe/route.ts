@@ -51,12 +51,26 @@ export async function POST(request: Request) {
 
     // Store the transcribed text in FileContext table
     try {
-      await createFileContext({
-        fileName: fileName,
-        text: transcript.text,
-        blockId: blockId
-      });
-      console.log(`Successfully stored transcription for file ${fileName} in block ${blockId}`);
+      // Check if file context already exists for this file
+      const { getFileContextByFileName } = await import('@/lib/filecontext');
+      const existingContext = await getFileContextByFileName(blockId, fileName);
+      
+      if (existingContext) {
+        // Update existing context
+        const { updateFileContext } = await import('@/lib/filecontext');
+        await updateFileContext(existingContext.id, {
+          text: transcript.text
+        });
+        console.log(`Successfully updated transcription for file ${fileName} in block ${blockId}`);
+      } else {
+        // Create new context
+        await createFileContext({
+          fileName: fileName,
+          text: transcript.text,
+          blockId: blockId
+        });
+        console.log(`Successfully stored transcription for file ${fileName} in block ${blockId}`);
+      }
       console.log('Transcribed content:', transcript.text);
     } catch (error) {
       console.error("Error storing transcription in FileContext:", error);

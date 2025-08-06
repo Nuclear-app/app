@@ -112,7 +112,9 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
           throw new Error('Empty file received');
         }
 
-        const file = new File([blob], 'temp', { type: fileType });
+        // Extract original filename from the parsed data
+        const originalFileName = parsedData.path ? parsedData.path.split('/').pop() : 'unknown';
+        const file = new File([blob], originalFileName, { type: fileType });
 
         // Ensure blockId is a string before passing to ocr
         const ocrResult = await ocr(file, blockId ?? '');
@@ -123,7 +125,9 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
         if (!fileUrl) {
           throw new Error('No audio URL provided');
         }
-        const transcript = await transcribeAudio(fileUrl, fileData.name, blockId ?? '');
+        // Extract original filename from the parsed data
+        const originalFileName = parsedData.path ? parsedData.path.split('/').pop() : 'unknown';
+        const transcript = await transcribeAudio(fileUrl, originalFileName, blockId ?? '');
         return transcript || '';
       }
 

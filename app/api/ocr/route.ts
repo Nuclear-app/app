@@ -64,7 +64,7 @@ export async function POST(request: Request) {
 
     // Check file size (base64 string length)
     const base64Size = imageBase64.length * 0.75; // approximate size in bytes
-    const maxSize = 5 * 1024 * 1024; // 5MB limit
+    const maxSize = 100 * 1024 * 1024; // 100MB limit
     if (base64Size > maxSize) {
       return NextResponse.json(
         { error: `File too large. Maximum size is ${maxSize / (1024 * 1024)}MB` },
@@ -156,12 +156,26 @@ export async function POST(request: Request) {
 
     // Store the extracted text in FileContext table
     try {
-      await createFileContext({
-        fileName: fileName,
-        text: extractedText,
-        blockId: blockId
-      });
-      console.log(`Successfully stored OCR text for file ${fileName} in block ${blockId}`);
+      // Check if file context already exists for this file
+      const { getFileContextByFileName } = await import('@/lib/filecontext');
+      const existingContext = await getFileContextByFileName(blockId, fileName);
+      
+      if (existingContext) {
+        // Update existing context
+        const { updateFileContext } = await import('@/lib/filecontext');
+        await updateFileContext(existingContext.id, {
+          text: extractedText
+        });
+        console.log(`Successfully updated OCR text for file ${fileName} in block ${blockId}`);
+      } else {
+        // Create new context
+        await createFileContext({
+          fileName: fileName,
+          text: extractedText,
+          blockId: blockId
+        });
+        console.log(`Successfully stored OCR text for file ${fileName} in block ${blockId}`);
+      }
     } catch (error) {
       console.error("Error storing OCR text in FileContext:", error);
       // Don't fail the entire request if storage fails, just log it

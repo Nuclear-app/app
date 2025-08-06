@@ -9,12 +9,24 @@ import { getBlockContext, getBlockNote, setBlockNote, updateBlock } from "@/lib/
 import { createFileContext, getFileContextsByBlockId } from "@/lib/filecontext"
 
 export async function updateContext(data: { blockId: string, context: string }) {  
-  // Create a new file context instead of updating the old context field
-  await createFileContext({
-    fileName: 'generated-context.txt',
-    text: data.context,
-    blockId: data.blockId
-  });
+  // Check if a generated context already exists for this block
+  const existingContexts = await getFileContextsByBlockId(data.blockId);
+  const existingGeneratedContext = existingContexts.find(fc => fc.fileName === 'generated-context.txt');
+  
+  if (existingGeneratedContext) {
+    // Update existing context instead of creating a new one
+    const { updateFileContext } = await import('@/lib/filecontext');
+    await updateFileContext(existingGeneratedContext.id, {
+      text: data.context
+    });
+  } else {
+    // Create a new file context only if one doesn't exist
+    await createFileContext({
+      fileName: 'generated-context.txt',
+      text: data.context,
+      blockId: data.blockId
+    });
+  }
 } 
 
 export async function fetchContext(blockId: string): Promise<string> {

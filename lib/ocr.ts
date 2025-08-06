@@ -25,7 +25,7 @@ export const ocr = async (selectedFile: File, blockId: string): Promise<OCRResul
         }
 
         // Check file size
-        const maxSize = 5 * 1024 * 1024; // 5MB
+        const maxSize = 100 * 1024 * 1024; // 100MB
         if (selectedFile.size > maxSize) {
             throw new Error(`File too large. Maximum size is ${maxSize / (1024 * 1024)}MB`);
         }
