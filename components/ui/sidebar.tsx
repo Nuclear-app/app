@@ -139,12 +139,13 @@ const FileHistory = ({ blockId }: { blockId: string }) => {
 };
 
 // Enhanced Folder component with context menu and dropdown
-const EnhancedFolder = ({ element, value, children, onRename, onDelete }: {
+const EnhancedFolder = ({ element, value, children, onRename, onDelete, isDeleting }: {
     element: string
     value: string
     children: React.ReactNode
     onRename?: (id: string, newName: string) => Promise<void>
     onDelete?: (id: string) => Promise<void>
+    isDeleting?: boolean
 }) => {
     const [renameDialogOpen, setRenameDialogOpen] = useState(false)
 
@@ -166,68 +167,88 @@ const EnhancedFolder = ({ element, value, children, onRename, onDelete }: {
     }
 
     return (
-        <ContextMenu>
-            <ContextMenuTrigger className="w-full">
-                <div className="relative group">
-                    <Folder element={element} value={value}>
-                        {children}
-                    </Folder>
-                    <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-6 w-6 p-0 hover:bg-gray-700">
-                                    <MoreVertical className="h-3 w-3" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-48 bg-[#292929] border border-[#333333]">
-                                <DropdownMenuItem 
-                                    className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]"
-                                    onClick={() => setRenameDialogOpen(true)}
-                                >
-                                    <Pencil className="h-4 w-4" />
-                                    <span>Rename Folder</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    className="flex items-center gap-2 cursor-pointer text-red-500 hover:bg-[#333333]"
-                                    onClick={handleDelete}
-                                >
-                                    <Trash2 className="h-4 w-4" />
-                                    <span>Delete Folder</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+        <>
+            <ContextMenu>
+                <ContextMenuTrigger className="w-full">
+                    <div className={`relative group ${isDeleting ? 'opacity-50 pointer-events-none' : ''}`}>
+                        <Folder element={element} value={value}>
+                            {children}
+                        </Folder>
+                        <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button 
+                                        variant="ghost" 
+                                        className="h-6 w-6 p-0 hover:bg-gray-700"
+                                        disabled={isDeleting}
+                                    >
+                                        <MoreVertical className="h-3 w-3" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-48 bg-[#292929] border border-[#333333]">
+                                    <DropdownMenuItem 
+                                        className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]"
+                                        onClick={() => setRenameDialogOpen(true)}
+                                        disabled={isDeleting}
+                                    >
+                                        <Pencil className="h-4 w-4" />
+                                        <span>Rename Folder</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        className="flex items-center gap-2 cursor-pointer text-red-500 hover:bg-[#333333]"
+                                        onClick={handleDelete}
+                                        disabled={isDeleting}
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                        <span>Delete Folder</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
                     </div>
-                </div>
-            </ContextMenuTrigger>
-            <ContextMenuContent className="w-48 bg-[#292929] border border-[#333333]">
-                <ContextMenuItem 
-                    className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]"
-                    onClick={() => setRenameDialogOpen(true)}
-                >
-                    <Pencil className="h-4 w-4" />
-                    <span>Rename Folder</span>
-                </ContextMenuItem>
-                <ContextMenuItem 
-                    className="flex items-center gap-2 cursor-pointer text-red-500 hover:bg-[#333333]"
-                    onClick={handleDelete}
-                >
-                    <Trash2 className="h-4 w-4" />
-                    <span>Delete Folder</span>
-                </ContextMenuItem>
-            </ContextMenuContent>
-        </ContextMenu>
+                </ContextMenuTrigger>
+                <ContextMenuContent className="w-48 bg-[#292929] border border-[#333333]">
+                    <ContextMenuItem 
+                        className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]"
+                        onClick={() => setRenameDialogOpen(true)}
+                        disabled={isDeleting}
+                    >
+                        <Pencil className="h-4 w-4" />
+                        <span>Rename Folder</span>
+                    </ContextMenuItem>
+                    <ContextMenuItem 
+                        className="flex items-center gap-2 cursor-pointer text-red-500 hover:bg-[#333333]"
+                        onClick={handleDelete}
+                        disabled={isDeleting}
+                    >
+                        <Trash2 className="h-4 w-4" />
+                        <span>Delete Folder</span>
+                    </ContextMenuItem>
+                </ContextMenuContent>
+            </ContextMenu>
+            
+            {/* Rename Folder Dialog */}
+            <RenameBlockDialogue
+                open={renameDialogOpen}
+                onOpenChange={setRenameDialogOpen}
+                currentName={element}
+                onRename={handleRename}
+            />
+        </>
     )
 }
 
 // Enhanced File component with context menu and dropdown
-const EnhancedFile = ({ element, value, onRename, onDelete, isCurrentBlock }: {
+const EnhancedFile = ({ element, value, onRename, onDelete, isCurrentBlock, isDeleting }: {
     element: string
     value: string
     onRename?: (id: string, newName: string) => Promise<void>
     onDelete?: (id: string) => Promise<void>
     isCurrentBlock?: boolean
+    isDeleting?: boolean
 }) => {
     const [renameDialogOpen, setRenameDialogOpen] = useState(false)
+    const router = useRouter()
 
     const handleRename = async (newName: string) => {
         try {
@@ -246,57 +267,86 @@ const EnhancedFile = ({ element, value, onRename, onDelete, isCurrentBlock }: {
         }
     }
 
+    const handleBlockClick = () => {
+        if (isDeleting) return // Prevent navigation while deleting
+        // Navigate to the block page
+        router.push(`/dashboard/block/${value}`)
+    }
+
     return (
-        <ContextMenu>
-            <ContextMenuTrigger className="w-full">
-                <div className="relative group">
-                    <File value={value}>
-                        {element}
-                    </File>
-                    <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-6 w-6 p-0 hover:bg-gray-700">
-                                    <MoreVertical className="h-3 w-3" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-48 bg-[#292929] border border-[#333333]">
-                                <DropdownMenuItem 
-                                    className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]"
-                                    onClick={() => setRenameDialogOpen(true)}
-                                >
-                                    <Pencil className="h-4 w-4" />
-                                    <span>Rename Block</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    className={`flex items-center gap-2 cursor-pointer hover:bg-[#333333] ${isCurrentBlock ? 'text-gray-500 cursor-not-allowed' : 'text-red-500'}`}
-                                    onClick={isCurrentBlock ? undefined : handleDelete}
-                                >
-                                    <Trash2 className="h-4 w-4" />
-                                    <span>{isCurrentBlock ? 'Current Block (Cannot Delete)' : 'Delete Block'}</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+        <>
+            <ContextMenu>
+                <ContextMenuTrigger className="w-full">
+                    <div className={`relative group ${isDeleting ? 'opacity-50 pointer-events-none' : ''}`}>
+                        <div 
+                            className={`cursor-pointer hover:bg-gray-700/50 rounded transition-colors ${isDeleting ? 'cursor-not-allowed' : ''}`}
+                            onClick={handleBlockClick}
+                        >
+                            <File value={value}>
+                                {element}
+                            </File>
+                        </div>
+                        <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button 
+                                        variant="ghost" 
+                                        className="h-6 w-6 p-0 hover:bg-gray-700"
+                                        disabled={isDeleting}
+                                    >
+                                        <MoreVertical className="h-3 w-3" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-48 bg-[#292929] border border-[#333333]">
+                                    <DropdownMenuItem 
+                                        className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]"
+                                        onClick={() => setRenameDialogOpen(true)}
+                                        disabled={isDeleting}
+                                    >
+                                        <Pencil className="h-4 w-4" />
+                                        <span>Rename Block</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        className={`flex items-center gap-2 cursor-pointer hover:bg-[#333333] ${isCurrentBlock ? 'text-gray-500 cursor-not-allowed' : 'text-red-500'}`}
+                                        onClick={isCurrentBlock ? undefined : handleDelete}
+                                        disabled={isCurrentBlock || isDeleting}
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                        <span>{isCurrentBlock ? 'Current Block (Cannot Delete)' : 'Delete Block'}</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
                     </div>
-                </div>
-            </ContextMenuTrigger>
-            <ContextMenuContent className="w-48 bg-[#292929] border border-[#333333]">
-                <ContextMenuItem 
-                    className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]"
-                    onClick={() => setRenameDialogOpen(true)}
-                >
-                    <Pencil className="h-4 w-4" />
-                    <span>Rename Block</span>
-                </ContextMenuItem>
-                <ContextMenuItem 
-                    className={`flex items-center gap-2 cursor-pointer hover:bg-[#333333] ${isCurrentBlock ? 'text-gray-500 cursor-not-allowed' : 'text-red-500'}`}
-                    onClick={isCurrentBlock ? undefined : handleDelete}
-                >
-                    <Trash2 className="h-4 w-4" />
-                    <span>{isCurrentBlock ? 'Current Block (Cannot Delete)' : 'Delete Block'}</span>
-                </ContextMenuItem>
-            </ContextMenuContent>
-        </ContextMenu>
+                </ContextMenuTrigger>
+                <ContextMenuContent className="w-48 bg-[#292929] border border-[#333333]">
+                    <ContextMenuItem 
+                        className="flex items-center gap-2 cursor-pointer hover:bg-[#333333]"
+                        onClick={() => setRenameDialogOpen(true)}
+                        disabled={isDeleting}
+                    >
+                        <Pencil className="h-4 w-4" />
+                        <span>Rename Block</span>
+                    </ContextMenuItem>
+                    <ContextMenuItem 
+                        className={`flex items-center gap-2 cursor-pointer hover:bg-[#333333] ${isCurrentBlock ? 'text-gray-500 cursor-not-allowed' : 'text-red-500'}`}
+                        onClick={isCurrentBlock ? undefined : handleDelete}
+                        disabled={isCurrentBlock || isDeleting}
+                    >
+                        <Trash2 className="h-4 w-4" />
+                        <span>{isCurrentBlock ? 'Current Block (Cannot Delete)' : 'Delete Block'}</span>
+                    </ContextMenuItem>
+                </ContextMenuContent>
+            </ContextMenu>
+            
+            {/* Rename Block Dialog */}
+            <RenameBlockDialogue
+                open={renameDialogOpen}
+                onOpenChange={setRenameDialogOpen}
+                currentName={element}
+                onRename={handleRename}
+            />
+        </>
     )
 }
 
@@ -305,6 +355,7 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
     const [loading, setLoading] = useState(true)
     const [isFileDialogOpen, setIsFileDialogOpen] = useState(false)
     const [mounted, setMounted] = useState(false)
+    const [deletingItems, setDeletingItems] = useState<Set<string>>(new Set())
     const router = useRouter()
 
     useEffect(() => {
@@ -366,7 +417,18 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                 return
             }
             
+            // Add to deleting set for animation
+            setDeletingItems(prev => new Set(prev).add(blockIdToDelete))
+            
             await deleteBlock(blockIdToDelete)
+            
+            // Remove from deleting set
+            setDeletingItems(prev => {
+                const newSet = new Set(prev)
+                newSet.delete(blockIdToDelete)
+                return newSet
+            })
+            
             // Refresh the file structure after delete
             const result = await getUserFileStructureAction(userId || "")
             if (result.success) {
@@ -374,6 +436,12 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
             }
         } catch (error) {
             console.error("Failed to delete block:", error)
+            // Remove from deleting set on error
+            setDeletingItems(prev => {
+                const newSet = new Set(prev)
+                newSet.delete(blockIdToDelete)
+                return newSet
+            })
         }
     }
 
@@ -392,7 +460,18 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
 
     const handleDeleteFolder = async (folderId: string) => {
         try {
+            // Add to deleting set for animation
+            setDeletingItems(prev => new Set(prev).add(folderId))
+            
             await deleteCrate(folderId)
+            
+            // Remove from deleting set
+            setDeletingItems(prev => {
+                const newSet = new Set(prev)
+                newSet.delete(folderId)
+                return newSet
+            })
+            
             // Refresh the file structure after delete
             const result = await getUserFileStructureAction(userId || "")
             if (result.success) {
@@ -400,37 +479,85 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
             }
         } catch (error) {
             console.error("Failed to delete folder:", error)
+            // Remove from deleting set on error
+            setDeletingItems(prev => {
+                const newSet = new Set(prev)
+                newSet.delete(folderId)
+                return newSet
+            })
         }
     }
 
     // Helper function to render tree structure with enhanced components
     const renderTreeStructure = (structure: any[], onRenameBlock?: (id: string, newName: string) => Promise<void>, onDeleteBlock?: (id: string) => Promise<void>, onRenameFolder?: (id: string, newName: string) => Promise<void>, onDeleteFolder?: (id: string) => Promise<void>) => {
-        return structure.map((item) => {
-            if (item.type === 'folder') {
-                return (
-                    <EnhancedFolder 
-                        key={item.value} 
-                        element={item.element} 
-                        value={item.value}
-                        onRename={onRenameFolder}
-                        onDelete={onDeleteFolder}
-                    >
-                        {item.children && item.children.length > 0 && renderTreeStructure(item.children, onRenameBlock, onDeleteBlock, onRenameFolder, onDeleteFolder)}
-                    </EnhancedFolder>
-                )
-            } else {
-                return (
-                    <EnhancedFile 
-                        key={item.value} 
-                        element={item.element} 
-                        value={item.value}
-                        onRename={onRenameBlock}
-                        onDelete={onDeleteBlock}
-                        isCurrentBlock={item.value === blockId}
-                    />
-                )
-            }
-        })
+        return (
+            <AnimatePresence mode="popLayout">
+                {structure.map((item) => {
+                    if (item.type === 'folder') {
+                        return (
+                            <motion.div
+                                key={item.value}
+                                layout
+                                initial={{ opacity: 1, scale: 1 }}
+                                exit={{
+                                    opacity: 0,
+                                    scale: 0.8,
+                                    x: -50,
+                                    transition: {
+                                        duration: 0.3,
+                                        ease: "easeInOut"
+                                    }
+                                }}
+                                transition={{
+                                    duration: 0.2,
+                                    layout: { duration: 0.3 }
+                                }}
+                            >
+                                <EnhancedFolder 
+                                    element={item.element} 
+                                    value={item.value}
+                                    onRename={onRenameFolder}
+                                    onDelete={onDeleteFolder}
+                                    isDeleting={deletingItems.has(item.value)}
+                                >
+                                    {item.children && item.children.length > 0 && renderTreeStructure(item.children, onRenameBlock, onDeleteBlock, onRenameFolder, onDeleteFolder)}
+                                </EnhancedFolder>
+                            </motion.div>
+                        )
+                    } else {
+                        return (
+                            <motion.div
+                                key={item.value}
+                                layout
+                                initial={{ opacity: 1, scale: 1 }}
+                                exit={{
+                                    opacity: 0,
+                                    scale: 0.8,
+                                    x: -50,
+                                    transition: {
+                                        duration: 0.3,
+                                        ease: "easeInOut"
+                                    }
+                                }}
+                                transition={{
+                                    duration: 0.2,
+                                    layout: { duration: 0.3 }
+                                }}
+                            >
+                                <EnhancedFile 
+                                    element={item.element} 
+                                    value={item.value}
+                                    onRename={onRenameBlock}
+                                    onDelete={onDeleteBlock}
+                                    isCurrentBlock={item.value === blockId}
+                                    isDeleting={deletingItems.has(item.value)}
+                                />
+                            </motion.div>
+                        )
+                    }
+                })}
+            </AnimatePresence>
+        )
     }
 
     return (
