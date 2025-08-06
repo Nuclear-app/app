@@ -276,7 +276,7 @@ export function SignUpForm({
                      width={1000}
                      height={1000}
                      alt="Image"
-                     className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.5] dark:grayscale"
+                     className="absolute inset-0 h-full w-full object-cover dark:grayscale"
                   />
                </motion.div>
             </CardContent>

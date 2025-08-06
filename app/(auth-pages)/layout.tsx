@@ -4,6 +4,6 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="w-full h-full">{children}</div>
+    <div className="flex w-screen h-screen">{children}</div>
   );
 }
