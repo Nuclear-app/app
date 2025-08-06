@@ -738,7 +738,7 @@ export async function getFileContextsWithLongText(minLength: number): Promise<Fi
     const fileContexts = await prisma.fileContext.findMany({
       where: {
         text: {
-          not: null
+          not: ''
         }
       },
       orderBy: { createdAt: 'desc' }
@@ -765,7 +765,7 @@ export async function getFileContextsWithShortText(maxLength: number): Promise<F
     const fileContexts = await prisma.fileContext.findMany({
       where: {
         text: {
-          not: null
+          not: ''
         }
       },
       orderBy: { createdAt: 'desc' }
@@ -793,9 +793,14 @@ export async function getUniqueFileExtensions(): Promise<string[]> {
         const parts = context.fileName.split('.')
         return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : null
       })
-      .filter(ext => ext !== null) as string[]
+      // The original code used `.filter(ext => ext !== null) as string[]` to remove nulls and then cast the result to string[].
+      // This is unsafe because TypeScript can't guarantee that all non-null values are strings.
+      // The improved code uses a type predicate: `.filter((ext): ext is string => ext !== null)`.
+      // This tells TypeScript that after filtering, the array contains only strings, so no type assertion is needed.
+      // Also, `Array.from(new Set(extensions))` is used instead of `[...new Set(extensions)]` for clarity, but both are equivalent.
+      .filter((ext): ext is string => ext !== null)
 
-    return [...new Set(extensions)]
+    return Array.from(new Set(extensions))
   } catch (error) {
     throw new FileContextError(`Failed to get unique file extensions: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
   }
