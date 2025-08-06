@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Settings, FileText, Star, Share2, X, Home, Zap, Flag, User, LogOut, ArrowLeftToLine, MoreVertical, Trash2, Pencil, ChevronRight, ChevronDown, Upload } from "lucide-react"
+import { Settings, FileText, Star, Share2, X, Home, Zap, Flag, User, LogOut, ArrowLeftToLine, MoreVertical, Trash2, Pencil, ChevronRight, ChevronDown, Upload, Plus } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Tree, Folder, File } from "@/components/magicui/file-tree"
 import { useEffect, useState } from "react"
@@ -28,6 +28,7 @@ import FileUpload, { FileState } from "@/components/fileInputComponent/fileUploa
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Skeleton } from "./skeleton"
 import { fetchFileNames, deleteFile } from "@/app/modeSpecific/fileInput/actions"
+import { SelectionDialog } from "@/components/dashboardComp/SelectionDialog"
 
 interface SidebarProps {
     isOpen: boolean
@@ -354,6 +355,7 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
     const [fileStructure, setFileStructure] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
     const [isFileDialogOpen, setIsFileDialogOpen] = useState(false)
+    const [selectionDialogOpen, setSelectionDialogOpen] = useState(false)
     const [mounted, setMounted] = useState(false)
     const [deletingItems, setDeletingItems] = useState<Set<string>>(new Set())
     const router = useRouter()
@@ -574,7 +576,7 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                         {/* Header */}
                         <div className="flex items-center justify-between p-2 gap-2">
                             <Button 
-                                className="text-lg font-semibold w-4/5 rounded-xl justify-start h-10"
+                                className="text-lg font-semibold w-4/5 rounded-xl justify-start h-12"
                                 onClick={() => router.push('/dashboard')}
                             >
                                 <Home className="mr-2 h-4 w-4" />
@@ -584,7 +586,7 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                                 variant="ghost"
                                 size="icon"
                                 onClick={onClose}
-                                className="hover:bg-[#3C373588] bg-[#3C3735] rounded-xl w-1/5 h-10"
+                                className="hover:bg-[#3C373588] bg-[#3C3735] rounded-xl w-1/5 h-12"
                             >
                                 <ArrowLeftToLine className="h-5 w-5" />
                             </Button>
@@ -609,15 +611,24 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                                 <Zap className="mr-3 h-4 w-4" />
                                 Flashcards
                             </Button>
+                        </div>
 
-                            {/* File Management Button */}
+                        {/* Sources Button and Create New Button*/}
+                        <div className="flex items-center justify-between p-2 gap-2">
+                            <Button 
+                                className="hover:bg-[#3C373588] bg-[#3C3735] text-white text-lg font-semibold w-4/5 rounded-xl justify-start h-12"
+                                onClick={() => setIsFileDialogOpen(true)}                         
+                            >
+                                <Upload className="mr-2 h-4 w-4" />
+                                Sources
+                            </Button>
                             <Button
                                 variant="ghost"
-                                className="w-full justify-start font-bold text-lg text-[#90EE90] hover:text-white hover:bg-gray-800"
-                                onClick={() => setIsFileDialogOpen(true)}
+                                size="icon"
+                                onClick={() => setSelectionDialogOpen(true)}
+                                className="hover:bg-[#3C373588] bg-[#3C3735] rounded-xl w-1/5 h-12"
                             >
-                                <Upload className="mr-3 h-4 w-4" />
-                                File Management
+                                <Plus className="h-5 w-5" />
                             </Button>
                         </div>
                         
@@ -646,7 +657,7 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                         {/* Footer */}
                         <div className="flex items-center justify-between p-2 gap-2">
                             <Button
-                                className=" text-lg font-semibold w-4/5 rounded-xl justify-start h-10 bg-[#3C3735] text-white"
+                                className="hover:bg-[#3C373588] text-lg font-semibold w-4/5 rounded-xl justify-start h-12 bg-[#3C3735] text-white"
                                 onClick={async () => {
                                     const supabase = createClient()
                                     await supabase.auth.signOut()
@@ -658,7 +669,7 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                             </Button>
                             <Button
                                 size="icon"
-                                className="hover:bg-[#3C373588] bg-[#3C3735] rounded-xl w-1/5 h-10 text-white"
+                                className="hover:bg-[#3C373588] bg-[#3C3735] rounded-xl w-1/5 h-12 text-white"
                             >
                                 <User className="h-5 w-5" />
                             </Button>
