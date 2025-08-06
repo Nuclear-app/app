@@ -472,6 +472,19 @@ export async function getFileSystemStructureWithCache(userId: string, ttlSeconds
     );
 }
 
+export async function getUserFileStructureWithCache(userId: string, ttlSeconds = 600) {
+    console.log(`getUserFileStructureWithCache called with userId: ${userId}`);
+    return cacheAside(
+        `filestructure:${userId}`,
+        ttlSeconds,
+        async () => {
+            // Import the function dynamically to avoid circular dependencies
+            const { getUserFileStructure } = await import('./folder');
+            return await getUserFileStructure(userId);
+        }
+    );
+}
+
 // ==================== CACHE INVALIDATION ====================
 
 export async function invalidateBlockCache(blockId: string) {
@@ -507,7 +520,8 @@ export async function invalidateUserCache(userId: string) {
         `user:folders:${userId}`,
         `user:name:${userId}`,
         `user:dashboard:${userId}`,
-        `filesystem:${userId}`
+        `filesystem:${userId}`,
+        `filestructure:${userId}`
     ];
     await Promise.all(keys.map(key => redis.del(key)));
     console.log(`invalidateUserCache: deleted ${keys.length} keys for userId: ${userId}`);
@@ -587,13 +601,15 @@ export async function invalidateUserFoldersCache(userId: string) {
 
 export async function invalidateRootBlocksCache(userId: string) {
     console.log(`invalidateRootBlocksCache called with userId: ${userId}`);
-    await redis.del(`blocks:toplevel:${userId}:f2120a35-5e3f-488e-be86-f0753af42e77`);
+    const ROOT_FOLDER_ID = process.env.ROOT_FOLDER_ID || "f2120a35-5e3f-488e-be86-f0753af42e77";
+    await redis.del(`blocks:toplevel:${userId}:${ROOT_FOLDER_ID}`);
     console.log(`invalidateRootBlocksCache: deleted key for userId: ${userId}`);
 }
 
 export async function invalidateRootFoldersCache(userId: string) {
     console.log(`invalidateRootFoldersCache called with userId: ${userId}`);
-    await redis.del(`folders:toplevel:${userId}:f2120a35-5e3f-488e-be86-f0753af42e77`);
+    const ROOT_FOLDER_ID = process.env.ROOT_FOLDER_ID || "f2120a35-5e3f-488e-be86-f0753af42e77";
+    await redis.del(`folders:toplevel:${userId}:${ROOT_FOLDER_ID}`);
     console.log(`invalidateRootFoldersCache: deleted key for userId: ${userId}`);
 }
 

@@ -7,6 +7,7 @@ import { Tree, Folder, File } from "@/components/magicui/file-tree"
 import { useEffect, useState } from "react"
 import { getUserFileStructureAction } from "@/lib/folderActions"
 import { Loading } from "./loading"
+import { Skeleton } from "./skeleton"
 import {
     ContextMenu,
     ContextMenuContent,
@@ -26,7 +27,6 @@ import { createClient } from "@/utils/supabase/client"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./dialog"
 import FileUpload, { FileState } from "@/components/fileInputComponent/fileUpload"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { Skeleton } from "./skeleton"
 import { fetchFileNames, deleteFile } from "@/app/modeSpecific/fileInput/actions"
 
 interface SidebarProps {
@@ -352,7 +352,7 @@ const EnhancedFile = ({ element, value, onRename, onDelete, isCurrentBlock, isDe
 
 export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
     const [fileStructure, setFileStructure] = useState<any[]>([])
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [isFileDialogOpen, setIsFileDialogOpen] = useState(false)
     const [mounted, setMounted] = useState(false)
     const [deletingItems, setDeletingItems] = useState<Set<string>>(new Set())
@@ -365,15 +365,26 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
 
     useEffect(() => {
         const loadFileStructure = async () => {
+            console.log('Loading file structure, userId:', userId)
+            
             if (!userId) {
+                console.log('No userId provided, setting loading to false')
                 setLoading(false)
                 return
             }
 
+            setLoading(true) // Ensure loading is true when starting
+            console.log('Starting to load file structure...')
+
+            // Add a small delay to ensure loading state is visible
+            await new Promise(resolve => setTimeout(resolve, 500))
+
             try {
                 const result = await getUserFileStructureAction(userId)
+                console.log('File structure result:', result)
                 if (result.success) {
                     setFileStructure(result.data)
+                    console.log('File structure data:', result.data)
                 } else {
                     console.error('Failed to load file structure:', result.error)
                     setFileStructure([])
@@ -382,6 +393,7 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                 console.error('Failed to load file structure:', error)
                 setFileStructure([])
             } finally {
+                console.log('Setting loading to false')
                 setLoading(false)
             }
         }
@@ -560,6 +572,8 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
         )
     }
 
+    console.log('Sidebar render - loading:', loading, 'fileStructure length:', fileStructure.length, 'userId:', userId)
+    
     return (
         <AnimatePresence>
             {isOpen && (
@@ -623,8 +637,31 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                         
                         {/* Folder Tree */}
                         <div className="flex-1 overflow-y-auto p-4 py-8">
-                            {loading ? (
-                                <Loading></Loading>
+                            {(loading || (!loading && fileStructure.length === 0 && userId)) ? (
+                                <div className="space-y-3">
+                                    {/* Root level skeleton items */}
+                                    {[...Array(3)].map((_, index) => (
+                                        <div key={`root-${index}`} className="space-y-2">
+                                            {/* Folder skeleton */}
+                                            <div className="flex items-center space-x-2">
+                                                <Skeleton className="h-4 w-4" /> {/* Chevron */}
+                                                <Skeleton className="h-4 w-4" /> {/* Folder icon */}
+                                                <Skeleton className="h-4 w-32" /> {/* Folder name */}
+                                            </div>
+                                            {/* Nested items skeleton */}
+                                            {index === 0 && (
+                                                <div className="ml-6 space-y-2">
+                                                    {[...Array(2)].map((_, subIndex) => (
+                                                        <div key={`nested-${subIndex}`} className="flex items-center space-x-2">
+                                                            <Skeleton className="h-4 w-4" /> {/* File icon */}
+                                                            <Skeleton className="h-4 w-24" /> {/* File name */}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
                             ) : fileStructure.length > 0 ? (
                                 <Tree
                                     openIcon={<ChevronDown className="size-4" />}
@@ -638,9 +675,9 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                                         handleDeleteFolder
                                     )}
                                 </Tree>
-                            ) : (
+                            ) : userId ? (
                                 <div className="">No files found {":("} </div>
-                            )}
+                            ) : null}
                         </div>
                         
                         {/* Footer */}

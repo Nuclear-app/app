@@ -5,6 +5,8 @@ import { JSONContent } from "novel";
 import { createClient } from "@/utils/supabase/server";
 import { createBlock, getBlockById, updateBlock as updateBlockLib } from "@/lib/block";
 
+const ROOT_FOLDER_ID = process.env.ROOT_FOLDER_ID || "f2120a35-5e3f-488e-be86-f0753af42e77";
+
 
 export async function updateBlock(content: JSONContent, blockId?: string) {
   try {
@@ -31,6 +33,7 @@ export async function updateBlock(content: JSONContent, blockId?: string) {
         title: "Untitled Note",
         authorId: user.id,
         note: serializedContent,
+        folderId: ROOT_FOLDER_ID
       })
 
       revalidatePath("/");

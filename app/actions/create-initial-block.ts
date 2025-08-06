@@ -6,7 +6,7 @@ import { Block, Mode } from "@prisma/client";
 import { updatePoints } from "@/lib/blockFetch";
 import { createBlock } from "@/lib/block";
 
-const ROOT_FOLDER_ID = "f2120a35-5e3f-488e-be86-f0753af42e77";
+const ROOT_FOLDER_ID = process.env.ROOT_FOLDER_ID || "f2120a35-5e3f-488e-be86-f0753af42e77";
 
 type BlockResponse = {
   success: boolean;

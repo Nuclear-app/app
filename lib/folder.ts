@@ -817,9 +817,9 @@ export async function getUserFileStructure(userId: string): Promise<any[]> {
       })
     }
 
-    // Start building from root folders (those with parentId = ROOT_FOLDER_ID or null)
+    // Start building from root folders (those with parentId = ROOT_FOLDER_ID)
     const rootFolders = folders.filter(folder => 
-      folder.parentId === ROOT_FOLDER_ID || folder.parentId === null
+      folder.parentId === ROOT_FOLDER_ID
     )
 
     const treeStructure = rootFolders.map(folder => {
@@ -838,9 +838,9 @@ export async function getUserFileStructure(userId: string): Promise<any[]> {
       }
     })
 
-    // Add root-level blocks (blocks not in any folder)
+    // Add root-level blocks (blocks that are in ROOT_FOLDER_ID or have no folderId)
     const rootLevelBlocks = allBlocks.filter(block => 
-      !block.folderId || block.folderId === ROOT_FOLDER_ID
+      block.folderId === ROOT_FOLDER_ID || !block.folderId
     )
 
     const rootBlockFiles = rootLevelBlocks.map(block => ({
@@ -854,5 +854,77 @@ export async function getUserFileStructure(userId: string): Promise<any[]> {
   } catch (error) {
     if (error instanceof FolderError) throw error
     throw new FolderError(`Failed to get user file structure: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
+  }
+}
+
+/**
+ * Get root-level items for sidebar display
+ * @param userId - The user's unique identifier
+ * @returns Promise<Array> - Array of root-level items (folders and blocks)
+ */
+export async function getRootLevelItems(userId: string): Promise<any[]> {
+  try {
+    console.log("getRootLevelItems - userId:", userId);
+    if (!userId || typeof userId !== 'string') {
+      throw new FolderError('Invalid user ID provided', 'INVALID_USER_ID')
+    }
+
+    // Get root-level folders (those with parentId = ROOT_FOLDER_ID)
+    const rootFolders = await prisma.folder.findMany({
+      where: { 
+        authorId: userId,
+        parentId: ROOT_FOLDER_ID
+      },
+      select: {
+        id: true,
+        name: true,
+        icon: true,
+        createdAt: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+
+    // Get root-level blocks (those with folderId = ROOT_FOLDER_ID or null)
+    const rootBlocks = await prisma.block.findMany({
+      where: { 
+        authorId: userId,
+        OR: [
+          { folderId: ROOT_FOLDER_ID },
+          { folderId: null }
+        ]
+      },
+      select: {
+        id: true,
+        title: true,
+        createdAt: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+
+    console.log("getRootLevelItems - rootFolders:", rootFolders);
+    console.log("getRootLevelItems - rootBlocks:", rootBlocks);
+
+    // Convert to the expected format
+    const folders = rootFolders.map(folder => ({
+      element: folder.name,
+      value: folder.id,
+      type: 'folder'
+    }))
+
+    const blocks = rootBlocks.map(block => ({
+      element: block.title || 'Untitled Block',
+      value: block.id,
+      type: 'file'
+    }))
+
+    // Combine and return
+    return [...folders, ...blocks]
+  } catch (error) {
+    if (error instanceof FolderError) throw error
+    throw new FolderError(`Failed to get root level items: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
   }
 } 

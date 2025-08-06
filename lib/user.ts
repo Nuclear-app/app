@@ -3,6 +3,8 @@ import prisma from './prisma'
 import { User, Mode, SubscriptionStatus } from '@prisma/client'
 import { createClient } from '@/utils/supabase/server'
 
+const ROOT_FOLDER_ID = process.env.ROOT_FOLDER_ID || "f2120a35-5e3f-488e-be86-f0753af42e77";
+
 /**
  * Custom error class for User operations
  */
@@ -463,7 +465,7 @@ export async function getUserCrates(userId: string) {
 
     const crates = await prisma.folder.findMany({
       where: {
-        parentId: null,
+        parentId: ROOT_FOLDER_ID,
         authorId: userId
       },
       select: {
