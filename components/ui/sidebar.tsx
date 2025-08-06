@@ -28,6 +28,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import FileUpload, { FileState } from "@/components/fileInputComponent/fileUpload"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { fetchFileNames, deleteFile } from "@/app/modeSpecific/fileInput/actions"
+import { SettingsPopup } from "./settings-popup"
 
 interface SidebarProps {
     isOpen: boolean
@@ -354,6 +355,7 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
     const [fileStructure, setFileStructure] = useState<any[]>([])
     const [loading, setLoading] = useState(false)
     const [isFileDialogOpen, setIsFileDialogOpen] = useState(false)
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false)
     const [mounted, setMounted] = useState(false)
     const [deletingItems, setDeletingItems] = useState<Set<string>>(new Set())
     const router = useRouter()
@@ -696,6 +698,7 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                             <Button
                                 size="icon"
                                 className="hover:bg-[#3C373588] bg-[#3C3735] rounded-xl w-1/5 h-10 text-white"
+                                onClick={() => setIsSettingsOpen(true)}
                             >
                                 <User className="h-5 w-5" />
                             </Button>
@@ -730,6 +733,12 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                             </DialogContent>
                         </Dialog>
                     )}
+
+                    {/* Settings Popup */}
+                    <SettingsPopup 
+                        open={isSettingsOpen} 
+                        onOpenChange={setIsSettingsOpen} 
+                    />
                 </motion.div>
             )}
         </AnimatePresence>
