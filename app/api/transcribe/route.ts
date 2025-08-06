@@ -39,6 +39,16 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check file size (audioUrl length as approximate size)
+    const audioUrlSize = audioUrl.length * 0.75; // approximate size in bytes
+    const maxSize = 50 * 1024 * 1024; // 50MB limit
+    if (audioUrlSize > maxSize) {
+      return NextResponse.json(
+        { error: `File too large. Maximum size is ${maxSize / (1024 * 1024)}MB` },
+        { status: 400 }
+      );
+    }
+
     // Transcribe audio using AssemblyAI
     const transcript = await client.transcripts.transcribe({
       audio_url: audioUrl,

@@ -24,11 +24,7 @@ export const ocr = async (selectedFile: File, blockId: string): Promise<OCRResul
             throw new Error(`Unsupported file type: ${selectedFile.type}. Supported types are: ${[...SUPPORTED_IMAGE_TYPES, SUPPORTED_PDF_TYPE].join(', ')}`);
         }
 
-        // Check file size
-        const maxSize = 100 * 1024 * 1024; // 100MB
-        if (selectedFile.size > maxSize) {
-            throw new Error(`File too large. Maximum size is ${maxSize / (1024 * 1024)}MB`);
-        }
+
 
         const reader = new FileReader();
         const base64Promise = new Promise<string>((resolve, reject) => {

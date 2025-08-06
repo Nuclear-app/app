@@ -167,7 +167,6 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
       const pond = FilePond.create(pondRef.current, {
         allowMultiple: true,
         maxFiles: 10,
-        maxFileSize: '100MB',
         acceptedFileTypes: ['image/*', 'application/pdf', 'audio/*'],
         labelIdle: 'Drag & Drop your files or <span class="filepond--label-action">Browse</span>',
         instantUpload: true,
