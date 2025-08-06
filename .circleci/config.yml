@@ -7,8 +7,19 @@ jobs:
   build-and-test:
     docker:
       - image: oven/bun:1
+    environment:
+      # Add AWS environment variables for the build process
+      AMAZON_REGION: us-east-1
+      AMAZON_ACCESS_KEY_ID: ${AMAZON_ACCESS_KEY_ID}
+      AMAZON_SECRET_ACCESS_KEY: ${AMAZON_SECRET_ACCESS_KEY}
+      UPLOAD_BUCKET: ${UPLOAD_BUCKET}
     steps:
       - checkout
+      - run:
+          name: Install system dependencies
+          command: |
+            # Install OpenSSL and other required packages
+            apt-get update && apt-get install -y openssl curl
       - run:
           name: Install dependencies with Bun
           command: bun install
@@ -25,11 +36,11 @@ jobs:
           name: Run tests (if any)
           command: bun run test || echo "No tests configured"
       - run:
-          name: Install curl for Discord notifications
-          command: |
-            # Install curl in the Bun Docker image
-            apt-get update && apt-get install -y curl
-      - run:
+      #     name: Install curl for Discord notifications
+      #     command: |
+      #       # Install curl in the Bun Docker image
+      #       apt-get update && apt-get install -y curl
+      # - run:
           name: Notify Discord - Build Success
           command: |
             if [ "$CIRCLE_JOB" = "build-and-test" ] && [ -n "$DISCORD_WEBHOOK_URL" ]; then
