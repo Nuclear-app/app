@@ -21,7 +21,7 @@ import {
   invalidateFolderCache
 } from "@/lib/redis";
 
-const ROOT_FOLDER_ID = "f2120a35-5e3f-488e-be86-f0753af42e77";
+const ROOT_FOLDER_ID = process.env.ROOT_FOLDER_ID || "f2120a35-5e3f-488e-be86-f0753af42e77";
 
 export interface DatabaseItem {
     id: string;
@@ -188,7 +188,7 @@ export const addBlock = async (title: string, parentId?: string) => {
         const block = await createBlock({
             title,
             authorId: userId,
-            folderId: parentId
+            folderId: parentId || ROOT_FOLDER_ID
         });
         
         // Invalidate relevant caches
@@ -209,7 +209,7 @@ export const addCrate = async (title: string, icon: string, parentId?: string) =
         const crate = await createFolder({
             name: title,
             authorId: userId,
-            parentId: parentId,
+            parentId: parentId || ROOT_FOLDER_ID,
             icon
         });
         
@@ -265,10 +265,14 @@ export const deleteCrate = async (crateId: string) => {
 
 export const updateBlockTitle = async (blockId: string, newTitle: string) => {
     try {
+        const userId = await getUser();
+        if (!userId) throw new Error("User not authenticated");
+
         await setBlockTitle(blockId, newTitle);
         
         // Invalidate relevant caches
         await invalidateBlockCache(blockId);
+        await invalidateUserCache(userId);
         
         return { success: true };
     } catch (error) {

@@ -10,7 +10,7 @@ import CreateItemForm from './createItemForm';
 import FileSystemTree from './fileSystemTree';
 import { DatabaseItem } from '@/lib/types';
 
-const rootFolderId = "f2120a35-5e3f-488e-be86-f0753af42e77";
+const rootFolderId = process.env.NEXT_PUBLIC_ROOT_FOLDER_ID || "f2120a35-5e3f-488e-be86-f0753af42e77";
 
 export interface FileSystemItem {
     name: string;
