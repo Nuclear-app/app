@@ -67,7 +67,7 @@ export async function POST(request: Request) {
 
     // Check file size (base64 string length)
     const base64Size = imageBase64.length * 0.75; // approximate size in bytes
-    const maxSize = 100 * 1024 * 1024; // 100MB limit
+    const maxSize = 50 * 1024 * 1024; // 50MB limit
     if (base64Size > maxSize) {
       return NextResponse.json(
         { error: `File too large. Maximum size is ${maxSize / (1024 * 1024)}MB` },
