@@ -352,4 +352,19 @@ export const getCurrentUserAction = async () => {
         console.error("Failed to get current user:", error);
         return null;
     }
+};
+
+export const updateUserNameAction = async (name: string) => {
+    try {
+        const userId = await getUser();
+        if (!userId) throw new Error("User not authenticated");
+
+        const { setUserName } = await import('@/lib/user');
+        await setUserName(userId, name);
+        
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update user name:", error);
+        throw error;
+    }
 }; 
