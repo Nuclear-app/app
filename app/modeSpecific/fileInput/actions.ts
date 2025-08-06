@@ -38,6 +38,26 @@ export async function fetchContext(blockId: string): Promise<string> {
   return contextText || '';
 }
 
+export async function fetchFileNames(blockId: string): Promise<string[]> {
+  try {
+    const { getFileNamesByBlockId } = await import('@/lib/filecontext');
+    return await getFileNamesByBlockId(blockId);
+  } catch (error) {
+    console.error('Error fetching file names:', error);
+    return [];
+  }
+}
+
+export async function deleteFile(blockId: string, fileName: string): Promise<boolean> {
+  try {
+    const { deleteFileFromContext } = await import('@/lib/filecontext');
+    return await deleteFileFromContext(blockId, fileName);
+  } catch (error) {
+    console.error('Error deleting file:', error);
+    return false;
+  }
+}
+
 export async function fetchNotes(blockId: string): Promise<string> {
   try {
     const block = await getBlockNote(blockId)

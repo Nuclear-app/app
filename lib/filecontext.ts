@@ -859,4 +859,44 @@ export async function getFileContextStats() {
   } catch (error) {
     throw new FileContextError(`Failed to get file context stats: ${error instanceof Error ? error.message : 'Unknown error'}`, 'STATS_ERROR')
   }
+}
+
+/**
+ * Get filenames from FileContext for a specific block
+ * @param blockId - The block ID
+ * @returns Promise<string[]> - Array of filenames
+ */
+export async function getFileNamesByBlockId(blockId: string): Promise<string[]> {
+  try {
+    const fileContexts = await prisma.fileContext.findMany({
+      where: { blockId },
+      select: { fileName: true }
+    });
+    
+    return fileContexts.map(fc => fc.fileName);
+  } catch (error) {
+    console.error('Error getting file names by block ID:', error);
+    return [];
+  }
+}
+
+/**
+ * Delete a specific file from FileContext
+ * @param blockId - The block ID
+ * @param fileName - The filename to delete
+ * @returns Promise<boolean> - Success status
+ */
+export async function deleteFileFromContext(blockId: string, fileName: string): Promise<boolean> {
+  try {
+    await prisma.fileContext.deleteMany({
+      where: {
+        blockId: blockId,
+        fileName: fileName
+      }
+    });
+    return true;
+  } catch (error) {
+    console.error('Error deleting file from context:', error);
+    return false;
+  }
 } 

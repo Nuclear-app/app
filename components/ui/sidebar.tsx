@@ -26,8 +26,8 @@ import { createClient } from "@/utils/supabase/client"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./dialog"
 import FileUpload, { FileState } from "@/components/fileInputComponent/fileUpload"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { fetchFiles } from "@/lib/fileUpload"
 import { Skeleton } from "./skeleton"
+import { fetchFileNames, deleteFile } from "@/app/modeSpecific/fileInput/actions"
 
 interface SidebarProps {
     isOpen: boolean
@@ -41,11 +41,12 @@ const FileHistory = ({ blockId }: { blockId: string }) => {
     const [files, setFiles] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [deletingFiles, setDeletingFiles] = useState<Set<string>>(new Set());
 
     useEffect(() => {
         const loadFiles = async () => {
             try {
-                const fileList = await fetchFiles(blockId);
+                const fileList = await fetchFileNames(blockId);
                 setFiles(fileList || []);
             } catch (err) {
                 setError('Failed to load files');
@@ -57,6 +58,27 @@ const FileHistory = ({ blockId }: { blockId: string }) => {
 
         loadFiles();
     }, [blockId]);
+
+    const handleDeleteFile = async (fileName: string) => {
+        try {
+            setDeletingFiles(prev => new Set(prev).add(fileName));
+            const success = await deleteFile(blockId, fileName);
+            if (success) {
+                setFiles(prev => prev.filter(f => f !== fileName));
+            } else {
+                setError('Failed to delete file');
+            }
+        } catch (err) {
+            setError('Failed to delete file');
+            console.error(err);
+        } finally {
+            setDeletingFiles(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(fileName);
+                return newSet;
+            });
+        }
+    };
 
     if (loading) {
         return (
@@ -80,14 +102,38 @@ const FileHistory = ({ blockId }: { blockId: string }) => {
 
     return (
         <div className="space-y-2">
-            {files.map((fileName, index) => (
-                <div 
-                    key={index}
-                    className="flex items-center justify-between p-2 rounded-md bg-muted/50"
-                >
-                    <span className="text-sm">{fileName}</span>
-                </div>
-            ))}
+            <AnimatePresence mode="popLayout">
+                {files.map((fileName, index) => (
+                    <motion.div 
+                        key={fileName}
+                        initial={{ opacity: 0, x: -20, height: 0 }}
+                        animate={{ opacity: 1, x: 0, height: "auto" }}
+                        exit={{ 
+                            opacity: 0, 
+                            x: 20, 
+                            height: 0,
+                            transition: { duration: 0.2 }
+                        }}
+                        transition={{ 
+                            duration: 0.3,
+                            ease: "easeInOut"
+                        }}
+                        layout
+                        className="flex items-center justify-between p-2 rounded-md bg-muted/50 hover:bg-muted/70 transition-colors overflow-hidden"
+                    >
+                        <span className="text-sm flex-1 truncate">{fileName}</span>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 w-6 p-0 ml-2 hover:bg-destructive/10 hover:text-destructive"
+                            onClick={() => handleDeleteFile(fileName)}
+                            disabled={deletingFiles.has(fileName)}
+                        >
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                    </motion.div>
+                ))}
+            </AnimatePresence>
         </div>
     );
 };
