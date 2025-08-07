@@ -154,13 +154,26 @@ export async function clearAllCaches() {
  * Clear caches by pattern
  * @param pattern - Redis pattern to match keys
  * @returns Promise<number> - Number of keys cleared
+ * @warning This function uses redis.keys() which can be slow on large datasets
  */
 export async function clearCachesByPattern(pattern: string) {
   try {
     const { redis } = await import('@/lib/redis');
+    
+    // For safety, limit the pattern to prevent accidental deletion of all keys
+    if (pattern === '*' || pattern === '') {
+      console.warn('Pattern "*" or "" is not allowed for safety. Use clearAllCaches() instead.');
+      return 0;
+    }
+    
     const keys = await redis.keys(pattern);
     if (keys.length > 0) {
-      await redis.del(...keys);
+      // Delete keys in batches to avoid overwhelming Redis
+      const batchSize = 100;
+      for (let i = 0; i < keys.length; i += batchSize) {
+        const batch = keys.slice(i, i + batchSize);
+        await redis.del(...batch);
+      }
     }
     return keys.length;
   } catch (error) {
