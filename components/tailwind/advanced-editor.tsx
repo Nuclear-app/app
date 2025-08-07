@@ -60,7 +60,7 @@ const AdvancedEditor = ({ blockId: initialBlockId, initialContent }: AdvancedEdi
     const doc = new DOMParser().parseFromString(content, "text/html");
     doc.querySelectorAll("pre code").forEach((el) => {
       // @ts-ignore
-      // https://highlightjs.readthedocs.io/en/latest/api.html?highlight=highlightElement#highlightelement
+      // https://highlightjs.readthedocs.io/en/latest/api.html?highlight=highlightElement#highlightElement
       hljs.highlightElement(el);
     });
     return new XMLSerializer().serializeToString(doc);
@@ -113,7 +113,7 @@ const AdvancedEditor = ({ blockId: initialBlockId, initialContent }: AdvancedEdi
   if (!content) return null;
 
   return (
-    <div className="relative w-full max-w-screen-lg mx-auto">
+    <div className="relative w-full max-w-screen-lg mx-auto h-[90vh] flex flex-col">
       <div className="flex absolute right-5 top-5 z-10 mb-5 gap-2">
         <div className="rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground">{saveStatus}</div>
         <div className={charsCount ? "rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground" : "hidden"}>
@@ -124,7 +124,7 @@ const AdvancedEditor = ({ blockId: initialBlockId, initialContent }: AdvancedEdi
         <EditorContent
           initialContent={content}
           extensions={extensions}
-          className="relative p-4 min-h-[500px] w-full max-w-screen-lg bg-background sm:mb-[calc(20vh)] sm:rounded-lg sm:shadow-lg"
+          className="relative p-4 w-full max-w-screen-lg bg-background sm:rounded-lg sm:shadow-lg h-full overflow-y-auto"
           editorProps={{
             handleDOMEvents: {
               keydown: (_view, event) => handleCommandNavigation(event),
@@ -133,7 +133,7 @@ const AdvancedEditor = ({ blockId: initialBlockId, initialContent }: AdvancedEdi
             handleDrop: (view, event, _slice, moved) => handleImageDrop(view, event, moved, uploadFn),
             attributes: {
               class:
-                "prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full",
+                "prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full min-h-full",
             },
           }}
           onUpdate={({ editor }) => {

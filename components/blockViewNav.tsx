@@ -46,7 +46,6 @@ export function BlockViewNav({ blockId, children }: blockViewNavProps) {
             setUser(user)
         }
         fetchUser()
-
         const fetchBreadcrumbs = async () => {
             try {
                 setIsLoading(true)
