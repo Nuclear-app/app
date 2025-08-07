@@ -1,7 +1,7 @@
 import { ChatPerplexity } from "@langchain/community/chat_models/perplexity";
 import { match } from "ts-pattern";
 import { Ratelimit } from "@upstash/ratelimit";
-import { redis } from "@/lib/redis";
+import { redis } from "@/lib/redisClient";
 
 // IMPORTANT! Set the runtime to edge: https://vercel.com/docs/functions/edge-functions/edge-runtime
 export const runtime = "edge";

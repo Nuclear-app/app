@@ -466,22 +466,7 @@ import {
 import getBreadcrumb from "@/lib/blockViewNav";
 import { getExamples } from "@/lib/examplesPerplexity";
 import { getFlashcards } from "@/lib/flashcardGen";
-
-// Validate Redis environment variables
-if (!process.env.UPSTASH_REDIS_REST_URL) {
-  console.warn('UPSTASH_REDIS_REST_URL environment variable is not set. Redis caching will be disabled.');
-}
-
-if (!process.env.UPSTASH_REDIS_REST_TOKEN) {
-  console.warn('UPSTASH_REDIS_REST_TOKEN environment variable is not set. Redis caching will be disabled.');
-}
-
-export const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
-
-
+import { redis } from "@/lib/redisClient";
 
 export async function cacheAside<T>(key: string, ttlSeconds: number, fetcher: () => Promise<T>): Promise<T> {
     console.log(`cacheAside called with key: ${key}, ttl: ${ttlSeconds}`);

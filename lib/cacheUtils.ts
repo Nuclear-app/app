@@ -7,6 +7,7 @@ import {
   invalidateFillInTheBlankCache,
   invalidateTopicCache
 } from "@/lib/redis";
+import { redis } from "@/lib/redisClient";
 
 // ==================== CACHE INVALIDATION HELPERS ====================
 
@@ -99,8 +100,7 @@ export async function invalidateMultipleFolderCaches(folderIds: string[]) {
  * @returns Promise<boolean> - True if Redis is working
  */
 export async function checkRedisHealth() {
-  try {
-    const { redis } = await import('@/lib/redis');
+  try { 
     await redis.ping();
     return true;
   } catch (error) {
@@ -117,7 +117,6 @@ export async function checkRedisHealth() {
  */
 export async function getCacheStats() {
   try {
-    const { redis } = await import('@/lib/redis');
     // Use a simple ping to check if Redis is working
     await redis.ping();
     return {
@@ -141,7 +140,6 @@ export async function getCacheStats() {
  */
 export async function clearAllCaches() {
   try {
-    const { redis } = await import('@/lib/redis');
     await redis.flushdb();
     return true;
   } catch (error) {
@@ -158,8 +156,6 @@ export async function clearAllCaches() {
  */
 export async function clearCachesByPattern(pattern: string) {
   try {
-    const { redis } = await import('@/lib/redis');
-    
     // For safety, limit the pattern to prevent accidental deletion of all keys
     if (pattern === '*' || pattern === '') {
       console.warn('Pattern "*" or "" is not allowed for safety. Use clearAllCaches() instead.');
