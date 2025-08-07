@@ -34,7 +34,7 @@ export function BlockViewNav({ blockId, children }: blockViewNavProps) {
     const router = useRouter()
     const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([])
     const [isLoading, setIsLoading] = useState(true)
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true)
     const [user, setUser] = useState<User | null>(null)
 
     // Use real-time points hook
