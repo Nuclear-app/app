@@ -24,9 +24,8 @@ export default function Dashboard({ initialBlocks = [], initialCrates = [] }: Da
 
   useEffect(() => {
     const fetchData = async () => {
-      // Debug logging
-      console.log('Redis URL available:', !!process.env.UPSTASH_REDIS_REST_URL);
-      console.log('Redis Token available:', !!process.env.UPSTASH_REDIS_REST_TOKEN);
+      // Note: Redis environment variables are server-side only, so these will show false in browser
+      // This is normal and expected - Redis caching works on the server
       setLoading(true);
       try {
         const result = await loadData({ types: selectedTypes });

@@ -783,7 +783,12 @@ export async function getUniqueFileExtensions(): Promise<string[]> {
         const parts = context.fileName.split('.')
         return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : null
       })
-      .filter(ext => ext !== null) as string[]
+      // The original code used `.filter(ext => ext !== null) as string[]` to remove nulls and then cast the result to string[].
+      // This is unsafe because TypeScript can't guarantee that all non-null values are strings.
+      // The improved code uses a type predicate: `.filter((ext): ext is string => ext !== null)`.
+      // This tells TypeScript that after filtering, the array contains only strings, so no type assertion is needed.
+      // Also, `Array.from(new Set(extensions))` is used instead of `[...new Set(extensions)]` for clarity, but both are equivalent.
+      .filter((ext): ext is string => ext !== null)
 
     return Array.from(new Set(extensions))
   } catch (error) {
@@ -843,5 +848,45 @@ export async function getFileContextStats() {
     }
   } catch (error) {
     throw new FileContextError(`Failed to get file context stats: ${error instanceof Error ? error.message : 'Unknown error'}`, 'STATS_ERROR')
+  }
+}
+
+/**
+ * Get filenames from FileContext for a specific block
+ * @param blockId - The block ID
+ * @returns Promise<string[]> - Array of filenames
+ */
+export async function getFileNamesByBlockId(blockId: string): Promise<string[]> {
+  try {
+    const fileContexts = await prisma.fileContext.findMany({
+      where: { blockId },
+      select: { fileName: true }
+    });
+    
+    return fileContexts.map(fc => fc.fileName);
+  } catch (error) {
+    console.error('Error getting file names by block ID:', error);
+    return [];
+  }
+}
+
+/**
+ * Delete a specific file from FileContext
+ * @param blockId - The block ID
+ * @param fileName - The filename to delete
+ * @returns Promise<boolean> - Success status
+ */
+export async function deleteFileFromContext(blockId: string, fileName: string): Promise<boolean> {
+  try {
+    await prisma.fileContext.deleteMany({
+      where: {
+        blockId: blockId,
+        fileName: fileName
+      }
+    });
+    return true;
+  } catch (error) {
+    console.error('Error deleting file from context:', error);
+    return false;
   }
 } 

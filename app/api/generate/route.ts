@@ -1,17 +1,14 @@
 import { ChatPerplexity } from "@langchain/community/chat_models/perplexity";
 import { match } from "ts-pattern";
 import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
+import { redis } from "@/lib/redisClient";
 
 // IMPORTANT! Set the runtime to edge: https://vercel.com/docs/functions/edge-functions/edge-runtime
 export const runtime = "edge";
 
 // Create a new ratelimiter that allows 50 requests per day
 const ratelimit = new Ratelimit({
-  redis: new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL!,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-  }),
+  redis,
   limiter: Ratelimit.slidingWindow(50, "1 d"),
 });
 

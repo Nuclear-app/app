@@ -12,7 +12,7 @@ const client = new AssemblyAI({
 
 });
 
-export async function transcribeAudio(audioUrl: string): Promise<string> {
+export async function transcribeAudio(audioUrl: string, fileName?: string, blockId?: string): Promise<string> {
 
   if (!audioUrl) {
 
@@ -22,21 +22,51 @@ export async function transcribeAudio(audioUrl: string): Promise<string> {
 
   try {
 
-    const transcript = await client.transcripts.transcribe({
+    // If fileName and blockId are provided, use the API endpoint for server-side storage
+    if (fileName && blockId) {
+      const response = await fetch("/api/transcribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          audioUrl: audioUrl,
+          fileName: fileName,
+          blockId: blockId
+        }),
+      });
 
-      audio_url: audioUrl,
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Transcription API error:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorData
+        });
+        throw new Error(`Transcription failed: ${errorData.error || response.statusText}`);
+      }
 
-      speech_model: "nano",
+      const { text, error } = await response.json();
 
-    });
-        
-    if (!transcript.text) {
+      if (error) {
+        console.error('Transcription processing error:', error);
+        throw new Error(error);
+      }
 
-      throw new Error("No transcription text received");
+      console.log('Transcribed content:', text);
+      return text;
+    } else {
+      // Fallback to direct AssemblyAI call for cases without storage
+      const transcript = await client.transcripts.transcribe({
+        audio_url: audioUrl,
+        speech_model: "nano",
+      });
+          
+      if (!transcript.text) {
+        throw new Error("No transcription text received");
+      }
 
+      console.log('Transcribed content:', transcript.text);
+      return transcript.text;
     }
-
-    return transcript.text;
 
   } catch (error) {
 

@@ -18,6 +18,8 @@ import { FunFacts } from "../ui/fun-facts";
 import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import { TextAnimate } from "../ui/text-animate";
+import { transcribeAudio } from "@/lib/assemblyai";
+import { ocr } from "@/lib/ocr";
 
 // Custom FilePond styles
 const filePondStyles = `
@@ -75,6 +77,82 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
     return () => setMounted(false);
   }, []);
 
+  const getFileContent = async (file: FileState) => {
+    if (!file || !file.file) return '';
+
+    try {
+      // Get the file data from FilePond's response
+      const fileData = file.file;
+      if (!fileData || !fileData.name) {
+        throw new Error('Invalid file data');
+      }
+
+      // The file data is stored in the name property as a JSON string
+      console.log('File data name:', fileData.name);
+      const parsedData = JSON.parse(fileData.name);
+      console.log('Parsed data:', parsedData);
+      if (!parsedData || !parsedData.url) {
+        throw new Error('Invalid file data structure');
+      }
+
+      const fileUrl = parsedData.url;
+      const fileType = fileData.type;
+
+      // Validate file type
+      if (!fileType) {
+        console.error('No file type provided');
+        return '';
+      }
+
+      if (fileType.startsWith('image/') || fileType === 'application/pdf') {
+        const response = await fetch(fileUrl);
+        if (!response.ok) throw new Error(`Failed to fetch file: ${response.statusText}`);
+
+        const blob = await response.blob();
+        if (blob.size === 0) {
+          throw new Error('Empty file received');
+        }
+
+        // Use the original filename stored in the JSON data
+        const fileName = parsedData.originalName || 
+          (parsedData.path ? parsedData.path.split('/').pop() : 'unknown');
+        
+        console.log('OCR - Using filename:', fileName);
+        console.log('OCR - Original name from parsed data:', parsedData.originalName);
+        console.log('OCR - Path from parsed data:', parsedData.path);
+        
+        const file = new File([blob], fileName, { type: fileType });
+
+        // Ensure blockId is a string before passing to ocr
+        const ocrResult = await ocr(file, blockId ?? '');
+        return ocrResult?.text || '';
+      }
+
+      if (fileType.startsWith('audio/')) {
+        if (!fileUrl) {
+          throw new Error('No audio URL provided');
+        }
+        
+        // Use the original filename stored in the JSON data
+        const fileName = parsedData.originalName || 
+          (parsedData.path ? parsedData.path.split('/').pop() : 'unknown');
+        
+        console.log('Transcription - Using filename:', fileName);
+        console.log('Transcription - Original name from parsed data:', parsedData.originalName);
+        console.log('Transcription - Path from parsed data:', parsedData.path);
+        
+        const transcript = await transcribeAudio(fileUrl, fileName, blockId ?? '');
+        return transcript || '';
+      }
+
+      console.warn(`Unsupported file type: ${fileType}`);
+      return '';
+    } catch (error) {
+      console.error(`Error processing file:`, error);
+      return ''; // Return empty string for failed files
+    }
+  }
+
   useEffect(() => {
     if (!mounted) return;
 
@@ -89,7 +167,6 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
       const pond = FilePond.create(pondRef.current, {
         allowMultiple: true,
         maxFiles: 10,
-        maxFileSize: '100MB',
         acceptedFileTypes: ['image/*', 'application/pdf', 'audio/*'],
         labelIdle: 'Drag & Drop your files or <span class="filepond--label-action">Browse</span>',
         instantUpload: true,
@@ -99,7 +176,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
             try {
               // Check if user is authenticated
               const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-              
+
               if (sessionError) {
                 console.error('Session error:', sessionError);
                 error('Authentication error. Please try signing in again.');
@@ -152,16 +229,36 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
                 publicUrl,
                 bucket: 'files'
               });
-              
+
               // Store the file path in the file object
               const fileData = {
                 url: publicUrl,
                 path: filePath
               };
               console.log('Upload response:', fileData);
-              
-              // Pass the file data as a string
-              load(JSON.stringify(fileData));
+
+              // Create a temporary FileState object to pass to getFileContent
+              const tempFileState: FileState = {
+                file: new File([file], JSON.stringify({
+                  ...fileData,
+                  originalName: file.name // Store the original filename here
+                }), { type: file.type })
+              };
+
+              // Extract and print the file content - this must complete before loading finishes
+              console.log('Extracting content from file:', file.name);
+              const extractedContent = await getFileContent(tempFileState);
+              console.log('Extracted content:', extractedContent);
+
+              // Only complete the upload if content extraction was successful
+              if (extractedContent !== '') {
+                console.log('Content extraction successful, completing upload');
+                // Pass the file data as a string
+                load(JSON.stringify(fileData));
+              } else {
+                console.error('Content extraction failed for file:', file.name);
+                error('Failed to extract content from file. Please try again.');
+              }
             } catch (err) {
               console.error('Upload error:', err);
               error('Upload failed. Please try again.');
@@ -182,7 +279,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
 
               // Check if user is authenticated
               const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-              
+
               if (sessionError) {
                 console.error('Session error:', sessionError);
                 error('Authentication error. Please try signing in again.');
@@ -228,27 +325,43 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
         },
         onaddfile: async (error, file) => {
           if (error) return;
+          
+          // Store the original filename - this is the filename from the user's computer
+          const originalFilename = file.filename;
+          console.log('Original filename captured:', originalFilename);
+          
           // Create a new file with the server response data
           const newFile = new File([file.file], JSON.stringify({
-            url: file.serverId ? JSON.parse(file.serverId).url : null,
-            path: file.serverId ? JSON.parse(file.serverId).path : null
+            url: null, // Will be set after upload
+            path: null, // Will be set after upload
+            originalName: originalFilename // Store the original filename in the JSON data
           }), { type: file.fileType });
           setFiles(prev => [...prev, { file: newFile }]);
 
-          // Add file name to Block's files array
+          // Add file name to Block's files array - use the original filename
           try {
-            await addFile(blockId, file.filename);
-            console.log('Added file to Block:', file.filename);
+            await addFile(blockId, originalFilename);
+            console.log('Added file to Block:', originalFilename);
           } catch (err) {
             console.error('Error updating Block files:', err);
           }
+
         },
         onprocessfile: (error, file) => {
           if (error) return;
+          
+          // Get the original filename from the file object
+          const originalFilename = file.filename;
+          console.log('Processing file with original name:', originalFilename);
+          
+          // Parse the server response to get URL and path
+          const serverData = file.serverId ? JSON.parse(file.serverId) : {};
+          
           // When file is fully processed (uploaded), add it to uploadedFiles
           const processedFile = new File([file.file], JSON.stringify({
-            url: file.serverId ? JSON.parse(file.serverId).url : null,
-            path: file.serverId ? JSON.parse(file.serverId).path : null
+            url: serverData.url || null,
+            path: serverData.path || null,
+            originalName: originalFilename // Store the original filename
           }), { type: file.fileType });
           setUploadedFiles(prev => [...prev, { file: processedFile }]);
         },
@@ -299,8 +412,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ returnFiles, mode, blockId, new
               <FunFacts />
             </div>
           ) : (
-            <SubmitButton 
-              className="w-full" 
+            <SubmitButton
+              className="w-full"
               onClick={handleUploadClick}
               disabled={uploadedFiles.length === 0}
             >

@@ -108,9 +108,10 @@ export async function getBlockTitle(id: string): Promise<string | null> {
 }
 
 /**
- * Get block's context
+ * Get block's context (deprecated - use getFileContextsByBlockId from filecontext.ts instead)
  * @param id - The block's unique identifier
  * @returns Promise<string | null> - The block's context or null if not found
+ * @deprecated Use getFileContextsByBlockId from filecontext.ts for new implementations
  */
 export async function getBlockContext(id: string): Promise<string | null> {
   try {
@@ -118,12 +119,17 @@ export async function getBlockContext(id: string): Promise<string | null> {
       throw new BlockError('Invalid block ID provided', 'INVALID_ID')
     }
 
-    const block = await prisma.block.findUnique({
-      where: { id },
-      select: { context: true }
-    })
-
-    return block?.context || null
+    // Import the new file context function
+    const { getFileContextsByBlockId } = await import('./filecontext');
+    const fileContexts = await getFileContextsByBlockId(id);
+    
+    // Combine all file contexts into one string
+    const contextText = fileContexts
+      .map(fc => fc.text)
+      .filter(text => text && text.trim().length > 0)
+      .join('\n\n');
+    
+    return contextText || null;
   } catch (error) {
     if (error instanceof BlockError) throw error
     throw new BlockError(`Failed to get block context: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
@@ -179,9 +185,9 @@ export async function getBlockFiles(id: string): Promise<string[] | null> {
 /**
  * Get block's note
  * @param id - The block's unique identifier
- * @returns Promise<any | null> - The block object with note and context, or null if not found
+ * @returns Promise<any | null> - The block object with note, or null if not found
  */
-export async function getBlockNote(id: string): Promise<{note: any, context: string | null} | null> {
+export async function getBlockNote(id: string): Promise<{note: any} | null> {
   try {
     if (!id || typeof id !== 'string') {
       throw new BlockError('Invalid block ID provided', 'INVALID_ID')
@@ -189,9 +195,7 @@ export async function getBlockNote(id: string): Promise<{note: any, context: str
 
     const block = await prisma.block.findUnique({
       where: { id },
-      select: { note: true,
-        context: true,
-      }
+      select: { note: true }
     })
 
     return block
@@ -234,7 +238,6 @@ export async function getBlockCreatedAt(id: string): Promise<Date | null> {
  */
 export async function updateBlock(id: string, data: {
   title?: string
-  context?: string
   points?: number
   files?: string[]
   note?: any
@@ -302,10 +305,11 @@ export async function setBlockTitle(id: string, title: string): Promise<Block> {
 }
 
 /**
- * Set block's context
+ * Set block's context (deprecated - use createFileContext from filecontext.ts instead)
  * @param id - The block's unique identifier
  * @param context - The new context
  * @returns Promise<Block> - The updated block object
+ * @deprecated Use createFileContext from filecontext.ts for new implementations
  */
 export async function setBlockContext(id: string, context: string): Promise<Block> {
   try {
@@ -317,12 +321,24 @@ export async function setBlockContext(id: string, context: string): Promise<Bloc
       throw new BlockError('Context must be a string', 'INVALID_CONTEXT')
     }
 
-    const block = await prisma.block.update({
-      where: { id },
-      data: { context }
-    })
+    // For backward compatibility, we'll create a generic file context
+    const { createFileContext } = await import('./filecontext');
+    await createFileContext({
+      fileName: 'legacy-context.txt',
+      text: context,
+      blockId: id
+    });
 
-    return block
+    // Return the block (we can't update the old context field anymore)
+    const block = await prisma.block.findUnique({
+      where: { id }
+    });
+
+    if (!block) {
+      throw new BlockError('Block not found', 'NOT_FOUND')
+    }
+
+    return block;
   } catch (error) {
     if (error instanceof BlockError) throw error
     if (error instanceof Error && error.message.includes('Record to update not found')) {
@@ -660,7 +676,6 @@ export async function createBlock(data: {
   title: string
   authorId: string
   folderId?: string
-  context?: string
   points?: number
   files?: string[]
   note?: any
@@ -687,7 +702,6 @@ export async function createBlock(data: {
         title: data.title.trim(),
         authorId: data.authorId,
         folderId: data.folderId,
-        context: data.context,
         points: data.points || 0,
         files: data.files || [],
         note: data.note

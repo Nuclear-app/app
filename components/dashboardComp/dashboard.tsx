@@ -8,7 +8,7 @@ import { GridDisplay } from "./GridDisplay";
 import { BlockDialog } from "./BlockDialogue";
 import { CrateDialog } from "./CrateDialogue";
 import { SelectionDialog } from "./SelectionDialog";
-import { addBlock, addCrate, deleteBlock, deleteCrate } from "@/app/dashboard/actions";
+import { addBlock, addCrate, deleteBlock, deleteCrate, renameCrate, changeCrateIcon } from "@/app/dashboard/actions";
 import { loadData } from "../../lib/loadData";
 import { createClient } from "@/utils/supabase/client";
 
@@ -165,18 +165,31 @@ export default function Dashboard() {
         }
     };
 
-    // const handleRenameCrate = async (crateId: string, newName: string) => {
-    //     try {
-    //         // Update the UI immediately
-    //         setCrates(prev => prev.map(crate => 
-    //             crate.id === crateId 
-    //                 ? { ...crate, name: newName }
-    //                 : crate
-    //         ));
-    //     } catch (error) {
-    //         console.error("Failed to rename crate:", error);
-    //     }
-    // };
+    const handleRenameCrate = async (crateId: string, newName: string) => {
+        try {
+            // Update the UI immediately
+            setCrates(prev => prev.map(crate => 
+                crate.id === crateId 
+                    ? { ...crate, name: newName }
+                    : crate
+            ));
+        } catch (error) {
+            console.error("Failed to rename crate:", error);
+        }
+    };
+
+    const handleChangeCrateIcon = async (crateId: string, newIcon: string) => {
+        try {
+            // Update the UI immediately
+            setCrates(prev => prev.map(crate => 
+                crate.id === crateId 
+                    ? { ...crate, icon: newIcon }
+                    : crate
+            ));
+        } catch (error) {
+            console.error("Failed to change crate icon:", error);
+        }
+    };
 
     return (
         <div className="container h-5/6 w-full px-[12%] pt-[10%] pb-[4%]">
@@ -195,7 +208,8 @@ export default function Dashboard() {
                     onDeleteBlock={handleDeleteBlock}
                     onDeleteCrate={handleDeleteCrate}
                     onRenameBlock={handleRenameBlock}
-                    // onRenameCrate={handleRenameCrate}
+                    onRenameCrate={handleRenameCrate}
+                    onChangeCrateIcon={handleChangeCrateIcon}
                     isLoading={isLoading}
                 />
             </div>

@@ -3,12 +3,9 @@
 import { useEffect, useState, Suspense } from 'react'
 import { FileState } from "@/components/fileInputComponent/fileUpload";
 import FileUpload from "@/components/fileInputComponent/fileUpload";
-import { ocr } from "@/lib/ocr";
-import { transcribeAudio } from "@/lib/assemblyai";
-import { getAudioURL, deleteAudio } from "@/lib/audioURL";
 import { createBrowserClient } from '@supabase/ssr'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { updateContext, fetchNotes } from '@/app/modeSpecific/fileInput/actions';
+import { fetchContext } from '@/app/modeSpecific/fileInput/actions';
 import { generateNotes } from '@/lib/generateNotes';
 
 const acceptedFileTypes = {
@@ -49,106 +46,37 @@ function FileInputContent() {
   }, [router])
 
   const handleFiles = async (files: FileState[]) => {
-    console.log(files);
+    console.log('Files uploaded:', files);
     try {
       // Validate input
       if (!files || !Array.isArray(files)) {
         throw new Error('Invalid files input');
       }
 
-      // Process all files first to get the complete context
-      const processedResults = await Promise.all(
-        files.map(async (file) => {
-          if (!file || !file.file) return '';
-
-          try {
-            // Get the file data from FilePond's responseF
-            const fileData = file.file;
-            if (!fileData || !fileData.name) {
-              throw new Error('Invalid file data');
-            }
-
-            // The file data is stored in the name property as a JSON string
-            console.log(fileData.name);
-            const parsedData = JSON.parse(fileData.name);
-            if (!parsedData || !parsedData.url) {
-              throw new Error('Invalid file data structure');
-            }
-
-            const fileUrl = parsedData.url;
-            const fileType = fileData.type;
-
-            // Validate file type
-            if (!fileType) {
-              console.error('No file type provided');
-              return '';
-            }
-
-            if (fileType.startsWith('image/') || fileType === 'application/pdf') {
-              const response = await fetch(fileUrl);
-              if (!response.ok) throw new Error(`Failed to fetch file: ${response.statusText}`);
-              
-              const blob = await response.blob();
-              if (blob.size === 0) {
-                throw new Error('Empty file received');
-              }
-
-              const file = new File([blob], 'temp', { type: fileType });
-              
-              const ocrResult = await ocr(file);
-              return ocrResult?.text || '';
-            }
-
-            if (fileType.startsWith('audio/')) {
-              if (!fileUrl) {
-                throw new Error('No audio URL provided');
-              }
-              const transcript = await transcribeAudio(fileUrl);
-              return transcript || '';
-            }
-
-            console.warn(`Unsupported file type: ${fileType}`);
-            return '';
-          } catch (error) {
-            console.error(`Error processing file:`, error);
-            return ''; // Return empty string for failed files
-          }
-        })
-      );
-
-      // Filter out empty results and combine
-      const newContext = processedResults
-        .filter(result => result.trim().length > 0)
-        .join('\n\n')
-        .trim();
-
-      if (!newContext) {
-        throw new Error('No valid content was extracted from the files');
+      if (!blockId) {
+        throw new Error('Block ID is required');
       }
 
-      // Save context to block if blockId is available
-      if (blockId) {
-        try {
-          // Validate blockId
-          if (typeof blockId !== 'string' || blockId.trim().length === 0) {
-            throw new Error('Invalid block ID');
-          }
+      // Wait a moment for file processing to complete
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
-          // Get existing notes
-          const existingNotes = await fetchNotes(blockId);
-          
-          // Combine existing notes with new context
-          const combinedContext = existingNotes 
-            ? `${existingNotes}\n\n${newContext}` 
-            : newContext;
-          
-          // Update the block with combined context
-          await updateContext({ blockId, context: combinedContext });
-          await generateNotes(blockId);
-        } catch (error) {
-          console.error('Error updating block context:', error);
-          throw error; // Re-throw to be caught by outer try-catch
+      // Get the concatenated text from FileContext for this block
+      try {
+        // Get existing notes and file contexts
+        const existingNotes = await fetchContext(blockId);
+        
+        if (!existingNotes || existingNotes.trim().length === 0) {
+          throw new Error('No content was extracted from the uploaded files');
         }
+
+        console.log('Retrieved content from FileContext:', existingNotes);
+
+        // Generate notes from the extracted content
+        await generateNotes(blockId);
+        
+      } catch (error) {
+        console.error('Error retrieving content from FileContext:', error);
+        throw error;
       }
       
       // Validate mode before navigation

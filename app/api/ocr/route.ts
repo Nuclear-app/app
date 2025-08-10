@@ -6,10 +6,11 @@ import {
   GetDocumentTextDetectionCommand
 } from "@aws-sdk/client-textract";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { createFileContext } from "@/lib/filecontext";
 
 // Validate environment variables
-if (!process.env.AWS_REGION) {
-  throw new Error("AWS_REGION environment variable is not set");
+if (!process.env.AMAZON_REGION) {
+  throw new Error("AMAZON_REGION environment variable is not set");
 }
 if (!process.env.UPLOAD_BUCKET) {
   throw new Error("UPLOAD_BUCKET environment variable is not set");
@@ -23,7 +24,10 @@ const s3 = new S3Client({ region: process.env.AMAZON_REGION });
 
 export async function POST(request: Request) {
   try {
-    const { imageBase64, fileName, fileType } = await request.json();
+    const { imageBase64, fileName, fileType, blockId } = await request.json();
+    
+    console.log('OCR API - Received filename:', fileName);
+    console.log('OCR API - Received blockId:', blockId);
     
     if (!imageBase64) {
       return NextResponse.json(
@@ -46,6 +50,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!blockId) {
+      return NextResponse.json(
+        { error: "Missing blockId in request body" },
+        { status: 400 }
+      );
+    }
+
     // Validate file type
     if (!SUPPORTED_IMAGE_TYPES.includes(fileType) && fileType !== SUPPORTED_PDF_TYPE) {
       return NextResponse.json(
@@ -56,7 +67,7 @@ export async function POST(request: Request) {
 
     // Check file size (base64 string length)
     const base64Size = imageBase64.length * 0.75; // approximate size in bytes
-    const maxSize = 5 * 1024 * 1024; // 5MB limit
+    const maxSize = 50 * 1024 * 1024; // 50MB limit
     if (base64Size > maxSize) {
       return NextResponse.json(
         { error: `File too large. Maximum size is ${maxSize / (1024 * 1024)}MB` },
@@ -72,6 +83,8 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+
+    let extractedText = "";
 
     if (fileType === SUPPORTED_PDF_TYPE) {
       try {
@@ -112,11 +125,10 @@ export async function POST(request: Request) {
           throw new Error("Text detection job timed out");
         }
 
-        const text = allBlocks
+        extractedText = allBlocks
           .filter(b => b.BlockType === "LINE")
           .map(b => b.Text)
           .join("\n");
-        return NextResponse.json({ text });
       } catch (error: any) {
         console.error("PDF processing error:", error);
         return NextResponse.json(
@@ -135,8 +147,7 @@ export async function POST(request: Request) {
           throw new Error("No text blocks detected in the image");
         }
 
-        const text = Blocks.filter(b => b.BlockType === "LINE").map(b => b.Text).join("\n") || "";
-        return NextResponse.json({ text });
+        extractedText = Blocks.filter(b => b.BlockType === "LINE").map(b => b.Text).join("\n") || "";
       } catch (error: any) {
         console.error("Image processing error:", error);
         return NextResponse.json(
@@ -145,6 +156,35 @@ export async function POST(request: Request) {
         );
       }
     }
+
+    // Store the extracted text in FileContext table
+    try {
+      // Check if file context already exists for this file
+      const { getFileContextByFileName } = await import('@/lib/filecontext');
+      const existingContext = await getFileContextByFileName(blockId, fileName);
+      
+      if (existingContext) {
+        // Update existing context
+        const { updateFileContext } = await import('@/lib/filecontext');
+        await updateFileContext(existingContext.id, {
+          text: extractedText
+        });
+        console.log(`Successfully updated OCR text for file ${fileName} in block ${blockId}`);
+      } else {
+        // Create new context
+        await createFileContext({
+          fileName: fileName,
+          text: extractedText,
+          blockId: blockId
+        });
+        console.log(`Successfully stored OCR text for file ${fileName} in block ${blockId}`);
+      }
+    } catch (error) {
+      console.error("Error storing OCR text in FileContext:", error);
+      // Don't fail the entire request if storage fails, just log it
+    }
+
+    return NextResponse.json({ text: extractedText });
   } catch (error: any) {
     console.error("General error:", error);
     return NextResponse.json(

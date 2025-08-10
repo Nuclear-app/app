@@ -15,12 +15,13 @@ import {
   getDashboardItemsWithCache,
   getFileSystemStructureWithCache,
   getUserNameWithCache,
+  getFolderWithCache,
   invalidateUserCache,
   invalidateBlockCache,
   invalidateFolderCache
 } from "@/lib/redis";
 
-const ROOT_FOLDER_ID = "f2120a35-5e3f-488e-be86-f0753af42e77";
+const ROOT_FOLDER_ID = process.env.ROOT_FOLDER_ID || "f2120a35-5e3f-488e-be86-f0753af42e77";
 
 export interface DatabaseItem {
     id: string;
@@ -161,7 +162,7 @@ export const fetchCratePath = async (crateId: string) => {
         let currentId = crateId;
 
         while (currentId && currentId !== ROOT_FOLDER_ID) {
-            const folder = await getFolderById(currentId);
+            const folder = await getFolderWithCache(currentId);
             if (folder) {
                 path.unshift({ id: folder.id, name: folder.name });
                 currentId = folder.parentId || "";
@@ -187,7 +188,7 @@ export const addBlock = async (title: string, parentId?: string) => {
         const block = await createBlock({
             title,
             authorId: userId,
-            folderId: parentId
+            folderId: parentId || ROOT_FOLDER_ID
         });
         
         // Invalidate relevant caches
@@ -208,7 +209,7 @@ export const addCrate = async (title: string, icon: string, parentId?: string) =
         const crate = await createFolder({
             name: title,
             authorId: userId,
-            parentId: parentId,
+            parentId: parentId || ROOT_FOLDER_ID,
             icon
         });
         
@@ -264,10 +265,14 @@ export const deleteCrate = async (crateId: string) => {
 
 export const updateBlockTitle = async (blockId: string, newTitle: string) => {
     try {
+        const userId = await getUser();
+        if (!userId) throw new Error("User not authenticated");
+
         await setBlockTitle(blockId, newTitle);
         
         // Invalidate relevant caches
         await invalidateBlockCache(blockId);
+        await invalidateUserCache(userId);
         
         return { success: true };
     } catch (error) {
@@ -296,6 +301,46 @@ export const renameFolderAction = async (folderId: string, newName: string) => {
     }
 };
 
+export const renameCrate = async (crateId: string, newName: string) => {
+    try {
+        const userId = await getUser();
+        if (!userId) throw new Error("User not authenticated");
+
+        // Import the setFolderName function (crates are stored as folders)
+        const { setFolderName } = await import('@/lib/folder');
+        await setFolderName(crateId, newName);
+        
+        // Invalidate relevant caches
+        await invalidateFolderCache(crateId);
+        await invalidateUserCache(userId);
+        
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to rename crate:", error);
+        throw error;
+    }
+};
+
+export const changeCrateIcon = async (crateId: string, newIcon: string) => {
+    try {
+        const userId = await getUser();
+        if (!userId) throw new Error("User not authenticated");
+
+        // Import the setFolderIcon function
+        const { setFolderIcon } = await import('@/lib/folder');
+        await setFolderIcon(crateId, newIcon);
+        
+        // Invalidate relevant caches
+        await invalidateFolderCache(crateId);
+        await invalidateUserCache(userId);
+        
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to change crate icon:", error);
+        throw error;
+    }
+};
+
 // ==================== USER OPERATIONS ====================
 
 export const getCurrentUserAction = async () => {
@@ -306,5 +351,20 @@ export const getCurrentUserAction = async () => {
     } catch (error) {
         console.error("Failed to get current user:", error);
         return null;
+    }
+};
+
+export const updateUserNameAction = async (name: string) => {
+    try {
+        const userId = await getUser();
+        if (!userId) throw new Error("User not authenticated");
+
+        const { setUserName } = await import('@/lib/user');
+        await setUserName(userId, name);
+        
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update user name:", error);
+        throw error;
     }
 }; 

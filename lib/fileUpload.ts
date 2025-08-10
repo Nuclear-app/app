@@ -3,13 +3,11 @@
 import prisma from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
 import { getBlockFilesWithCache, invalidateBlockCache } from "@/lib/redis";
+import { getBlockById, updateBlock } from "./block";
 
 export const addFile = async (blockId: string, fileName: string) => {
   try {
-    const block = await prisma.block.findUnique({
-      where: { id: blockId },
-      select: { files: true },
-    });
+    const block = await getBlockById(blockId)
 
     if (!block) {
       throw new Error('Block not found');
@@ -17,10 +15,7 @@ export const addFile = async (blockId: string, fileName: string) => {
 
     const updatedFiles = [...block.files, fileName];
 
-    await prisma.block.update({
-      where: { id: blockId },
-      data: { files: updatedFiles },
-    });
+    await updateBlock(blockId, { files: updatedFiles });
 
     // Invalidate cache after update
     await invalidateBlockCache(blockId);
@@ -48,10 +43,7 @@ export const fetchFiles = async (blockId: string) => {
 
 export const removeFile = async (blockId: string, fileName: string) => {
   try {
-    const block = await prisma.block.findUnique({
-      where: { id: blockId },
-      select: { files: true },
-    });
+    const block = await getBlockById(blockId)
 
     if (!block) {
       throw new Error('Block not found');
@@ -59,10 +51,7 @@ export const removeFile = async (blockId: string, fileName: string) => {
 
     const updatedFiles = block.files.filter((file: string) => file !== fileName);
 
-    await prisma.block.update({
-      where: { id: blockId },
-      data: { files: updatedFiles },
-    });
+    await updateBlock(blockId, { files: updatedFiles });
 
     // Invalidate cache after update
     await invalidateBlockCache(blockId);

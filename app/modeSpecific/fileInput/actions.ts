@@ -6,14 +6,56 @@ import { generateHTML } from '@tiptap/html'
 import { StarterKit } from "@tiptap/starter-kit"
 import { generateNotes } from "@/lib/generateNotes"
 import { getBlockContext, getBlockNote, setBlockNote, updateBlock } from "@/lib/block"
+import { createFileContext, getFileContextsByBlockId } from "@/lib/filecontext"
 
 export async function updateContext(data: { blockId: string, context: string }) {  
-  await updateBlock(data.blockId, { context: data.context })
+  // Check if a generated context already exists for this block
+  const existingContexts = await getFileContextsByBlockId(data.blockId);
+  const existingGeneratedContext = existingContexts.find(fc => fc.fileName === 'generated-context.txt');
+  
+  if (existingGeneratedContext) {
+    // Update existing context instead of creating a new one
+    const { updateFileContext } = await import('@/lib/filecontext');
+    await updateFileContext(existingGeneratedContext.id, {
+      text: data.context
+    });
+  } else {
+    // Create a new file context only if one doesn't exist
+    await createFileContext({
+      fileName: 'generated-context.txt',
+      text: data.context,
+      blockId: data.blockId
+    });
+  }
 } 
 
 export async function fetchContext(blockId: string): Promise<string> {
-  const context = await getBlockContext(blockId)
-  return context || '';
+  const fileContexts = await getFileContextsByBlockId(blockId);
+    const contextText = fileContexts
+      .map(fc => fc.text)
+      .filter(text => text && text.trim().length > 0)
+      .join('\n\n');
+  return contextText || '';
+}
+
+export async function fetchFileNames(blockId: string): Promise<string[]> {
+  try {
+    const { getFileNamesByBlockId } = await import('@/lib/filecontext');
+    return await getFileNamesByBlockId(blockId);
+  } catch (error) {
+    console.error('Error fetching file names:', error);
+    return [];
+  }
+}
+
+export async function deleteFile(blockId: string, fileName: string): Promise<boolean> {
+  try {
+    const { deleteFileFromContext } = await import('@/lib/filecontext');
+    return await deleteFileFromContext(blockId, fileName);
+  } catch (error) {
+    console.error('Error deleting file:', error);
+    return false;
+  }
 }
 
 export async function fetchNotes(blockId: string): Promise<string> {
@@ -33,9 +75,15 @@ export async function fetchNotes(blockId: string): Promise<string> {
       content += html.replace(/<[^>]*>/g, '') + '\n\n';
     }
 
-    // Add context if it exists
-    if (block.context) {
-      content += block.context;
+    // Get file contexts and add them to content
+    const fileContexts = await getFileContextsByBlockId(blockId);
+    const contextText = fileContexts
+      .map(fc => fc.text)
+      .filter(text => text && text.trim().length > 0)
+      .join('\n\n');
+    
+    if (contextText) {
+      content += contextText;
     }
 
     return content.trim();

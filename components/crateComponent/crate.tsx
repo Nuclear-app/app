@@ -8,7 +8,7 @@ import { DashboardHeader } from "@/components/dashboardComp/DashboardHeader";
 import { BlockDialog } from "@/components/dashboardComp/BlockDialogue";
 import { CrateDialog } from "@/components/dashboardComp/CrateDialogue";
 import { SelectionDialog } from "@/components/dashboardComp/SelectionDialog";
-import { addBlock, addCrate, CratePath } from "@/app/dashboard/actions";
+import { addBlock, addCrate, CratePath, deleteBlock, deleteCrate } from "@/app/dashboard/actions";
 import { CrateBreadcrumb } from "./crateBC";
 import { loadData } from "@/lib/loadData";
 
@@ -22,6 +22,7 @@ export default function CrateComponent({ crateId }: CrateComponentProps) {
     const [crates, setCrates] = useState<Crate[]>([]);
     const [cratePath, setCratePath] = useState<CratePath[]>([]);
     const [currentCrateName, setCurrentCrateName] = useState<string>("");
+    const [isLoading, setIsLoading] = useState(true);
     const [selectedTypes, setSelectedTypes] = useState<Set<'blocks' | 'crates'>>(() => 
         new Set<'blocks' | 'crates'>(['blocks', 'crates'] as const)
     );
@@ -33,6 +34,7 @@ export default function CrateComponent({ crateId }: CrateComponentProps) {
     // Function to load data based on selection
     const fetchData = async (types: Set<'blocks' | 'crates'>) => {
         try {
+            setIsLoading(true);
             const result = await loadData({ types, crateId });
             setBlocks(result.blocks);
             setCrates(result.crates);
@@ -41,6 +43,8 @@ export default function CrateComponent({ crateId }: CrateComponentProps) {
             setCurrentCrateName(result.currentCrateName || "");
         } catch (error) {
             console.error("Failed to load data:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -99,8 +103,27 @@ export default function CrateComponent({ crateId }: CrateComponentProps) {
         }
     };
 
+    const handleDeleteBlock = async (blockId: string) => {
+        try {
+            await deleteBlock(blockId);
+            // Update UI immediately by filtering out the deleted block
+            setBlocks(prev => prev.filter(block => block.id !== blockId));
+        } catch (error) {
+            console.error("Failed to delete block:", error);
+        }
+    };
+
+    const handleDeleteCrate = async (crateId: string) => {
+        try {
+            await deleteCrate(crateId);
+            setCrates(prev => prev.filter(crate => crate.id !== crateId));
+        } catch (error) {
+            console.error("Failed to delete crate:", error);
+        }
+    };
+
     return (
-        <div className="container h-5/6 w-full">
+        <div className="container h-5/6 w-full px-[12%] pt-[10%] pb-[4%]">
             <CrateBreadcrumb cratePath={cratePath} />
             
             <DashboardHeader
@@ -115,9 +138,9 @@ export default function CrateComponent({ crateId }: CrateComponentProps) {
                     blocks={blocks}
                     crates={crates}
                     selectedTypes={selectedTypes}
-                    isLoading={false}
-                    onDeleteBlock={() => Promise.resolve(undefined)}
-                    onDeleteCrate={() => Promise.resolve(undefined)}
+                    isLoading={isLoading}
+                    onDeleteBlock={handleDeleteBlock}
+                    onDeleteCrate={handleDeleteCrate}
                 />
             </div>
 
