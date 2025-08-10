@@ -736,11 +736,6 @@ export async function getFileContextsWithLongText(minLength: number): Promise<Fi
     }
 
     const fileContexts = await prisma.fileContext.findMany({
-      where: {
-        text: {
-          not: null
-        }
-      },
       orderBy: { createdAt: 'desc' }
     })
 
@@ -763,11 +758,6 @@ export async function getFileContextsWithShortText(maxLength: number): Promise<F
     }
 
     const fileContexts = await prisma.fileContext.findMany({
-      where: {
-        text: {
-          not: null
-        }
-      },
       orderBy: { createdAt: 'desc' }
     })
 
@@ -795,7 +785,7 @@ export async function getUniqueFileExtensions(): Promise<string[]> {
       })
       .filter(ext => ext !== null) as string[]
 
-    return [...new Set(extensions)]
+    return Array.from(new Set(extensions))
   } catch (error) {
     throw new FileContextError(`Failed to get unique file extensions: ${error instanceof Error ? error.message : 'Unknown error'}`, 'GET_ERROR')
   }
