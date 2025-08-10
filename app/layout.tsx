@@ -36,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${bricolage.className} dark`} suppressHydrationWarning>
-      <body className="min-h-screen bg-background text-foreground antialiased">
+      <body className="min-h-screen bg-background text-foreground antialiased" suppressHydrationWarning>
         <div className="noise" />
         <main className="min-h-screen flex flex-col">
           <div className="flex-1 w-full flex flex-col">
