@@ -516,6 +516,8 @@ export async function createFolder(data: {
  */
 export async function deleteFolder(id: string, userId?: string): Promise<{ success: boolean }> {
   try {
+    console.log(`deleteFolder called with id: ${id}, userId: ${userId}`);
+    
     const crate = await prisma.folder.findUnique({
       where: { id: id },
       select: { 
@@ -533,7 +535,10 @@ export async function deleteFolder(id: string, userId?: string): Promise<{ succe
       }
   });
 
+  console.log(`Found crate:`, { id, authorId: crate?.authorId, userId, matches: crate?.authorId === userId });
+
   if (!crate || crate.authorId !== userId) {
+      console.error(`Authorization failed: crate.authorId (${crate?.authorId}) !== userId (${userId})`);
       throw new Error("Unauthorized to delete this crate");
   }
 

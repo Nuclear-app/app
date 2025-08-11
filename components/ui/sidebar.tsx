@@ -1,10 +1,10 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Settings, FileText, Star, Share2, X, Home, Zap, Flag, User, LogOut, ArrowLeftToLine, MoreVertical, Trash2, Pencil, ChevronRight, ChevronDown, Upload } from "lucide-react"
+import { Settings, FileText, Star, Share2, X, Home, Zap, Flag, User, LogOut, ArrowLeftToLine, MoreVertical, Trash2, Pencil, ChevronRight, ChevronDown, Upload, Plus } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Tree, Folder, File } from "@/components/magicui/file-tree"
-import { useEffect, useState } from "react"
+import { useState, useEffect } from "react"
 import { getUserFileStructureAction } from "@/lib/folderActions"
 import { Loading } from "./loading"
 import { Skeleton } from "./skeleton"
@@ -24,11 +24,19 @@ import { updateBlockTitle, deleteBlock, deleteCrate, renameFolderAction } from "
 import { RenameBlockDialogue } from "@/components/dashboardComp/RenameBlockDialogue"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogClose } from "./dialog"
 import FileUpload, { FileState } from "@/components/fileInputComponent/fileUpload"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { fetchFileNames, deleteFile } from "@/app/modeSpecific/fileInput/actions"
 import { SettingsPopup } from "./settings-popup"
+import { Separator } from "@/components/ui/separator"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import { Input } from "@/components/ui/input"
+import { addBlock, addCrate } from "@/app/dashboard/actions"
+import { EmojiPicker } from "frimousse"
 
 interface SidebarProps {
     isOpen: boolean
@@ -351,14 +359,52 @@ const EnhancedFile = ({ element, value, onRename, onDelete, isCurrentBlock, isDe
     )
 }
 
+// Form schemas for block and crate creation
+const blockFormSchema = z.object({
+    title: z.string().min(1, {
+        message: "Title is required.",
+    }).max(50, {
+        message: "Title must be less than 50 characters.",
+    }),
+});
+
+const crateFormSchema = z.object({
+    title: z.string().min(1, {
+        message: "Title is required.",
+    }).max(50, {
+        message: "Title must be less than 50 characters.",
+    }),
+    icon: z.string(),
+});
+
 export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
     const [fileStructure, setFileStructure] = useState<any[]>([])
     const [loading, setLoading] = useState(false)
     const [isFileDialogOpen, setIsFileDialogOpen] = useState(false)
+    const [isCreateNewOpen, setIsCreateNewOpen] = useState(false)
+    const [isCreateBlockOpen, setIsCreateBlockOpen] = useState(false)
+    const [isCreateCrateOpen, setIsCreateCrateOpen] = useState(false)
     const [isSettingsOpen, setIsSettingsOpen] = useState(false)
     const [mounted, setMounted] = useState(false)
     const [deletingItems, setDeletingItems] = useState<Set<string>>(new Set())
+    const [selectedEmoji, setSelectedEmoji] = useState<string>("📁")
     const router = useRouter()
+
+    // Form instances
+    const blockForm = useForm<z.infer<typeof blockFormSchema>>({
+        resolver: zodResolver(blockFormSchema),
+        defaultValues: {
+            title: "",
+        },
+    });
+
+    const crateForm = useForm<z.infer<typeof crateFormSchema>>({
+        resolver: zodResolver(crateFormSchema),
+        defaultValues: {
+            title: "",
+            icon: "📁",
+        },
+    });
 
     useEffect(() => {
         setMounted(true)
@@ -502,6 +548,45 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
         }
     }
 
+    // Block creation handler
+    const handleCreateBlock = async (title: string) => {
+        try {
+            const block = await addBlock(title, undefined); // Root level block
+            setIsCreateBlockOpen(false);
+            blockForm.reset();
+            router.push(`/onboarding/name/study-type?blockId=${block.id}&newBlock=false`);
+        } catch (error) {
+            console.error("Failed to create block:", error);
+        }
+    };
+
+    // Crate creation handler
+    const handleCreateCrate = async (title: string, icon: string) => {
+        try {
+            const crate = await addCrate(title, icon, undefined); // Root level crate
+            setIsCreateCrateOpen(false);
+            crateForm.reset();
+            // Optionally refresh the sidebar or navigate
+            router.push(`/dashboard/crate/${crate.id}`);
+        } catch (error) {
+            console.error("Failed to create crate:", error);
+        }
+    };
+
+    // Reset forms when dialogs are closed
+    useEffect(() => {
+        if (!isCreateBlockOpen) {
+            blockForm.reset();
+        }
+    }, [isCreateBlockOpen, blockForm]);
+
+    useEffect(() => {
+        if (!isCreateCrateOpen) {
+            crateForm.reset();
+            setSelectedEmoji("📁");
+        }
+    }, [isCreateCrateOpen, crateForm]);
+
     // Helper function to render tree structure with enhanced components
     const renderTreeStructure = (structure: any[], onRenameBlock?: (id: string, newName: string) => Promise<void>, onDeleteBlock?: (id: string) => Promise<void>, onRenameFolder?: (id: string, newName: string) => Promise<void>, onDeleteFolder?: (id: string) => Promise<void>) => {
         return (
@@ -606,8 +691,11 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                             </Button>
                         </div>
                         
+                        {/* Separator */}
+                        <Separator className="bg-[#8A8888]" />
+                        
                         {/* Features */}
-                        <div className="flex-0 p-4 space-y-4 border-b border-gray-700 w-3/4">
+                        <div className="flex-0 p-4 space-y-4 w-3/4">
                             <Button
                                 variant="ghost"
                                 className="w-full justify-start font-bold text-lg text-[#77D0E0] hover:bg-gray-800"
@@ -627,16 +715,31 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                             </Button>
 
                             {/* File Management Button */}
-                            <Button
-                                variant="ghost"
-                                className="w-full justify-start font-bold text-lg text-[#90EE90] hover:text-white hover:bg-gray-800"
-                                onClick={() => setIsFileDialogOpen(true)}
-                            >
-                                <Upload className="mr-3 h-4 w-4" />
-                                File Management
-                            </Button>
+
                         </div>
                         
+                        {/* Separator */}
+                        <Separator className="bg-[#8A8888] h-1 rounded-full my-2" />
+
+                        {/* File Management + Create New Combo */}
+                        <div className="flex items-center justify-between p-2 gap-2">
+                            <Button 
+                                className="text-lg font-semibold w-4/5 rounded-xl justify-start h-10"
+                                onClick={() => setIsFileDialogOpen(true)}
+                            >
+                                <Upload className="mr-2 h-4 w-4" />
+                                Sources
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setIsCreateNewOpen(true)}
+                                className="hover:bg-[#3C373588] bg-[#3C3735] rounded-xl w-1/5 h-10"
+                            >
+                                <Plus className="h-5 w-5" />
+                            </Button>
+                        </div>
+
                         {/* Folder Tree */}
                         <div className="flex-1 overflow-y-auto p-4 py-8">
                             {(loading || (!loading && fileStructure.length === 0 && userId)) ? (
@@ -681,6 +784,9 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                                 <div className="">No files found {":("} </div>
                             ) : null}
                         </div>
+                        
+                        {/* Separator */}
+                        <Separator className="bg-[#8A8888]" />
                         
                         {/* Footer */}
                         <div className="flex items-center justify-between p-2 gap-2">
@@ -730,6 +836,171 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                                         <FileHistory blockId={blockId} />
                                     </TabsContent>
                                 </Tabs>
+                            </DialogContent>
+                        </Dialog>
+                    )}
+
+                    {/* Create New Dialog */}
+                    {mounted && (
+                        <Dialog open={isCreateNewOpen} onOpenChange={setIsCreateNewOpen}>
+                            <DialogContent className="sm:max-w-md">
+                                <DialogHeader>
+                                    <DialogTitle>Create New</DialogTitle>
+                                    <DialogDescription>
+                                        Create a new block or crate.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="flex flex-col space-y-4 mt-4">
+                                    <Button
+                                        className="w-full justify-start h-12 text-lg"
+                                        onClick={() => {
+                                            setIsCreateNewOpen(false);
+                                            setIsCreateBlockOpen(true);
+                                        }}
+                                    >
+                                        <FileText className="mr-3 h-5 w-5" />
+                                        New Block
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        className="w-full justify-start h-12 text-lg"
+                                        onClick={() => {
+                                            setIsCreateNewOpen(false);
+                                            setIsCreateCrateOpen(true);
+                                        }}
+                                    >
+                                        <Star className="mr-3 h-5 w-5" />
+                                        New Crate
+                                    </Button>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                    )}
+
+                    {/* Create Block Dialog */}
+                    {mounted && (
+                        <Dialog open={isCreateBlockOpen} onOpenChange={setIsCreateBlockOpen}>
+                            <DialogContent className="bg-[#161616] border-2">
+                                <DialogHeader>
+                                    <DialogTitle className="text-2xl font-black">Create New Block</DialogTitle>
+                                    <DialogDescription className="text-gray-400">
+                                        Enter a name for your new block.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <Form {...blockForm}>
+                                    <form onSubmit={blockForm.handleSubmit((values) => handleCreateBlock(values.title))} className="space-y-4">
+                                        <FormField
+                                            control={blockForm.control}
+                                            name="title"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Title</FormLabel>
+                                                    <FormControl>
+                                                        <Input {...field} className="bg-[#292929] border rounded-md p-2" />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <Button type="submit">Create Block</Button>
+                                    </form>
+                                </Form>
+                            </DialogContent>
+                        </Dialog>
+                    )}
+
+                    {/* Create Crate Dialog */}
+                    {mounted && (
+                        <Dialog open={isCreateCrateOpen} onOpenChange={setIsCreateCrateOpen}>
+                            <DialogContent className="bg-[#161616] border-2">
+                                <DialogHeader>
+                                    <DialogTitle className="text-2xl font-black">Create New Crate</DialogTitle>
+                                    <DialogDescription className="text-gray-400">
+                                        Choose an emoji and name for your new crate.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <Form {...crateForm}>
+                                    <form onSubmit={crateForm.handleSubmit((values) => handleCreateCrate(values.title, values.icon))} className="space-y-4">
+                                        <FormField
+                                            control={crateForm.control}
+                                            name="title"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Title</FormLabel>
+                                                    <FormControl>
+                                                        <Input {...field} className="bg-[#292929] border rounded-md p-2" />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={crateForm.control}
+                                            name="icon"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Icon</FormLabel>
+                                                    <FormControl>
+                                                        <div className="flex flex-col gap-2">
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="text-2xl">{selectedEmoji}</span>
+                                                                <span className="text-sm text-gray-400">Selected emoji</span>
+                                                            </div>
+                                                            <div className="max-h-[300px] overflow-y-auto">
+                                                                <EmojiPicker.Root 
+                                                                    className="isolate flex w-fit flex-col bg-[#292929] dark:bg-neutral-900"
+                                                                    onEmojiSelect={(selection) => {
+                                                                        setSelectedEmoji(selection.emoji);
+                                                                        field.onChange(selection.emoji);
+                                                                    }}
+                                                                >
+                                                                    <EmojiPicker.Search className="z-10 mx-2 mt-2 appearance-none rounded-md bg-[#333333] px-2.5 py-2 text-sm text-white dark:bg-neutral-800" />
+                                                                    <EmojiPicker.Viewport className="relative flex-1 outline-hidden">
+                                                                        <EmojiPicker.Loading className="absolute inset-0 flex items-center justify-center text-neutral-400 text-sm dark:text-neutral-500">
+                                                                            Loading…
+                                                                        </EmojiPicker.Loading>
+                                                                        <EmojiPicker.Empty className="absolute inset-0 flex items-center justify-center text-neutral-400 text-sm dark:text-neutral-500">
+                                                                            No emoji found.
+                                                                        </EmojiPicker.Empty>
+                                                                        <EmojiPicker.List
+                                                                            className="select-none pb-1.5"
+                                                                            components={{
+                                                                                CategoryHeader: ({ category, ...props }) => (
+                                                                                    <div
+                                                                                        className="bg-[#292929] px-3 pt-3 pb-1.5 font-medium text-neutral-400 text-xs dark:bg-neutral-900"
+                                                                                        {...props}
+                                                                                    >
+                                                                                        {category.label}
+                                                                                    </div>
+                                                                                ),
+                                                                                Row: ({ children, ...props }) => (
+                                                                                    <div className="scroll-my-1.5 px-1.5" {...props}>
+                                                                                        {children}
+                                                                                    </div>
+                                                                                ),
+                                                                                Emoji: ({ emoji, ...props }) => (
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        className="flex size-8 items-center justify-center rounded-md text-lg data-[active]:bg-[#333333] dark:data-[active]:bg-neutral-800"
+                                                                                        {...props}
+                                                                                    >
+                                                                                        {emoji.emoji}
+                                                                                    </button>
+                                                                                ),
+                                                                            }}
+                                                                        />
+                                                                    </EmojiPicker.Viewport>
+                                                                </EmojiPicker.Root>
+                                                            </div>
+                                                        </div>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <Button type="submit">Create Crate</Button>
+                                    </form>
+                                </Form>
                             </DialogContent>
                         </Dialog>
                     )}

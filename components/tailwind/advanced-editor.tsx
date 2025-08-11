@@ -2,13 +2,7 @@
 import React from "react";
 import { defaultEditorContent } from "@/lib/content";
 import {
-  EditorCommand,
-  EditorCommandEmpty,
-  EditorCommandItem,
-  EditorCommandList,
   EditorContent,
-  EditorBubble,
-
   type EditorInstance,
   EditorRoot,
   ImageResizer,
@@ -29,12 +23,11 @@ import { Separator } from "@/components/ui/separator";
 import GenerativeMenuSwitch from "./generative/generative-menu-switch";
 import { uploadFn } from "./image-upload";
 import { TextButtons } from "./selectors/text-buttons";
-import { slashCommand, suggestionItems } from "./slash-command";
-import { saveContent as saveContentToServer } from "./advancedEditor";
+import { slashCommand } from "./slash-command";
 import { updateBlock } from "@/app/actions/update-block";
 
 
-const hljs = require("highlight.js");
+
 
 const extensions = [...defaultExtensions, slashCommand];
 
@@ -54,17 +47,6 @@ const AdvancedEditor = ({ blockId: initialBlockId, initialContent }: AdvancedEdi
   const [openLink, setOpenLink] = useState(false);
   const [openAI, setOpenAI] = useState(false);
   const editorRef = useRef<EditorInstance | null>(null);
-
-  //Apply Codeblock Highlighting on the HTML from editor.getHTML()
-  const highlightCodeblocks = (content: string) => {
-    const doc = new DOMParser().parseFromString(content, "text/html");
-    doc.querySelectorAll("pre code").forEach((el) => {
-      // @ts-ignore
-      // https://highlightjs.readthedocs.io/en/latest/api.html?highlight=highlightElement#highlightElement
-      hljs.highlightElement(el);
-    });
-    return new XMLSerializer().serializeToString(doc);
-  };
 
   const handleSave = useCallback(async (editor: EditorInstance) => {
     if (!editor) return;
@@ -86,7 +68,7 @@ const AdvancedEditor = ({ blockId: initialBlockId, initialContent }: AdvancedEdi
       }
 
       // Local storage backup
-      window.localStorage.setItem("html-content", highlightCodeblocks(editor.getHTML()));
+      window.localStorage.setItem("html-content", editor.getHTML());
       window.localStorage.setItem("novel-content", JSON.stringify(json));
       window.localStorage.setItem("markdown", editor.storage.markdown.getMarkdown());
       
@@ -142,24 +124,21 @@ const AdvancedEditor = ({ blockId: initialBlockId, initialContent }: AdvancedEdi
             setSaveStatus("Unsaved");
           }}
           slotAfter={<ImageResizer />}
-        >
+        />
 
-            <GenerativeMenuSwitch open={openAI} onOpenChange={setOpenAI}>
-              <Separator orientation="vertical" />
-              <NodeSelector open={openNode} onOpenChange={setOpenNode} />
-              <Separator orientation="vertical" />
-
-              <LinkSelector open={openLink} onOpenChange={setOpenLink} />
-              <Separator orientation="vertical" />
-              <MathSelector />
-              <Separator orientation="vertical" />
-              <TextButtons />
-              <Separator orientation="vertical" />
-              <ColorSelector open={openColor} onOpenChange={setOpenColor} />
-            </GenerativeMenuSwitch>
-          </EditorContent>
-        </EditorRoot>
-      </div>
+        <GenerativeMenuSwitch open={openAI} onOpenChange={setOpenAI}>
+          <Separator orientation="vertical" />
+          <NodeSelector open={openNode} onOpenChange={setOpenNode} />
+          <Separator orientation="vertical" />
+          <LinkSelector open={openLink} onOpenChange={setOpenLink} />
+          <Separator orientation="vertical" />
+          <MathSelector />
+          <Separator orientation="vertical" />
+          <TextButtons />
+          <Separator orientation="vertical" />
+          <ColorSelector open={openColor} onOpenChange={setOpenColor} />
+        </GenerativeMenuSwitch>
+      </EditorRoot>
     </div>
   );
 }

@@ -18,7 +18,8 @@ import {
   getFolderWithCache,
   invalidateUserCache,
   invalidateBlockCache,
-  invalidateFolderCache
+  invalidateFolderCache,
+  invalidateFileSystemStructureCache
 } from "@/lib/redis";
 
 const ROOT_FOLDER_ID = process.env.ROOT_FOLDER_ID || "f2120a35-5e3f-488e-be86-f0753af42e77";
@@ -193,6 +194,8 @@ export const addBlock = async (title: string, parentId?: string) => {
         
         // Invalidate relevant caches
         await invalidateUserCache(userId);
+        // Also invalidate file structure cache to refresh sidebar
+        await invalidateFileSystemStructureCache(userId);
         
         return block;
     } catch (error) {
@@ -215,6 +218,8 @@ export const addCrate = async (title: string, icon: string, parentId?: string) =
         
         // Invalidate relevant caches
         await invalidateUserCache(userId);
+        // Also invalidate file structure cache to refresh sidebar
+        await invalidateFileSystemStructureCache(userId);
         
         return crate;
     } catch (error) {
@@ -235,6 +240,8 @@ export const deleteBlock = async (blockId: string) => {
         // Invalidate relevant caches
         await invalidateBlockCache(blockId);
         await invalidateUserCache(userId);
+        // Also invalidate file structure cache to refresh sidebar
+        await invalidateFileSystemStructureCache(userId);
         
         return { success: true };
     } catch (error) {
@@ -246,6 +253,8 @@ export const deleteBlock = async (blockId: string) => {
 export const deleteCrate = async (crateId: string) => {
     try {
         const userId = await getUser();
+        console.log(`deleteCrate called with crateId: ${crateId}, userId: ${userId}`);
+        
         if (!userId) throw new Error("User not authenticated");
 
         await deleteFolder(crateId, userId);
@@ -253,6 +262,8 @@ export const deleteCrate = async (crateId: string) => {
         // Invalidate relevant caches
         await invalidateFolderCache(crateId);
         await invalidateUserCache(userId);
+        // Also invalidate file structure cache to refresh sidebar
+        await invalidateFileSystemStructureCache(userId);
         
         return { success: true };
     } catch (error) {
@@ -273,6 +284,8 @@ export const updateBlockTitle = async (blockId: string, newTitle: string) => {
         // Invalidate relevant caches
         await invalidateBlockCache(blockId);
         await invalidateUserCache(userId);
+        // Also invalidate file structure cache to refresh sidebar
+        await invalidateFileSystemStructureCache(userId);
         
         return { success: true };
     } catch (error) {
@@ -293,6 +306,8 @@ export const renameFolderAction = async (folderId: string, newName: string) => {
         // Invalidate relevant caches
         await invalidateFolderCache(folderId);
         await invalidateUserCache(userId);
+        // Also invalidate file structure cache to refresh sidebar
+        await invalidateFileSystemStructureCache(userId);
         
         return { success: true };
     } catch (error) {
@@ -313,6 +328,8 @@ export const renameCrate = async (crateId: string, newName: string) => {
         // Invalidate relevant caches
         await invalidateFolderCache(crateId);
         await invalidateUserCache(userId);
+        // Also invalidate file structure cache to refresh sidebar
+        await invalidateFileSystemStructureCache(userId);
         
         return { success: true };
     } catch (error) {
@@ -333,6 +350,8 @@ export const changeCrateIcon = async (crateId: string, newIcon: string) => {
         // Invalidate relevant caches
         await invalidateFolderCache(crateId);
         await invalidateUserCache(userId);
+        // Also invalidate file structure cache to refresh sidebar
+        await invalidateFileSystemStructureCache(userId);
         
         return { success: true };
     } catch (error) {
