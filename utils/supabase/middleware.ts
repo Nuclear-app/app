@@ -192,6 +192,25 @@ export const updateSession = async (request: NextRequest) => {
         if (isNewUser) {
           return NextResponse.redirect(new URL("/onboarding/name", request.url));
         } else {
+          try {
+            const siteUrl = request.nextUrl.origin;
+            const res = await fetch(`${siteUrl}/api/blocks/last-updated?userId=${encodeURIComponent(user.id)}`, {
+              headers: { 
+                'Content-Type': 'application/json',
+                'x-internal-auth': process.env.INTERNAL_API_SECRET || '',
+                'cookie': request.headers.get('cookie') ?? ''
+              },
+              cache: 'no-store'
+            });
+            if (res.ok) {
+              const { blockId } = await res.json();
+              if (blockId) {
+                return NextResponse.redirect(new URL(`/dashboard/block/${blockId}`, request.url));
+              }
+            }
+          } catch (err) {
+            console.error('Error resolving last updated block:', err);
+          }
           return NextResponse.redirect(new URL("/dashboard", request.url));
         }
       }
