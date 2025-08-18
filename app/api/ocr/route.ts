@@ -8,22 +8,31 @@ import {
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { createFileContext } from "@/lib/filecontext";
 
-// Validate environment variables
-if (!process.env.AMAZON_REGION) {
-  throw new Error("AWS_REGION environment variable is not set");
-}
-if (!process.env.UPLOAD_BUCKET) {
-  throw new Error("UPLOAD_BUCKET environment variable is not set");
-}
-
 const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/tiff'];
 const SUPPORTED_PDF_TYPE = 'application/pdf';
 
-const texClient = new TextractClient({ region: process.env.AMAZON_REGION });
-const s3 = new S3Client({ region: process.env.AMAZON_REGION });
-
 export async function POST(request: Request) {
   try {
+    // Lazy-load and validate environment to avoid build-time failures
+    const REGION = process.env.AMAZON_REGION || process.env.AWS_REGION;
+    const BUCKET = process.env.UPLOAD_BUCKET;
+
+    if (!REGION) {
+      return NextResponse.json(
+        { error: "OCR not configured: missing AMAZON_REGION/AWS_REGION" },
+        { status: 500 }
+      );
+    }
+    if (!BUCKET) {
+      return NextResponse.json(
+        { error: "OCR not configured: missing UPLOAD_BUCKET" },
+        { status: 500 }
+      );
+    }
+
+    const texClient = new TextractClient({ region: REGION });
+    const s3 = new S3Client({ region: REGION });
+
     const { imageBase64, fileName, fileType, blockId } = await request.json();
     
     console.log('OCR API - Received filename:', fileName);
@@ -90,14 +99,14 @@ export async function POST(request: Request) {
       try {
         const key = `uploads/${Date.now()}-${fileName}`;
         await s3.send(new PutObjectCommand({
-          Bucket: process.env.UPLOAD_BUCKET!,
+          Bucket: BUCKET!,
           Key: key,
           Body: Buffer.from(imageBase64, "base64"),
           ContentType: SUPPORTED_PDF_TYPE,
         }));
 
         const { JobId } = await texClient.send(new StartDocumentTextDetectionCommand({
-          DocumentLocation: { S3Object: { Bucket: process.env.UPLOAD_BUCKET!, Name: key } }
+          DocumentLocation: { S3Object: { Bucket: BUCKET!, Name: key } }
         }));
 
         if (!JobId) {

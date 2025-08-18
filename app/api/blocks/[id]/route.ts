@@ -3,10 +3,10 @@ import prisma from "@/lib/prisma";
 
 export async function GET(
   _request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = context.params.id;
+    const { id } = await params;
     const block = await prisma.block.findUnique({ where: { id } });
     if (!block) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
