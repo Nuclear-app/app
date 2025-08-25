@@ -1,9 +1,11 @@
 "use client";
+import React from "react"
 import { Quiz } from "@/components/quizComponent/quiz";
 import { useEffect, useState, use } from "react";
 import { getFullContext } from "@/lib/context";
 import { generateQuizzesIfNeeded } from "@/app/dashboard/block/[id]/actions";
 import { BlockViewNav } from "@/components/blockViewNav";
+import { Loading } from "@/components/ui/loading";
 
 interface Props {
     params: Promise<{ id: string }>;
@@ -55,7 +57,7 @@ export default function QuizParent({ params }: Props) {
     }
 
     if (isLoading) {
-        return <div>Loading context...</div>;
+        return <div><Loading /></div>;
     }
 
     // Check if context is empty and show a nice message
