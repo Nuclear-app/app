@@ -704,7 +704,8 @@ export async function createBlock(data: {
         folderId: data.folderId,
         points: data.points || 0,
         files: data.files || [],
-        note: data.note
+        note: data.note,
+        updatedAt: new Date()
       }
     })
 

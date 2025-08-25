@@ -611,7 +611,7 @@ export function Sidebar({ isOpen, onClose, blockId, userId }: SidebarProps) {
                             <Button
                                 variant="ghost"
                                 className="w-full justify-start font-bold text-lg text-[#77D0E0] hover:bg-gray-800"
-                                onClick={() => router.push(`/dashboard/block/${blockId}/quiz`)}
+                                onClick={() => router.push(`/dashboard/block/${blockId}/quizzes`)}
                             >
                                 <Flag className="mr-3 h-4 w-4" />
                                 Quizzes

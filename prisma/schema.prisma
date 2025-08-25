@@ -12,8 +12,8 @@ model User {
   id                 String             @id @default(uuid())
   email              String             @unique
   name               String?
-  mode               Mode?
   createdAt          DateTime           @default(now())
+  mode               Mode?
   subscriptionStatus SubscriptionStatus @default(TRIAL)
   posts              Block[]
   folders            Folder[]
@@ -26,18 +26,19 @@ model Block {
   authorId        String
   folderId        String?
   context         String?
-  points          Int?             @default(0)
   files           String[]
   note            Json?
+  points          Int?             @default(0)
+  updatedAt       DateTime @updatedAt
   author          User             @relation(fields: [authorId], references: [id])
   folder          Folder?          @relation(fields: [folderId], references: [id])
+  fileContexts    FileContext[]
   fillInTheBlanks FillInTheBlank[]
+  flashcards      Flashcard[]
   pointsUpdates   PointsUpdate[]
   questions       Question[]
   quizzes         Quiz[]
   topics          Topic[]
-  flashcards      Flashcard[]
-  fileContexts    FileContext[]
 }
 
 model Quiz {
@@ -66,9 +67,9 @@ model Folder {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  parentId  String?
-  icon      String?
   authorId  String?
+  icon      String?
+  parentId  String?
   blocks    Block[]
   author    User?    @relation(fields: [authorId], references: [id])
   parent    Folder?  @relation("FolderToFolder", fields: [parentId], references: [id])
@@ -102,11 +103,11 @@ model PointsUpdate {
 }
 
 model Flashcard {
-  id       String @id @default(uuid())
-  front    String
-  back     String
-  blockId  String
-  block    Block  @relation(fields: [blockId], references: [id], onDelete: Cascade)
+  id      String @id @default(uuid())
+  front   String
+  back    String
+  blockId String
+  block   Block  @relation(fields: [blockId], references: [id], onDelete: Cascade)
 }
 
 model FileContext {
