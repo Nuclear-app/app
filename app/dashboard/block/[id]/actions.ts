@@ -134,7 +134,22 @@ export async function generateQuizzesIfNeeded(blockId: string) {
 
   // Only generate quizzes if none exist
   if (existingQuizzes.length === 0) {
-    console.log("No quizzes found, generating quizzes...");
+    console.log("No quizzes found, checking for topics first...");
+    
+    // Check if topics (examples) exist
+    const existingTopics = await prisma.topic.findMany({
+      where: { blockId },
+      select: { id: true }
+    });
+    
+    // If no topics exist, generate them first
+    if (existingTopics.length === 0) {
+      console.log("No topics found, generating examples first...");
+      await generateExamples(content, blockId);
+      console.log("Examples generated, now generating quizzes...");
+    }
+    
+    // Now generate quizzes
     await generateQuizzes(content, blockId);
   } else {
     console.log(`Found ${existingQuizzes.length} existing quizzes, skipping quiz generation`);

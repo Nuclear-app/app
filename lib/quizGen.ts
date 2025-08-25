@@ -72,13 +72,18 @@ export async function generateQuizzes(text: string, blockId: string) {
     throw new Error("PERPLEXITY_API_KEY is not set in environment variables");
   }
 
+  console.log(`Generating quizzes for block ${blockId}...`);
+
   // Get all topics for this block
   const topics = await prisma.topic.findMany({
     where: { blockId },
   });
 
+  console.log(`Found ${topics.length} topics for block ${blockId}`);
+
   if (!topics.length) {
-    throw new Error("No topics found for this block");
+    console.error(`No topics found for block ${blockId}. Topics must be generated before quizzes.`);
+    throw new Error("No topics found for this block. Please generate examples first to create topics.");
   }
 
   const model = new ChatPerplexity({

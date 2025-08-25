@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { Quiz } from "@prisma/client";
 import { getQuizWithTopicsCache, invalidateQuizzesCache } from "@/lib/redis";
 import { generateQuizzes } from "./quizGen";
+import { generateExamples } from "./examplesPerplexity";
 import { incrementBlockPoints } from "./block";
 import { getFileContextsByBlockId } from "./filecontext";
 
@@ -23,7 +24,7 @@ export const fetchQuiz = async (blockId: string): Promise<Quiz[]> => {
     // Get all topics and quizzes using cached function
     let { unusedQuizzes, mistakeQuizzes } = await getQuizWithTopicsCache(blockId);
 
-    // If no quizzes, generate more
+    // If no quizzes, check if topics exist first, then generate quizzes
     if (unusedQuizzes.length === 0 && mistakeQuizzes.length === 0) {
       // Get block context from file contexts
       const fileContexts = await getFileContextsByBlockId(blockId);
@@ -36,6 +37,20 @@ export const fetchQuiz = async (blockId: string): Promise<Quiz[]> => {
         throw new Error("Block context not found for quiz generation");
       }
       
+      // First, check if topics (examples) exist
+      const existingTopics = await prisma.topic.findMany({
+        where: { blockId },
+        select: { id: true }
+      });
+      
+      // If no topics exist, generate them first
+      if (existingTopics.length === 0) {
+        console.log("No topics found, generating examples first...");
+        await generateExamples(contextText, blockId);
+        console.log("Examples generated, now generating quizzes...");
+      }
+      
+      // Now generate quizzes
       await generateQuizzes(contextText, blockId);
       
       // Fetch quizzes again using cache
