@@ -136,11 +136,19 @@ export default function FlashcardParent({ params }: Props) {
     }, [context]);
 
     if (!id) {
-        return <div>No block ID provided</div>;
+        return (
+            <BlockViewNav blockId={id as any}>
+                <div>No block ID provided</div>
+            </BlockViewNav>
+        );
     }
 
     if (isLoading) {
-        return <div className="flex justify-center items-center h-screen"><Loading /></div>;
+        return (
+            <BlockViewNav blockId={id}>
+                <div className="flex justify-center items-center h-screen"><Loading /></div>
+            </BlockViewNav>
+        );
     }
 
     // Transform flashcards to match the component's expected format
@@ -156,35 +164,19 @@ export default function FlashcardParent({ params }: Props) {
     const progressPercentage = totalCards > 0 ? ((completedCount + (completedCards.has(deck[currentCardIndex]?.id) ? 0 : 1)) / totalCards) * 100 : 0;
 
     return (
-        <div className="flex flex-col min-h-screen">
-            <BlockViewNav blockId={id} />
-
-            {/* Header with regenerate button */}
-            {/*<div className="flex justify-between items-center">
-                <Button
-                    onClick={handleRegenerate}
-                    disabled={isRegenerating}
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center gap-2"
-                >
-                    <RefreshCw className={`h-4 w-4 ${isRegenerating ? 'animate-spin' : ''}`} />
-                    {isRegenerating ? 'Regenerating...' : 'Regenerate'}
-                </Button>
-            </div>*/}
-
+        <BlockViewNav blockId={id}>
             {/* Progress Section */}
-             {totalCards > 0 && (
-                 <div className="bg-[#221d1d] rounded-full my-6">
-                     <div
-                         className="h-3 rounded-full transition-all duration-300 ease-out"
-                         style={{
-                             width: `${progressPercentage}%`,
-                             backgroundColor: '#bf77f7'
-                         }}
-                     />
-                 </div>
-             )}
+            {totalCards > 0 && (
+                <div className="bg-[#221d1d] rounded-full my-6">
+                    <div
+                        className="h-3 rounded-full transition-all duration-300 ease-out"
+                        style={{
+                            width: `${progressPercentage}%`,
+                            backgroundColor: '#bf77f7'
+                        }}
+                    />
+                </div>
+            )}
 
             {/* Error state */}
             {error && (
@@ -219,6 +211,6 @@ export default function FlashcardParent({ params }: Props) {
                     <p className="text-sm text-gray-500">Flashcards are being generated from your block content...</p>
                 </div>
             )}
-        </div>
+        </BlockViewNav>
     );
 }

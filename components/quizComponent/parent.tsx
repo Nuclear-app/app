@@ -63,8 +63,7 @@ export default function QuizParent({ params }: Props) {
     // Check if context is empty and show a nice message
     if (!context || context.trim() === "") {
         return (
-            <div className="flex flex-col min-h-screen">
-                <BlockViewNav blockId={id} />
+            <BlockViewNav blockId={id}>
                 <div className="flex flex-1 items-center justify-center p-8">
                     <div className="text-center max-w-md">
                         <div className="text-6xl mb-4">📝</div>
@@ -82,16 +81,15 @@ export default function QuizParent({ params }: Props) {
                         </a>
                     </div>
                 </div>
-            </div>
+            </BlockViewNav>
         );
     }
 
     return (
-        <div className="flex flex-col min-h-screen">
-            <BlockViewNav blockId={id} />
+        <BlockViewNav blockId={id}>
             <div className="flex flex-1 items-center justify-center">
                 <Quiz blockId={id} />
-            </div>            
-        </div>
+            </div>
+        </BlockViewNav>
     );
 }
